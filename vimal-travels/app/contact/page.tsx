@@ -1,4 +1,4 @@
-// app/contact/page.tsx
+﻿// app/contact/page.tsx
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import Image from "next/image";
 import QuickEnquiryForm from "@/components/QuickEnquiryForm";
@@ -50,7 +50,7 @@ export default function ContactPage() {
 
                 <div className="space-y-4 mb-8">
                   {[
-                    { icon: MapPin, label: "Office Address", content: "1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata Showroom, Bengaluru – 560054", href: undefined },
+                    { icon: MapPin, label: "Office Address", content: "5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054", href: undefined },
                     { icon: Phone,  label: "Phone",          content: "+91 98861 14440",     href: "tel:+919886114440" },
                     { icon: Mail,   label: "Email",          content: "vimaltrls@gmail.com", href: "mailto:vimaltrls@gmail.com" },
                     { icon: Clock,  label: "Business Hours", content: "Mon–Sat: 10:30 AM – 8:00 PM", href: undefined },
@@ -120,3 +120,4 @@ export default function ContactPage() {
     </>
   );
 }
+

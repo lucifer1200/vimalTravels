@@ -1,4 +1,4 @@
-// components/Footer.tsx
+﻿// components/Footer.tsx
 import Link from "next/link";
 import { Plane, MapPin, Phone, Mail, Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 
@@ -85,7 +85,7 @@ export default function Footer() {
           <ul className="space-y-4">
             <li className="flex gap-3 text-sm text-gray-400">
               <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-              1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata Showroom, Bengaluru – 560054
+              5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054
             </li>
             <li>
               <a href="tel:+919886114440" className="flex gap-3 text-sm text-gray-400 hover:text-blue-400 transition-colors">
@@ -113,3 +113,4 @@ export default function Footer() {
     </footer>
   );
 }
+
