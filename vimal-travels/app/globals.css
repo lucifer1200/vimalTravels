@@ -1,0 +1,140 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; overflow-y: scroll; }
+  * { box-sizing: border-box; }
+  body { @apply font-body antialiased text-slate-800; }
+  h1, h2, h3, h4 { @apply font-display; }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md inline-block;
+  }
+  .btn-navy {
+    @apply bg-slate-900 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 inline-block;
+  }
+  .btn-outline {
+    @apply border-2 border-white text-white hover:bg-white hover:text-slate-900 font-semibold px-6 py-3 rounded-lg transition-all duration-200 inline-block;
+  }
+  .btn-outline-blue {
+    @apply border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 inline-block;
+  }
+  .btn-whatsapp {
+    @apply bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 justify-center;
+  }
+  .btn-rose {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 inline-block;
+  }
+
+  /* ── Labels & Headings ── */
+  .section-label {
+    @apply text-blue-600 font-semibold text-xs uppercase tracking-widest;
+  }
+  .section-title {
+    @apply font-display text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight;
+  }
+
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 text-slate-800 text-sm transition-all;
+  }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all duration-200;
+  }
+  .glass-card {
+    @apply bg-white/10 border border-white/20 rounded-xl transition-all duration-200 hover:bg-white/15;
+  }
+
+  /* ── Gradient text ── */
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent;
+  }
+  .gradient-text-cool {
+    @apply bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+}
+
+/* ── Scroll Reveal ── */
+.sr-base {
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.sr-up    { transform: translateY(24px); }
+.sr-left  { transform: translateX(-24px); }
+.sr-right { transform: translateX(24px); }
+.sr-fade  { transform: none; }
+.sr-zoom  { transform: scale(0.95); }
+.sr-visible {
+  opacity: 1 !important;
+  transform: translate(0) scale(1) !important;
+}
+
+/* ── Keyframes ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-fade-up { animation: fadeUp 0.6s ease forwards; }
+.animate-fade-in { animation: fadeIn 0.5s ease forwards; }
+.animate-float   { animation: float 3s ease-in-out infinite; }
+
+/* ── Hero overlay - dark navy blue ── */
+.hero-overlay {
+  background: linear-gradient(
+    to right,
+    rgba(15, 40, 100, 0.92) 0%,
+    rgba(15, 40, 100, 0.70) 60%,
+    rgba(15, 40, 100, 0.40) 100%
+  );
+}
+
+/* ── Stat card (for blue bg sections) ── */
+.stat-card {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.stat-card:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.35);
+  transform: translateY(-3px);
+}
+
+/* ── Package card image zoom ── */
+.pkg-img { transition: transform 0.4s ease; }
+.card:hover .pkg-img { transform: scale(1.04); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb {
+  background: #2563EB;
+  border-radius: 3px;
+}
+
+/* ── Section dividers ── */
+.wave-divider { overflow: hidden; line-height: 0; }

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\jain1\\\\Downloads\\\\vimal-travels\\\\vimal-travels\" -Depth 2 | Where-Object { $_.PSIsContainer } | Select-Object FullName)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebFetch(domain:www.google.com)",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__get_page_text",
+      "mcp__Claude_in_Chrome__read_page",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "Bash(npm install *)",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/packages\" -UseBasicParsing -TimeoutSec 10)",
+      "PowerShell($pages = @\\(\"/\", \"/packages\", \"/about\", \"/services\", \"/contact\", \"/passport-visa\"\\); $results = foreach \\($p in $pages\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000$p\" -UseBasicParsing -TimeoutSec 10; \"$p -> $\\($r.StatusCode\\)\" }; $results)"
+    ]
+  }
+}
