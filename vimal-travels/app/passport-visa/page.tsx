@@ -18,18 +18,17 @@ const passportServices = [
 ];
 
 const visaCountries = [
-  { country: "Gulf / Middle East", type: "Tourist & Business",        time: "2–3 working days" },
+  { country: "Gulf / Middle East", type: "Tourist & Business",        time: "3–5 working days" },
   { country: "Thailand",           type: "Tourist (On Arrival Guide)", time: "Same day" },
   { country: "Singapore",          type: "Tourist & Business",        time: "3–5 working days" },
-  { country: "Malaysia",           type: "eNTRI / eVISA",             time: "1–2 working days" },
-  { country: "Vietnam",            type: "Tourist & Business",        time: "2–3 working days" },
-  { country: "Maldives",           type: "On Arrival (Free)",         time: "Guidance only" },
-  { country: "Sri Lanka",          type: "ETA Online",                time: "1–2 working days" },
+  { country: "Malaysia",           type: "eNTRI / eVISA",             time: "Same day" },
+  { country: "Vietnam",            type: "Tourist & Business",        time: "3–5 working days" },
+  { country: "Sri Lanka",          type: "ETA Online",                time: "Same day" },
   { country: "UK",                 type: "Tourist & Business",        time: "15–20 working days" },
   { country: "USA",                type: "B1/B2 Tourist",             time: "30–60 working days" },
-  { country: "Schengen",           type: "Multiple countries",        time: "15–20 working days" },
+  { country: "Schengen",           type: "Multiple countries",        time: "10–15 working days" },
   { country: "Australia",          type: "Tourist & Student",         time: "10–15 working days" },
-  { country: "South Africa",       type: "Tourist & Business",        time: "5–7 working days" },
+  { country: "China",              type: "Tourist & Business",        time: "7–10 working days" },
 ];
 
 export default function PassportVisaPage() {

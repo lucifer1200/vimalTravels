@@ -102,7 +102,7 @@ export default function PackagesPage() {
               <h1 className="font-display text-4xl md:text-5xl text-white font-bold leading-tight">Tour Packages</h1>
               <p className="text-gray-200 mt-4 text-lg">Handpicked experiences for every traveler and every budget.</p>
               <div className="flex gap-8 mt-8">
-                {[["6+", "Domestic Destinations"], ["8+", "International Destinations"], ["19+", "Years of Expertise"]].map(([val, label]) => (
+                {[["30+", "Domestic Destinations"], ["50+", "International Destinations"], ["19+", "Years of Expertise"]].map(([val, label]) => (
                   <div key={label}>
                     <div className="font-display text-3xl font-bold text-blue-300">{val}</div>
                     <div className="text-gray-300 text-xs mt-0.5">{label}</div>
@@ -124,7 +124,7 @@ export default function PackagesPage() {
                 <h2 className="font-display text-3xl font-bold text-slate-900">Domestic Packages</h2>
               </div>
               <span className="hidden md:flex items-center gap-2 bg-blue-50 text-blue-700 text-sm font-semibold px-4 py-2 rounded-full border border-blue-100">
-                🇮🇳 {domesticPackages.length} Destinations
+                🇮🇳 30+ Destinations
               </span>
             </div>
           </ScrollReveal>
@@ -145,7 +145,7 @@ export default function PackagesPage() {
                 <h2 className="font-display text-3xl font-bold text-slate-900">International Packages</h2>
               </div>
               <span className="hidden md:flex items-center gap-2 bg-blue-50 text-blue-700 text-sm font-semibold px-4 py-2 rounded-full border border-blue-100">
-                🌍 {internationalPackages.length} Destinations
+                🌍 50+ Destinations
               </span>
             </div>
           </ScrollReveal>
