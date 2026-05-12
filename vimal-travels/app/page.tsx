@@ -39,7 +39,7 @@ const packages = [
     highlights: ["Shikara Ride on Dal Lake", "Gulmarg Gondola Access", "Luxury Houseboat Stay"],
     price: "₹17,999",
     duration: "6N / 7D",
-    image: "https://images.unsplash.com/photo-1625047508494-c459c2a9d4a9?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
     tag: "Top Rated",
   },
   {

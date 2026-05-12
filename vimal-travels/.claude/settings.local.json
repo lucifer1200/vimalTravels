@@ -17,7 +17,8 @@
       "Bash(powershell -Command \"\\(Get-Content app/page.tsx\\) -replace 'photo-1548013146-72479768bada', 'photo-1568454537842-d933259bb258' | Set-Content app/page.tsx -Encoding utf8\")",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git commit *)"
     ]
   }
 }
