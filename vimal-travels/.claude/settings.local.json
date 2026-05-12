@@ -12,7 +12,12 @@
       "Bash(npm install *)",
       "mcp__Claude_in_Chrome__tabs_create_mcp",
       "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/packages\" -UseBasicParsing -TimeoutSec 10)",
-      "PowerShell($pages = @\\(\"/\", \"/packages\", \"/about\", \"/services\", \"/contact\", \"/passport-visa\"\\); $results = foreach \\($p in $pages\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000$p\" -UseBasicParsing -TimeoutSec 10; \"$p -> $\\($r.StatusCode\\)\" }; $results)"
+      "PowerShell($pages = @\\(\"/\", \"/packages\", \"/about\", \"/services\", \"/contact\", \"/passport-visa\"\\); $results = foreach \\($p in $pages\\) { $r = Invoke-WebRequest -Uri \"http://localhost:3000$p\" -UseBasicParsing -TimeoutSec 10; \"$p -> $\\($r.StatusCode\\)\" }; $results)",
+      "Bash(powershell -Command \"\\(Get-Content app/packages/page.tsx\\) -replace 'photo-1548013146-72479768bada', 'photo-1568454537842-d933259bb258' | Set-Content app/packages/page.tsx -Encoding utf8\")",
+      "Bash(powershell -Command \"\\(Get-Content app/page.tsx\\) -replace 'photo-1548013146-72479768bada', 'photo-1568454537842-d933259bb258' | Set-Content app/page.tsx -Encoding utf8\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const domesticPackages = [
-  { title: "Kashmir Paradise",   duration: "6N / 7D", price: "₹17,999", highlights: ["Dal Lake Shikara Ride", "Gulmarg Snow & Gondola", "Pahalgam Valley", "Sonamarg Glacier"],          image: "https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=85",   tag: "Most Popular" },
+  { title: "Kashmir Paradise",   duration: "6N / 7D", price: "₹17,999", highlights: ["Dal Lake Shikara Ride", "Gulmarg Snow & Gondola", "Pahalgam Valley", "Sonamarg Glacier"],          image: "https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=85",   tag: "Most Popular" },
   { title: "Kerala Backwaters",  duration: "5N / 6D", price: "₹14,999", highlights: ["Alleppey Houseboat Stay", "Munnar Tea Hills", "Ayurvedic Spa", "Cochin Heritage Walk"],             image: "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=800&q=85",  tag: "Family Favourite" },
   { title: "Goa Beach Escape",   duration: "3N / 4D", price: "₹12,999", highlights: ["North & South Goa Beaches", "Beach Shacks & Nightlife", "Water Sports", "Old Goa Churches"],        image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=85",   tag: "Weekend Getaway" },
   { title: "Rajasthan Royal",    duration: "5N / 6D", price: "₹19,999", highlights: ["Jaipur Pink City", "Amber Fort Tour", "Udaipur Pichola Lake", "Heritage Palace Walk"],              image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=85",   tag: "Heritage Tour" },
