@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 };
 
 const domesticPackages = [
-  { title: "Kashmir Paradise",   duration: "6N / 7D", price: "₹17,999", highlights: ["Dal Lake Shikara Ride", "Gulmarg Snow & Gondola", "Pahalgam Valley", "Sonamarg Glacier"],          image: "https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=85",   tag: "Most Popular" },
-  { title: "Kerala Backwaters",  duration: "5N / 6D", price: "₹14,999", highlights: ["Alleppey Houseboat Stay", "Munnar Tea Hills", "Ayurvedic Spa", "Cochin Heritage Walk"],             image: "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=800&q=85",  tag: "Family Favourite" },
+  { title: "Kashmir Paradise",   duration: "6N / 7D", price: "₹17,999", highlights: ["Dal Lake Shikara Ride", "Gulmarg Snow & Gondola", "Pahalgam Valley", "Sonamarg Glacier"],          image: "https://images.unsplash.com/photo-1625047508494-c459c2a9d4a9?w=800&q=85",   tag: "Most Popular" },
+  { title: "Kerala",             duration: "5N / 6D", price: "₹14,999", highlights: ["Munnar Tea Gardens", "Thekkady Wildlife", "Ayurvedic Spa", "Cochin Heritage Walk"],               image: "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=800&q=85",  tag: "Family Favourite" },
   { title: "Goa Beach Escape",   duration: "3N / 4D", price: "₹12,999", highlights: ["North & South Goa Beaches", "Beach Shacks & Nightlife", "Water Sports", "Old Goa Churches"],        image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=85",   tag: "Weekend Getaway" },
   { title: "Rajasthan Royal",    duration: "5N / 6D", price: "₹19,999", highlights: ["Jaipur Pink City", "Amber Fort Tour", "Udaipur Pichola Lake", "Heritage Palace Walk"],              image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=85",   tag: "Heritage Tour" },
   { title: "Andaman Islands",    duration: "5N / 6D", price: "₹21,499", highlights: ["Radhanagar Beach", "Scuba Diving & Snorkeling", "Neil Island", "Glass Bottom Boat"],               image: "https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?w=800&q=85",   tag: "Beach Paradise" },
@@ -76,7 +76,7 @@ function Disclaimer() {
     <div className="flex items-start gap-2 mt-8 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
       <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
       <p className="text-xs text-blue-700">
-        <span className="font-semibold">* Price Disclaimer:</span> All prices are indicative and per person on twin sharing basis. Rates may vary based on travel dates, availability, airline fares, and seasonal demand. Final pricing will be confirmed at the time of booking. Contact us for the latest rates.
+        <span className="font-semibold">* Price Disclaimer:</span> All prices are indicative and per person. Rates may vary based on travel dates, availability, airline fares, and seasonal demand. Final pricing will be confirmed at the time of booking. Contact us for the latest rates.
       </p>
     </div>
   );
