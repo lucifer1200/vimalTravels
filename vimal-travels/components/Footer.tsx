@@ -94,6 +94,12 @@ export default function Footer() {
               </a>
             </li>
             <li>
+              <a href="tel:+919845679729" className="flex gap-3 text-sm text-gray-400 hover:text-blue-400 transition-colors">
+                <Phone className="w-4 h-4 text-blue-400 shrink-0" />
+                +91 98456 79729
+              </a>
+            </li>
+            <li>
               <a href="mailto:vimaltrls@gmail.com" className="flex gap-3 text-sm text-gray-400 hover:text-blue-400 transition-colors">
                 <Mail className="w-4 h-4 text-blue-400 shrink-0" />
                 vimaltrls@gmail.com
@@ -113,4 +119,5 @@ export default function Footer() {
     </footer>
   );
 }
+
 

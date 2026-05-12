@@ -1,4 +1,4 @@
-// app/passport-visa/page.tsx
+﻿// app/passport-visa/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle, BookOpen, Clock, Shield, MessageCircle } from "lucide-react";
@@ -167,7 +167,10 @@ export default function PassportVisaPage() {
                   Get Started →
                 </Link>
                 <a href="tel:+919886114440" className="border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold px-7 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center text-sm">
-                  Call Now
+                  +91 98861 14440
+                </a>
+                <a href="tel:+919845679729" className="border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold px-7 py-3 rounded-lg transition-colors flex items-center gap-2 justify-center text-sm">
+                  +91 98456 79729
                 </a>
               </div>
             </div>
@@ -177,3 +180,4 @@ export default function PassportVisaPage() {
     </>
   );
 }
+

@@ -51,7 +51,7 @@ export default function ContactPage() {
                 <div className="space-y-4 mb-8">
                   {[
                     { icon: MapPin, label: "Office Address", content: "5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054", href: undefined },
-                    { icon: Phone,  label: "Phone",          content: "+91 98861 14440",     href: "tel:+919886114440" },
+                    { icon: Phone,  label: "Phone",          content: "+91 98861 14440  |  +91 98456 79729", href: "tel:+919886114440" },
                     { icon: Mail,   label: "Email",          content: "vimaltrls@gmail.com", href: "mailto:vimaltrls@gmail.com" },
                     { icon: Clock,  label: "Business Hours", content: "Mon–Sat: 10:30 AM – 8:00 PM", href: undefined },
                   ].map((item, i) => (
@@ -106,9 +106,12 @@ export default function ContactPage() {
               <h3 className="font-display text-xl font-bold text-white">Prefer to call? We&apos;re available Mon–Sat, 10:30 AM – 8:00 PM</h3>
               <p className="text-blue-200 text-sm mt-1">Our travel experts are ready to answer your queries.</p>
             </div>
-            <div className="flex gap-3 shrink-0">
+            <div className="flex flex-wrap gap-3 shrink-0">
               <a href="tel:+919886114440" className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-6 py-3 rounded-lg transition-colors text-sm">
-                Call Now
+                +91 98861 14440
+              </a>
+              <a href="tel:+919845679729" className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-6 py-3 rounded-lg transition-colors text-sm">
+                +91 98456 79729
               </a>
               <a href="https://wa.me/919886114440" className="border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold px-6 py-3 rounded-lg transition-colors text-sm">
                 WhatsApp Us
@@ -120,4 +123,5 @@ export default function ContactPage() {
     </>
   );
 }
+
 

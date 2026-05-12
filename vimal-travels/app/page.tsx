@@ -1,4 +1,4 @@
-// app/page.tsx
+﻿// app/page.tsx
 import Image from "next/image";
 import Link from "next/link";
 import { Award, Users, Calendar, CheckCircle, MapPin, Globe, FileText, BookOpen, Phone, MessageCircle, Star, Shield, Clock } from "lucide-react";
@@ -37,15 +37,15 @@ const packages = [
   {
     title: "Kashmir Paradise",
     highlights: ["Shikara Ride on Dal Lake", "Gulmarg Gondola Access", "Luxury Houseboat Stay"],
-    price: "₹24,999",
+    price: "₹17,999",
     duration: "6N / 7D",
-    image: "https://images.unsplash.com/photo-1566837945700-30057527ade0?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80",
     tag: "Top Rated",
   },
   {
     title: "Kerala Backwaters",
     highlights: ["Alleppey Houseboat", "Munnar Tea Gardens", "Ayurvedic Spa Session"],
-    price: "₹18,500",
+    price: "₹14,999",
     duration: "5N / 6D",
     image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=80",
     tag: "Popular",
@@ -53,7 +53,7 @@ const packages = [
   {
     title: "Bali Escape",
     highlights: ["Ubud Rice Terraces", "Tanah Lot Temple", "Kuta Beach Sunset"],
-    price: "₹55,999",
+    price: "₹29,999",
     duration: "5N / 6D",
     image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
     tag: "International",
@@ -295,3 +295,4 @@ export default function HomePage() {
     </>
   );
 }
+

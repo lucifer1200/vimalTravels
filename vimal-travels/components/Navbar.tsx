@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // components/Navbar.tsx
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -71,13 +71,16 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="hidden lg:flex items-center gap-4">
-          <a
-            href="tel:+919886114440"
-            className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            +91 98861 14440
-          </a>
+          <div className="flex flex-col items-end text-xs text-slate-600">
+            <a href="tel:+919886114440" className="flex items-center gap-1 font-medium hover:text-blue-600 transition-colors">
+              <Phone className="w-3.5 h-3.5" />
+              +91 98861 14440
+            </a>
+            <a href="tel:+919845679729" className="flex items-center gap-1 font-medium hover:text-blue-600 transition-colors">
+              <Phone className="w-3.5 h-3.5" />
+              +91 98456 79729
+            </a>
+          </div>
           <Link href="/contact" className="bg-slate-900 hover:bg-blue-600 text-white font-semibold text-sm py-2.5 px-5 rounded-lg transition-colors">
             Get a Quote
           </Link>
@@ -116,12 +119,13 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-3">
-            <a
-              href="tel:+919886114440"
-              className="flex items-center gap-2 text-slate-700 font-medium text-sm"
-            >
+            <a href="tel:+919886114440" className="flex items-center gap-2 text-slate-700 font-medium text-sm">
               <Phone className="w-4 h-4 text-blue-600" />
               +91 98861 14440
+            </a>
+            <a href="tel:+919845679729" className="flex items-center gap-2 text-slate-700 font-medium text-sm">
+              <Phone className="w-4 h-4 text-blue-600" />
+              +91 98456 79729
             </a>
             <Link href="/contact" className="btn-primary text-center text-sm">
               Get a Quote
@@ -132,3 +136,4 @@ export default function Navbar() {
     </header>
   );
 }
+
