@@ -1,6 +1,6 @@
 ﻿// components/Footer.tsx
 import Link from "next/link";
-import { Plane, MapPin, Phone, Mail, Facebook, Instagram, Youtube, Twitter } from "lucide-react";
+import { Plane, MapPin, Phone, Mail, Instagram } from "lucide-react";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -42,22 +42,8 @@ export default function Footer() {
           <p className="text-gray-400 text-sm leading-relaxed mb-5">
             Your trusted travel partner in Bengaluru. We specialize in domestic & international tours, visa processing, and passport assistance since 2007.
           </p>
-          <div className="flex gap-3 mb-5">
-            <a href="#" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-blue-600 transition-colors">
-              <Facebook className="w-4 h-4" />
-            </a>
-            <a href="https://www.instagram.com/vimaltravels" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-pink-600 transition-colors">
-              <Instagram className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-red-600 transition-colors">
-              <Youtube className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-blue-400 transition-colors">
-              <Twitter className="w-4 h-4" />
-            </a>
-          </div>
           <a
-            href="https://www.instagram.com/vimaltravels"
+            href="https://www.instagram.com/vimal_trls"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all"
