@@ -1,9 +1,10 @@
 // app/packages/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle, MessageCircle, Info } from "lucide-react";
+import { MessageCircle, Info } from "lucide-react";
 import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
+import PackageCard from "@/components/PackageCard";
 
 export const metadata: Metadata = {
   title: "Tour Packages — Vimal Travels",
@@ -30,46 +31,6 @@ const internationalPackages = [
   { title: "Europe Tour",         duration: "9N / 10D", price: "₹1,74,999", highlights: ["Paris Eiffel Tower", "Switzerland Alps", "Rome Colosseum", "Amsterdam Canals"],            image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=85",  tag: "Dream Trip" },
 ];
 
-function PackageCard({ p, i }: { p: typeof domesticPackages[0]; i: number }) {
-  return (
-    <ScrollReveal direction="up" delay={i * 80}>
-      <div className="card overflow-hidden group h-full flex flex-col">
-        <div className="relative h-52 overflow-hidden shrink-0">
-          <Image src={p.image} alt={p.title} fill className="object-cover pkg-img" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute top-3 left-3">
-            <span className="bg-blue-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">{p.tag}</span>
-          </div>
-          <div className="absolute top-3 right-3">
-            <span className="bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">{p.duration}</span>
-          </div>
-          <div className="absolute bottom-3 left-4">
-            <h3 className="font-display font-bold text-white text-lg drop-shadow">{p.title}</h3>
-          </div>
-        </div>
-        <div className="p-4 flex flex-col flex-1">
-          <ul className="space-y-1.5 mb-4 flex-1">
-            {p.highlights.map((h) => (
-              <li key={h} className="flex items-center gap-2 text-xs text-gray-600">
-                <CheckCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                {h}
-              </li>
-            ))}
-          </ul>
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <div>
-              <div className="text-xs text-gray-400">Starting from*</div>
-              <div className="font-bold text-blue-600 text-xl">{p.price}</div>
-            </div>
-            <Link href="/contact" className="bg-slate-900 hover:bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-              Enquire →
-            </Link>
-          </div>
-        </div>
-      </div>
-    </ScrollReveal>
-  );
-}
 
 function Disclaimer() {
   return (

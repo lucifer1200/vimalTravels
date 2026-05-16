@@ -1,9 +1,13 @@
 ﻿// app/page.tsx
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Award, Users, Calendar, CheckCircle, MapPin, Globe, FileText, BookOpen, Phone, MessageCircle, Star, Shield, Clock } from "lucide-react";
+import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import HeroPlane from "@/components/HeroPlane";
 
 const stats = [
   { icon: Calendar, value: "2007", label: "Established", sub: "Over a decade of service" },
@@ -91,22 +95,45 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 hero-overlay" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-2xl animate-fade-up">
-            <div className="inline-flex items-center gap-2 bg-blue-600 rounded-full px-3 py-1 mb-6">
+        {/* Flying plane + trail + destination chips */}
+        <HeroPlane />
+
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-flex items-center gap-2 bg-blue-600 rounded-full px-3 py-1 mb-6"
+            >
               <span className="text-white text-xs font-semibold uppercase tracking-wider">IATA Certified Travel Agency</span>
-            </div>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
+            >
               Your Trusted Travel Partner for Tours,{" "}
               <span className="text-blue-300">Visa &amp; Passport</span>
-            </h1>
-            <p className="text-gray-200 text-lg leading-relaxed mb-8 max-w-xl">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.35 }}
+              className="text-gray-200 text-lg leading-relaxed mb-8 max-w-xl"
+            >
               Seamlessly navigating global borders since 2007. Whether it&apos;s a dream vacation or business travel, our experts handle every detail.
-            </p>
-            <div className="flex flex-wrap gap-4">
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="flex flex-wrap gap-4"
+            >
               <Link href="/packages" className="btn-primary px-8 py-3.5">Explore Packages</Link>
               <Link href="/contact" className="btn-outline px-8 py-3.5">Get Free Quote</Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -118,7 +145,9 @@ export default function HomePage() {
             {stats.map((s, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 100}>
                 <div>
-                  <div className="font-display text-5xl md:text-6xl font-bold text-white mb-2">{s.value}</div>
+                  <div className="font-display text-5xl md:text-6xl font-bold text-white mb-2">
+                    <AnimatedCounter target={s.value} />
+                  </div>
                   <div className="text-blue-100 font-semibold text-sm">{s.label}</div>
                   <div className="text-blue-300 text-xs mt-1">{s.sub}</div>
                 </div>
@@ -142,16 +171,29 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             {services.map((s, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 100}>
-                <div className="card p-6 h-full">
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <motion.div
+                  whileHover={{ y: -6, boxShadow: "0 16px 40px rgba(37,99,235,0.12)" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="card p-6 h-full"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                    className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4"
+                  >
                     <s.icon className="w-5 h-5 text-blue-600" />
-                  </div>
+                  </motion.div>
                   <h3 className="font-display text-lg font-bold text-slate-900 mb-2">{s.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed mb-4">{s.desc}</p>
-                  <Link href={s.href} className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1">
-                    Learn More →
+                  <Link href={s.href} className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1 group">
+                    Learn More
+                    <motion.span
+                      className="inline-block"
+                      initial={{ x: 0 }}
+                      whileHover={{ x: 4 }}
+                    > →</motion.span>
                   </Link>
-                </div>
+                </motion.div>
               </ScrollReveal>
             ))}
           </div>

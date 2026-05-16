@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const testimonials = [
   { text: "Vimal Travels organised our Bangkok trip in a befitting manner, made us comfortable throughout and made a pleasant and memorable holiday. They organised every event professionally — money exchange, immigration, transport, hotel stay and local currency in an emergency — all done in an exemplary manner.", name: "Suresh Puttaiah", location: "Local Guide · Bengaluru", initials: "SP" },
@@ -19,6 +20,7 @@ const testimonials = [
 
 const INITIAL_COUNT = 6;
 
+
 export default function TestimonialsSection() {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? testimonials : testimonials.slice(0, INITIAL_COUNT);
@@ -26,7 +28,13 @@ export default function TestimonialsSection() {
   return (
     <section className="py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
           <p className="section-label mb-2">TESTIMONIALS</p>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900">What Our Travelers Say</h2>
           <div className="flex items-center justify-center gap-2 mt-3">
@@ -35,36 +43,57 @@ export default function TestimonialsSection() {
             </div>
             <span className="text-gray-500 text-sm">4.9/5 based on 200+ Google Reviews</span>
           </div>
-        </div>
+        </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {visible.map((t, i) => (
-            <div key={i} className="card p-5 flex flex-col">
-              <div className="flex text-yellow-400 mb-3">
-                {[...Array(5)].map((_, j) => <Star key={j} className="w-3.5 h-3.5 fill-current" />)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-5 flex-1">&ldquo;{t.text}&rdquo;</p>
-              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                  {t.initials}
+          <AnimatePresence mode="popLayout">
+            {visible.map((t, i) => (
+              <motion.div
+                key={t.name}
+                layout
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.45, delay: i * 0.06, ease: "easeOut", layout: { duration: 0.4 } }}
+                whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(37,99,235,0.10)" }}
+                className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col cursor-default"
+              >
+                <div className="flex text-yellow-400 mb-3">
+                  {[...Array(5)].map((_, j) => <Star key={j} className="w-3.5 h-3.5 fill-current" />)}
                 </div>
-                <div>
-                  <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
-                  <div className="text-gray-400 text-xs">{t.location}</div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-5 flex-1">&ldquo;{t.text}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                    {t.initials}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900 text-sm">{t.name}</div>
+                    <div className="text-gray-400 text-xs">{t.location}</div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
-        <div className="text-center mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-          <button
+        <motion.div
+          className="text-center mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => setShowAll(!showAll)}
             className="inline-flex items-center gap-2 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm"
           >
             {showAll ? "Show Less ↑" : `Show All ${testimonials.length} Reviews ↓`}
-          </button>
-          <a
+          </motion.button>
+          <motion.a
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             href="https://www.google.com/maps/place/Vimal+Travels/@13.0395342,77.5574472,17z"
             target="_blank"
             rel="noopener noreferrer"
@@ -77,8 +106,8 @@ export default function TestimonialsSection() {
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
             Write a Google Review
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </div>
     </section>
   );

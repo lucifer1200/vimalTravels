@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, ReactNode } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -8,28 +9,37 @@ interface Props {
   direction?: "up" | "left" | "right" | "fade" | "zoom";
 }
 
-export default function ScrollReveal({ children, className = "", delay = 0, direction = "up" }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+const variants = {
+  up:    { hidden: { opacity: 0, y: 36 },        visible: { opacity: 1, y: 0 } },
+  left:  { hidden: { opacity: 0, x: -36 },       visible: { opacity: 1, x: 0 } },
+  right: { hidden: { opacity: 0, x: 36 },        visible: { opacity: 1, x: 0 } },
+  fade:  { hidden: { opacity: 0 },               visible: { opacity: 1 } },
+  zoom:  { hidden: { opacity: 0, scale: 0.90 },  visible: { opacity: 1, scale: 1 } },
+};
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => el.classList.add("sr-visible"), delay);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.12 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [delay]);
+export default function ScrollReveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}: Props) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-72px" });
 
   return (
-    <div ref={ref} className={`sr-base sr-${direction} ${className}`}>
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={variants[direction]}
+      transition={{
+        duration: 0.65,
+        delay: delay / 1000,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className={className}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }

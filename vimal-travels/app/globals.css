@@ -125,8 +125,32 @@
 }
 
 /* ── Package card image zoom ── */
-.pkg-img { transition: transform 0.4s ease; }
-.card:hover .pkg-img { transform: scale(1.04); }
+.pkg-img { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.card:hover .pkg-img { transform: scale(1.07); }
+
+/* ── Button micro interactions ── */
+.btn-primary, .btn-navy, .btn-outline-blue {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after, .btn-navy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover::after, .btn-navy:hover::after { opacity: 1; }
+
+/* ── Card focus ring ── */
+.card:focus-within {
+  outline: 2px solid #2563EB;
+  outline-offset: 2px;
+}
+
+/* ── Smooth link underline ── */
+a { transition: color 0.2s ease; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
