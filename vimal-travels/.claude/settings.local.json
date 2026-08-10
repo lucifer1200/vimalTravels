@@ -20,7 +20,10 @@
       "Bash(git push *)",
       "Bash(git commit *)",
       "Bash(npm run *)",
-      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
+      "Bash(python3)",
+      "Bash(node -e ' *)",
+      "Bash(del \"C:\\\\Users\\\\jain1\\\\Downloads\\\\vimal-travels\\\\vimal-travels\\\\read_pdf_temp.mjs\")"
     ]
   }
 }
