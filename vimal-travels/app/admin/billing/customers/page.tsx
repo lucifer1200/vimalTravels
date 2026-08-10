@@ -325,11 +325,12 @@ export default function CustomersPage() {
     if (!form.name || !form.mobile) return;
     if (modal === "add") await addCustomer(form);
     else if (editId)     await updateCustomer(editId, form);
-    setModal(null); reload();
+    setModal(null);
+    await reload();
   };
 
   const confirmDelete = async () => {
-    if (delId) { await deleteCustomer(delId); setDelId(null); reload(); }
+    if (delId) { await deleteCustomer(delId); setDelId(null); await reload(); }
   };
 
   return (
