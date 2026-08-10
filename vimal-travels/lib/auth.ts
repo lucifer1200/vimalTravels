@@ -14,7 +14,7 @@ export interface Session {
   loginAt: number;
 }
 
-const USERS_KEY   = "vt_users";
+const USERS_KEY   = "vt_users_v2";
 const SESSION_KEY = "vt_admin_session";
 
 async function sha256(text: string): Promise<string> {
@@ -22,20 +22,9 @@ async function sha256(text: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Default credentials seeded on first run:
-//   superadmin / Vimal@Super2024
-//   admin      / Vimal@Admin2024
-//
-// To add a new user via browser console:
-//   const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('password'));
-//   const hash = [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('');
-//   const users = JSON.parse(localStorage.getItem('vt_users') || '[]');
-//   users.push({ username:'newuser', passwordHash: hash, role:'admin', displayName:'New User' });
-//   localStorage.setItem('vt_users', JSON.stringify(users));
-
 const SEED_USERS = [
-  { username: "superadmin", password: "Vimal@Super2024", role: "super_admin" as UserRole, displayName: "Super Admin" },
-  { username: "admin",      password: "Vimal@Admin2024", role: "admin"      as UserRole, displayName: "Admin"       },
+  { username: "vimaltrls@gmail.com",  password: "Dilip$4440", role: "super_admin" as UserRole, displayName: "Super Admin" },
+  { username: "vimaltrsl1@gmail.com", password: "Mayur$4440", role: "admin"       as UserRole, displayName: "Admin"       },
 ];
 
 export async function seedUsers(): Promise<void> {
