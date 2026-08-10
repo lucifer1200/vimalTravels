@@ -24,6 +24,10 @@ export const metadata: Metadata = {
     description: "Tours, Visa & Passport Services from Bengaluru",
     type: "website",
   },
+  icons: {
+    icon: "/vimal-logo.jpeg",
+    apple: "/vimal-logo.jpeg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
