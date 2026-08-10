@@ -28,6 +28,7 @@ export default function InvoiceViewPage() {
   const params = useParams();
   const router = useRouter();
   const [inv, setInv]           = useState<Invoice | null>(null);
+  const [loading, setLoading]   = useState(true);
   const [payModal, setPayModal] = useState(false);
   const [delConfirm, setDelConfirm] = useState(false);
   const [payForm, setPayForm]  = useState({
@@ -39,7 +40,11 @@ export default function InvoiceViewPage() {
   const [logoB64, setLogoB64] = useState<string>("/vimal-logo.jpeg");
 
   useEffect(() => {
-    getInvoiceById(params.id as string).then((data) => { if (data) setInv(data); });
+    setLoading(true);
+    getInvoiceById(params.id as string).then((data) => {
+      if (data) setInv(data);
+      setLoading(false);
+    });
   }, [params.id]);
 
   useEffect(() => {
@@ -57,6 +62,14 @@ export default function InvoiceViewPage() {
   const reload = () => {
     getInvoiceById(params.id as string).then((data) => { if (data) setInv(data); });
   };
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-full gap-3 text-slate-400 text-sm">
+      <div style={{ width: 18, height: 18, border: "2px solid #CBD5E1", borderTopColor: "#2563EB", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      Loading invoice...
+    </div>
+  );
 
   if (!inv) return (
     <div className="flex items-center justify-center h-full text-slate-400 text-sm">Invoice not found</div>
