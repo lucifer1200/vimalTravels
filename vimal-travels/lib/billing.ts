@@ -255,7 +255,7 @@ export const TYPE_LABEL_FULL: Record<InvoiceType, string> = {
 
 // ── Supabase import ───────────────────────────────────────────────────────────
 
-import { supabase } from "./supabase";
+import { getSupabase } from "./supabase";
 
 const TYPE_PREFIX: Record<InvoiceType, string> = {
   "air-intl": "VT-AIR",
@@ -315,7 +315,7 @@ export function fyDateRange(fy: string): { start: Date; end: Date } {
 
 async function incrementCounter(key: string): Promise<number> {
   // Upsert: increment atomically using Supabase RPC-style update
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("counters")
     .select("value")
     .eq("key", key)
@@ -323,7 +323,7 @@ async function incrementCounter(key: string): Promise<number> {
 
   const next = (data?.value ?? 0) + 1;
 
-  await supabase
+  await getSupabase()
     .from("counters")
     .upsert({ key, value: next }, { onConflict: "key" });
 
@@ -333,7 +333,7 @@ async function incrementCounter(key: string): Promise<number> {
 // ── Customer CRUD ─────────────────────────────────────────────────────────────
 
 export async function getCustomers(): Promise<Customer[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("customers")
     .select("*")
     .order("created_at", { ascending: false });
@@ -356,7 +356,7 @@ export async function addCustomer(c: Omit<Customer, "id" | "code" | "createdAt">
     type:       c.type ?? "individual",
     code:       `CUST-${String(seq).padStart(3, "0")}`,
   };
-  const { data, error } = await supabase.from("customers").insert(row).select().single();
+  const { data, error } = await getSupabase().from("customers").insert(row).select().single();
   if (error) throw error;
   return dbToCustomer(data);
 }
@@ -373,16 +373,16 @@ export async function updateCustomer(id: string, updates: Partial<Customer>): Pr
   if (updates.stateCode  !== undefined) row.state_code = updates.stateCode;
   if (updates.gstin      !== undefined) row.gstin      = updates.gstin;
   if (updates.type       !== undefined) row.type       = updates.type;
-  await supabase.from("customers").update(row).eq("id", id);
+  await getSupabase().from("customers").update(row).eq("id", id);
 }
 
 export async function deleteCustomer(id: string): Promise<void> {
-  await supabase.from("customers").delete().eq("id", id);
+  await getSupabase().from("customers").delete().eq("id", id);
 }
 
 export async function syncCustomerFromInvoice(inv: Invoice): Promise<void> {
   if (!inv.customer?.name) return;
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("customers")
     .select("id")
     .ilike("name", inv.customer.name)
@@ -413,7 +413,7 @@ function dbToCustomer(row: Record<string, unknown>): Customer {
 // ── Invoice CRUD ──────────────────────────────────────────────────────────────
 
 export async function getInvoices(): Promise<Invoice[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("invoices")
     .select("*")
     .order("created_at", { ascending: false });
@@ -443,18 +443,18 @@ export async function addInvoice(
     financialYear: fy,
     createdAt:     new Date().toISOString(),
   });
-  const { data, error } = await supabase.from("invoices").insert(row).select().single();
+  const { data, error } = await getSupabase().from("invoices").insert(row).select().single();
   if (error) throw error;
   return dbToInvoice(data);
 }
 
 export async function saveInvoice(inv: Invoice): Promise<void> {
   const row = invoiceToDb(inv);
-  await supabase.from("invoices").upsert(row, { onConflict: "id" });
+  await getSupabase().from("invoices").upsert(row, { onConflict: "id" });
 }
 
 export async function getInvoice(id: string): Promise<Invoice | undefined> {
-  const { data } = await supabase.from("invoices").select("*").eq("id", id).single();
+  const { data } = await getSupabase().from("invoices").select("*").eq("id", id).single();
   return data ? dbToInvoice(data) : undefined;
 }
 
@@ -463,7 +463,7 @@ export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
 }
 
 export async function deleteInvoice(id: string): Promise<void> {
-  await supabase.from("invoices").delete().eq("id", id);
+  await getSupabase().from("invoices").delete().eq("id", id);
 }
 
 export async function addPayment(invoiceId: string, payment: Omit<Payment, "id">): Promise<void> {
