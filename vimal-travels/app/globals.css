@@ -73,6 +73,12 @@
   h1, h2, h3, h4 { @apply font-display; }
 }
 
+/* Hide scrollbar on mobile for admin main area */
+@media (max-width: 767px) {
+  main::-webkit-scrollbar { display: none; }
+  main { scrollbar-width: none; -ms-overflow-style: none; }
+}
+
 @layer components {
   /* ── Buttons ── */
   .btn-primary {

@@ -385,12 +385,8 @@ function InvoicesPageContent() {
         <div className="rounded-2xl px-5 py-3 flex items-center gap-4" style={glass}>
           <div className="min-w-0">
             <h1 className="font-bold text-lg leading-tight" style={{ color: T.text, letterSpacing:"-0.03em", fontFamily:"var(--font-roboto),Roboto,system-ui,sans-serif" }}>Invoices</h1>
-            <p className="text-[12px] font-medium" style={{ color: T.textMuted }}>
-              {periodFiltered.length} invoice{periodFiltered.length !== 1 ? "s" : ""}
-              {datePeriod !== "all" && <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ background: dark?"rgba(0,119,182,0.2)":"rgba(0,119,182,0.10)", color: T.primary }}>
-                {datePeriod === "today" ? "Today" : datePeriod === "week" ? "Last 7 days" : datePeriod === "month" ? "This month" : datePeriod === "custom" ? `${customFrom} -> ${customTo}` : fyLabel}
-              </span>}
-              {" · "}{due.length} due · {partial.length} partial
+            <p className="text-[11px] font-medium leading-snug" style={{ color: T.textMuted }}>
+              {periodFiltered.length} invoices · {due.length} due · {partial.length} partial
             </p>
           </div>
           <div className="flex-1 max-w-[300px] hidden md:block relative">
@@ -408,7 +404,7 @@ function InvoicesPageContent() {
           </div>
           <div className="ml-auto flex items-center gap-2 shrink-0">
             <button onClick={() => exportCSV(filtered)}
-              className="flex items-center gap-1.5 text-[13px] font-semibold px-3 py-2.5 rounded-[12px] transition-all"
+              className="hidden md:flex items-center gap-1.5 text-[13px] font-semibold px-3 py-2.5 rounded-[12px] transition-all"
               style={{ background:dark?"rgba(255,255,255,0.07)":"#F3EFF6", color:dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(255,255,255,0.12)":"rgba(0,119,182,0.15)"}` }}
               title="Export current list to CSV">
               <Download className="w-3.5 h-3.5" /> Export CSV
@@ -427,7 +423,7 @@ function InvoicesPageContent() {
       <div className="px-5 pb-6 space-y-4">
 
         {/* -- KPI CHIPS -- */}
-        <motion.div className={`grid gap-4 ${isSuperAdmin ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-3"}`}
+        <motion.div className={`grid gap-3 ${isSuperAdmin ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-2 md:grid-cols-3"}`}
           initial="hidden" animate={mounted ? "show" : "hidden"}
           variants={{ show:{ transition:{ staggerChildren:0.07 } } }}>
           {[
@@ -632,8 +628,8 @@ function InvoicesPageContent() {
         ) : (
           <motion.div initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.25 }}
             className="rounded-[20px] overflow-hidden" style={glass}>
-            {/* Header */}
-            <div className="grid px-5 py-3 text-[11px] font-bold uppercase items-center"
+            {/* Header — desktop only */}
+            <div className="hidden md:grid px-5 py-3 text-[11px] font-bold uppercase items-center"
               style={{ gridTemplateColumns:"28px 1.4fr 1.8fr 1.1fr 0.9fr 1fr 90px 36px", background: T.tblHead, borderBottom:`1px solid ${T.divider}`, color: T.primary, letterSpacing:"0.06em" }}>
               <div onClick={toggleSelectAll} className="cursor-pointer w-4 h-4 rounded border-2 flex items-center justify-center"
                 style={{ borderColor: T.primary, background: selected.size !== 0 ? (dark?"#0096C7":"#0077B6") : "transparent" }}>
@@ -641,8 +637,8 @@ function InvoicesPageContent() {
               </div>
               <span>Invoice</span>
               <span>Customer</span>
-              <span className="hidden md:block">Type</span>
-              <span className="hidden md:block">Date</span>
+              <span>Type</span>
+              <span>Date</span>
               <span className="text-right">Amount</span>
               <span className="text-center">Status</span>
               <span></span>
@@ -660,8 +656,35 @@ function InvoicesPageContent() {
                 : { paid:{bg:"#DCFCE7",text:"#15803D",dot:"#22C55E"}, partial:{bg:"#FEF3C7",text:"#B45309",dot:"#F59E0B"}, due:{bg:"#FEE2E2",text:"#B91C1C",dot:"#EF4444"} }[inv.status];
               return (
                 <motion.div key={inv.id} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.05*Math.min(idx,8) }}>
+                  {/* Mobile card */}
                   <Link href={`/admin/billing/invoices/${inv.id}`}
-                    className="grid items-center px-5 py-4 group transition-colors"
+                    className="md:hidden flex items-center gap-3 px-4 py-3.5 transition-colors"
+                    style={{ borderBottom:`1px solid ${T.divider}` }}>
+                    <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
+                      style={{ background: dark ? tc.darkBg : tc.bg }}>
+                      <Icon className="w-3.5 h-3.5" style={{ color: dark ? tc.darkColor : tc.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[11px] font-bold" style={{ color: T.primary }}>{inv.invoiceNo}</span>
+                        <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
+                          style={{ background: sc.bg, color: sc.text }}>
+                          <span className="w-1 h-1 rounded-full" style={{ background: sc.dot }} />{inv.status}
+                        </span>
+                      </div>
+                      <div className="font-semibold text-[13px] truncate mt-0.5" style={{ color: T.text }}>{inv.customer?.name}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: T.textMuted }}>{fmtDate(inv.date)} · {tc.short}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-bold text-[14px] tabular-nums" style={{ color: T.text }}>₹{formatINR(inv.total)}</div>
+                      {inv.status === "partial" && <div className="text-[11px] tabular-nums" style={{ color: dark?"#FDE68A":"#B45309" }}>₹{formatINR(paidAmt)} paid</div>}
+                    </div>
+                    <ChevRight className="w-4 h-4 shrink-0" style={{ color: T.textMuted }} />
+                  </Link>
+
+                  {/* Desktop row */}
+                  <Link href={`/admin/billing/invoices/${inv.id}`}
+                    className="hidden md:grid items-center px-5 py-4 group transition-colors"
                     style={{ gridTemplateColumns:"28px 1.4fr 1.8fr 1.1fr 0.9fr 1fr 90px 36px", borderBottom:`1px solid ${T.divider}` }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.rowHover; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
@@ -691,11 +714,11 @@ function InvoicesPageContent() {
                         {inv.customer?.city && <div className="text-[12px] font-medium truncate" style={{ color: T.textMuted }}>{inv.customer.city}</div>}
                       </div>
                     </div>
-                    <span className="hidden md:inline-flex items-center gap-1.5 text-[12px] font-bold px-2.5 py-1 rounded-xl w-fit"
+                    <span className="inline-flex items-center gap-1.5 text-[12px] font-bold px-2.5 py-1 rounded-xl w-fit"
                       style={{ background: dark ? tc.darkBg : tc.bg, color: dark ? tc.darkColor : tc.color }}>
                       <Icon className="w-3 h-3" />{tc.short}
                     </span>
-                    <div className="hidden md:flex flex-col gap-0.5">
+                    <div className="flex flex-col gap-0.5">
                       <span className="text-[13px] font-medium" style={{ color: T.textMuted }}>{fmtDate(inv.date)}</span>
                       {isOverdue && (
                         <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full w-fit"

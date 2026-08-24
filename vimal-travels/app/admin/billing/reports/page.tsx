@@ -239,6 +239,8 @@ export default function ReportsPage() {
               </div>
               {months.length === 0 ? <div className="py-16 text-center text-[14px]" style={{ color:T.textMuted }}>No data yet</div> : (
                 <>
+                  <div className="overflow-x-auto">
+                  <div style={{ minWidth:520 }}>
                   <div className="grid px-6 py-3 text-[11px] font-bold uppercase"
                     style={{ gridTemplateColumns:"2fr 0.7fr 1.3fr 1.3fr 1.3fr", background:T.tblHead, borderBottom:`1px solid ${T.divider}`, color:dark?"#90E0EF":"#0077B6", letterSpacing:"0.06em" }}>
                     <span>Month</span><span className="text-center">Invoices</span>
@@ -266,6 +268,8 @@ export default function ReportsPage() {
                     <span className="text-[13px] text-right tabular-nums font-bold" style={{ color:"#22C55E" }}>Rs.{formatINR(totPaid)}</span>
                     <span className="text-[13px] text-right tabular-nums font-bold" style={{ color:dark?"#FCA5A5":"#B91C1C" }}>Rs.{formatINR(totOutstanding)}</span>
                   </div>
+                  </div>
+                  </div>
                 </>
               )}
             </motion.div>
@@ -283,6 +287,7 @@ export default function ReportsPage() {
               </div>
               {months.length === 0 ? <div className="py-16 text-center text-[14px]" style={{ color:T.textMuted }}>No GST data yet</div> : (
                 <>
+                  <div className="overflow-x-auto"><div style={{ minWidth:560 }}>
                   <div className="grid px-6 py-3 text-[11px] font-bold uppercase"
                     style={{ gridTemplateColumns:"1.8fr 0.7fr 1.1fr 1fr 1fr 1fr 1fr", background:T.tblHead, borderBottom:`1px solid ${T.divider}`, color:dark?"#C4AAFF":"#7C3AED", letterSpacing:"0.06em" }}>
                     <span>Month</span><span className="text-center">Inv</span>
@@ -313,6 +318,7 @@ export default function ReportsPage() {
                     <span className="text-[13px] text-right tabular-nums font-bold" style={{ color:dark?"#60C0DC":"#0891B2" }}>Rs.{formatINR(totIGST)}</span>
                     <span className="text-[15px] text-right tabular-nums font-black" style={{ color:dark?"#C4AAFF":"#7C3AED" }}>Rs.{formatINR(totGST)}</span>
                   </div>
+                  </div></div>
                 </>
               )}
             </motion.div>
@@ -327,6 +333,7 @@ export default function ReportsPage() {
               </div>
               {services.length === 0 ? <div className="py-16 text-center text-[14px]" style={{ color:T.textMuted }}>No data yet</div> : (
                 <>
+                  <div className="overflow-x-auto"><div style={{ minWidth:420 }}>
                   <div className="grid px-6 py-3 text-[11px] font-bold uppercase"
                     style={{ gridTemplateColumns:"2fr 0.7fr 1.2fr 1.2fr 1.2fr", background:T.tblHead, borderBottom:`1px solid ${T.divider}`, color:dark?"#6EE7B7":"#047857", letterSpacing:"0.06em" }}>
                     <span>Service</span><span className="text-center">Invoices</span>
@@ -364,6 +371,7 @@ export default function ReportsPage() {
                     <span className="text-[13px] text-right tabular-nums font-bold" style={{ color:"#22C55E" }}>Rs.{formatINR(services.reduce((s,r)=>s+r.paid,0))}</span>
                     <span className="text-[13px] text-right tabular-nums font-bold" style={{ color:dark?"#FCA5A5":"#B91C1C" }}>Rs.{formatINR(services.reduce((s,r)=>s+r.outstanding,0))}</span>
                   </div>
+                  </div></div>
                 </>
               )}
             </motion.div>

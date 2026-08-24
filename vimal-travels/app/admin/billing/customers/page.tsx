@@ -274,7 +274,7 @@ export default function CustomersPage() {
       <div className="px-5 pb-6 space-y-4">
 
         {/* -- STATS -- */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label:"Total Customers", value: customers.length,  icon: Users,     accent: dark?"#0096C7":"#0077B6", tint: dark?"rgba(0,119,182,0.18)":"#F3EFF6" },
             { label:"Corporate",       value: corporate.length,  icon: Building2, accent: dark?"#C4AAFF":"#7C3AED", tint: dark?"rgba(124,58,237,0.18)":"#EDE7F6" },
