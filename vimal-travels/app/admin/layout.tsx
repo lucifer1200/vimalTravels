@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -39,6 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [collapsed, setCollapsed] = useState(false);
   const [dark,      setDark]      = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     seedUsers().then(() => {
@@ -66,6 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const logout = () => {
     clearSession(); setSession(null); setUsername(""); setPassword("");
+    router.push("/admin/billing");
   };
 
   if (loading) return (
