@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAdminDark } from "@/lib/useAdminDark";
 import {
   getCustomers, addCustomer, addInvoice, getInvoice, saveInvoice,
   type Customer, type InvoiceType, type GSTType,
@@ -13,7 +14,7 @@ import {
   Bell, User, Globe, Hotel, Upload, Sparkles,
 } from "lucide-react";
 
-/* ── types ── */
+/* -- types -- */
 const TYPES: { value: InvoiceType; label: string; icon: any }[] = [
   { value: "air-intl", label: "Air (Intl)", icon: Globe },
   { value: "air-dom",  label: "Air (Dom)",  icon: Plane },
@@ -71,12 +72,22 @@ const calcItemFare = (item: InvoiceItem, type: InvoiceType): number => {
   return 0;
 };
 
-/* ── shared input style ── */
-const inp = "w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-50 bg-white transition-colors";
-const lbl = "block text-xs font-semibold text-slate-500 mb-1";
+/* -- shared input style (dark-aware) -- */
+const inpBase = "w-full rounded-xl px-3 py-3 text-[14px] focus:outline-none transition-colors";
+const inp = (dark: boolean) => `${inpBase}`;
+const inpStyle = (dark: boolean): React.CSSProperties => ({
+  background: dark ? "rgba(255,255,255,0.07)" : "#FAF7FF",
+  border: `1px solid ${dark ? "rgba(255,255,255,0.12)" : "#90E0EF"}`,
+  color: dark ? "#E6E1E5" : "#1C1B1F",
+});
+const lblStyle = (dark: boolean): React.CSSProperties => ({
+  display:"block", fontSize:"12px", fontWeight:700,
+  textTransform:"uppercase", letterSpacing:"0.06em",
+  marginBottom:"7px", color: dark ? "#A9A4B0" : "#6B6573",
+});
 const fmt = (n: number) => `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
 
-/* ── PDF text extraction (pdfjs-dist via lib/parseBooking — works on real PDFs) ── */
+/* -- PDF text extraction (pdfjs-dist via lib/parseBooking — works on real PDFs) -- */
 interface PdfExtracted {
   paxName?: string; pnr?: string; amount?: string;
   route?: string; sectorFrom?: string; sectorTo?: string;
@@ -117,14 +128,14 @@ function extractFromPdfText(text: string): PdfExtracted {
   const amtM = text.match(/(?:INR|Rs\.?|Total\s*Fare|Grand\s*Total)\s*[:\s]*([\d,]+(?:\.\d{1,2})?)/i);
   if (amtM) out.amount = amtM[1].replace(/,/g, "");
 
-  // Route — IndiGo: "Sector JRG-BLR", any: "BLR → TAS" or "BLR-TAS"
+  // Route — IndiGo: "Sector JRG-BLR", any: "BLR -> TAS" or "BLR-TAS"
   const sectorM =
-    text.match(/Sector\s+([A-Z]{3})[–\-]([A-Z]{3})/i) ||
-    text.match(/\b([A-Z]{3})[–\-→]([A-Z]{3})\b/);
+    text.match(/Sector\s+([A-Z]{3})["\-]([A-Z]{3})/i) ||
+    text.match(/\b([A-Z]{3})["\-->]([A-Z]{3})\b/);
   if (sectorM) {
     out.sectorFrom = sectorM[1];
     out.sectorTo   = sectorM[2];
-    out.route      = `${sectorM[1]}–${sectorM[2]}`;
+    out.route      = `${sectorM[1]}"${sectorM[2]}`;
   }
 
   // Flight — IATA 2-char code (letter+digit, digit+letter, 2 letters) + space/hyphen + digits
@@ -140,7 +151,7 @@ function extractFromPdfText(text: string): PdfExtracted {
     }
   }
 
-  // Date — IndiGo: "12:50, 23 Aug 2026" → captures "23 Aug 2026"
+  // Date — IndiGo: "12:50, 23 Aug 2026" -> captures "23 Aug 2026"
   const dateM =
     text.match(/\d{1,2}:\d{2},\s*(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4})/) ||
     text.match(/(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4})/) ||
@@ -165,14 +176,15 @@ function extractFromPdfText(text: string): PdfExtracted {
   return out;
 }
 
-/* ── Entry modal ── */
+/* -- Entry modal -- */
 function EntryModal({
-  type, initial, onSave, onClose,
+  type, initial, onSave, onClose, dark,
 }: {
   type: InvoiceType;
   initial: InvoiceItem;
   onSave: (item: InvoiceItem) => void;
   onClose: () => void;
+  dark: boolean;
 }) {
   const [item, setItem] = useState<InvoiceItem>({ ...initial });
   const upd = (updates: Partial<InvoiceItem>) => setItem((p) => ({ ...p, ...updates }));
@@ -248,13 +260,21 @@ function EntryModal({
 
   const isPaxType = type === "air-intl" || type === "air-dom" || type === "train" || type === "bus" || type === "visa" || type === "hotel";
 
+  const modalBg = dark ? "#1C1C1E" : "#FFFFFF";
+  const modalBorder = dark ? "rgba(255,255,255,0.10)" : "#E7E0EC";
+  const textPrimary = dark ? "#E6E1E5" : "#1C1B1F";
+  const textMuted = dark ? "#938F99" : "#79747E";
+  const sectionBg = dark ? "rgba(255,255,255,0.04)" : "#F7F2FF";
+  const sectionBorder = dark ? "rgba(255,255,255,0.08)" : "#E7E0EC";
+  const accentBg = dark ? "rgba(0,119,182,0.15)" : "#EDE7F6";
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:"rgba(0,0,0,0.55)", backdropFilter:"blur(8px)" }} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" style={{ background:modalBg, border:`1px solid ${modalBorder}`, boxShadow:"0 24px 64px rgba(0,0,0,0.4)" }}>
         <input ref={pdfRef} type="file" accept="application/pdf" className="hidden"
           onChange={(e) => e.target.files?.[0] && handlePdf(e.target.files[0])} />
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
-          <h3 className="font-bold text-slate-900 text-base">
+        <div className="flex items-center justify-between px-6 py-4 sticky top-0 z-10" style={{ background:modalBg, borderBottom:`1px solid ${dark?"rgba(255,255,255,0.07)":"#E7E0EC"}` }}>
+          <h3 className="font-bold text-[17px]" style={{ color:textPrimary, fontFamily:"var(--font-roboto),Roboto,system-ui,sans-serif" }}>
             {type === "air-intl" || type === "air-dom" ? "Passenger Details"
               : type === "train" ? "Train Booking" : type === "bus" ? "Bus Booking"
               : type === "visa" ? "Visa Applicant" : type === "package" ? "Package Details"
@@ -263,21 +283,21 @@ function EntryModal({
           <div className="flex items-center gap-2">
             {isPaxType && (
               <button onClick={() => pdfRef.current?.click()}
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors"
-                style={{ background:"#F0FDF4", color:"#16A34A", borderColor:"#DCFCE7" }}>
+                className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg border transition-colors"
+                style={{ background:"rgba(34,197,94,0.12)", color:"#16A34A", borderColor:"rgba(34,197,94,0.25)" }}>
                 {pdfLoading
                   ? <><div className="w-3 h-3 border-2 border-green-300 border-t-green-600 rounded-full animate-spin"/><span>Scanning PDF...</span></>
                   : <><Upload className="w-3 h-3"/><span>Import PDF</span></>
                 }
               </button>
             )}
-            <button onClick={onClose} className="p-1.5 hover:bg-slate-100 rounded-lg"><X className="w-4 h-4 text-slate-500" /></button>
+            <button onClick={onClose} className="p-1.5 rounded-lg" style={{ color:textMuted }}><X className="w-4 h-4" /></button>
           </div>
         </div>
 
         {/* Extracted data banner */}
         {extracted && Object.keys(extracted).length > 0 && (
-          <div className="mx-6 mt-4 rounded-xl p-3 flex flex-wrap gap-2" style={{ background:"#F0FDF4", border:"1px solid #DCFCE7" }}>
+          <div className="mx-6 mt-4 rounded-xl p-3 flex flex-wrap gap-2" style={{ background:"rgba(34,197,94,0.10)", border:"1px solid rgba(34,197,94,0.25)" }}>
             <div className="flex items-center gap-1.5 w-full mb-1">
               <Sparkles className="w-3.5 h-3.5" style={{ color:"#16A34A" }}/>
               <span className="text-xs font-bold" style={{ color:"#16A34A" }}>Extracted from PDF — fields auto-filled below</span>
@@ -311,41 +331,42 @@ function EntryModal({
           {/* Air */}
           {(type === "air-intl" || type === "air-dom") && (() => {
             const f = item as FlightItem;
+            const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
                 <div className="grid grid-cols-4 gap-3">
-                  <div><label className={lbl}>Pax No</label><input value={f.paxNo} onChange={(e) => upd({paxNo:e.target.value})} placeholder="001" className={inp} /></div>
-                  <div className="col-span-3"><label className={lbl}>Passenger Name</label><input value={f.paxName} onChange={(e) => upd({paxName:e.target.value.toUpperCase()})} placeholder="RAJESH KUMAR" className={`${inp} uppercase font-semibold`} /></div>
+                  <div><label style={lblStyle(dark)}>Pax No</label><input value={f.paxNo} onChange={(e) => upd({paxNo:e.target.value})} placeholder="001" className={inp(dark)} style={inpStyle(dark)} /></div>
+                  <div className="col-span-3"><label style={lblStyle(dark)}>Passenger Name</label><input value={f.paxName} onChange={(e) => upd({paxName:e.target.value.toUpperCase()})} placeholder="RAJESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)} /></div>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl space-y-3">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outbound</p>
+                <div className="p-3 rounded-xl space-y-3" style={{ background:sectionBg, border:`1px solid ${sectionBorder}` }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color:textMuted }}>Outbound</p>
                   <div className="grid grid-cols-5 gap-3">
-                    <div><label className={lbl}>From</label><input value={f.sectorFrom} onChange={(e) => upd({sectorFrom:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp} font-mono text-center uppercase`} /></div>
-                    <div><label className={lbl}>To</label><input value={f.sectorTo} onChange={(e) => upd({sectorTo:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp} font-mono text-center uppercase`} /></div>
-                    <div><label className={lbl}>Flight No</label><input value={f.flightNo} onChange={(e) => upd({flightNo:e.target.value.toUpperCase()})} placeholder="AI-102" className={`${inp} font-mono uppercase`} /></div>
-                    <div><label className={lbl}>Class</label><input value={f.flightClass} onChange={(e) => upd({flightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp} font-mono text-center uppercase`} /></div>
-                    <div><label className={lbl}>Date</label><input type="date" value={f.travelDate} onChange={(e) => upd({travelDate:e.target.value})} className={inp} /></div>
+                    <div><label style={lblStyle(dark)}>From</label><input value={f.sectorFrom} onChange={(e) => upd({sectorFrom:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
+                    <div><label style={lblStyle(dark)}>To</label><input value={f.sectorTo} onChange={(e) => upd({sectorTo:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
+                    <div><label style={lblStyle(dark)}>Flight No</label><input value={f.flightNo} onChange={(e) => upd({flightNo:e.target.value.toUpperCase()})} placeholder="AI-102" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} /></div>
+                    <div><label style={lblStyle(dark)}>Class</label><input value={f.flightClass} onChange={(e) => upd({flightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
+                    <div><label style={lblStyle(dark)}>Date</label><input type="date" value={f.travelDate} onChange={(e) => upd({travelDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)} /></div>
                   </div>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl space-y-3">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Return (optional)</p>
+                <div className="p-3 rounded-xl space-y-3" style={{ background:sectionBg, border:`1px solid ${sectionBorder}` }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color:textMuted }}>Return (optional)</p>
                   <div className="grid grid-cols-5 gap-3">
-                    <input value={f.returnSectorFrom} onChange={(e) => upd({returnSectorFrom:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp} font-mono text-center uppercase`} />
-                    <input value={f.returnSectorTo} onChange={(e) => upd({returnSectorTo:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp} font-mono text-center uppercase`} />
-                    <input value={f.returnFlightNo} onChange={(e) => upd({returnFlightNo:e.target.value.toUpperCase()})} placeholder="AI-103" className={`${inp} font-mono uppercase`} />
-                    <input value={f.returnFlightClass} onChange={(e) => upd({returnFlightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp} font-mono text-center uppercase`} />
-                    <input type="date" value={f.returnDate} onChange={(e) => upd({returnDate:e.target.value})} className={inp} />
+                    <input value={f.returnSectorFrom} onChange={(e) => upd({returnSectorFrom:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
+                    <input value={f.returnSectorTo} onChange={(e) => upd({returnSectorTo:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
+                    <input value={f.returnFlightNo} onChange={(e) => upd({returnFlightNo:e.target.value.toUpperCase()})} placeholder="AI-103" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} />
+                    <input value={f.returnFlightClass} onChange={(e) => upd({returnFlightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
+                    <input type="date" value={f.returnDate} onChange={(e) => upd({returnDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)} />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div><label className={lbl}>Airline PNR / Ticket No</label><input value={f.airlinePnr} onChange={(e) => upd({airlinePnr:e.target.value.toUpperCase()})} placeholder="098-76543210" className={`${inp} font-mono uppercase tracking-widest`} /></div>
+                  <div><label style={lblStyle(dark)}>Airline PNR / Ticket No</label><input value={f.airlinePnr} onChange={(e) => upd({airlinePnr:e.target.value.toUpperCase()})} placeholder="098-76543210" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)} /></div>
                   <div>
-                    <label className={lbl}>Base Fare (₹) <span className="text-slate-300 font-normal">— GST exempt</span></label>
-                    <input type="number" value={f.amount||""} onChange={(e) => upd({amount:parseFloat(e.target.value)||0})} placeholder="4500" className={`${inp} font-bold text-blue-700`} />
+                    <label style={lblStyle(dark)}>Base Fare (₹) <span style={{ color:textMuted, fontWeight:400 }}>— exempt</span></label>
+                    <input type="number" value={f.amount||""} onChange={(e) => upd({amount:parseFloat(e.target.value)||0})} placeholder="4500" className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }} />
                   </div>
                   <div>
-                    <label className={lbl}>Service Charge (₹) <span className="text-amber-400 font-normal">— taxable</span></label>
-                    <input type="number" value={f.serviceCharge||""} onChange={(e) => upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm font-bold text-amber-700 bg-amber-50 focus:outline-none focus:border-amber-400" />
+                    <label style={lblStyle(dark)}>Service Charge (₹)</label>
+                    <input type="number" value={f.serviceCharge||""} onChange={(e) => upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle} />
                   </div>
                 </div>
               </>
@@ -355,24 +376,25 @@ function EntryModal({
           {/* Train */}
           {type === "train" && (() => {
             const t = item as TrainItem;
+            const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
                 <div className="grid grid-cols-4 gap-3">
-                  <div className="col-span-2"><label className={lbl}>Passenger Name</label><input value={t.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="RAHUL KUMAR" className={`${inp} uppercase font-semibold`}/></div>
-                  <div><label className={lbl}>Train No</label><input value={t.trainNo} onChange={(e)=>upd({trainNo:e.target.value})} placeholder="16591" className={`${inp} font-mono`}/></div>
-                  <div><label className={lbl}>Train Name</label><input value={t.trainName} onChange={(e)=>upd({trainName:e.target.value.toUpperCase()})} placeholder="HAMPI EXP" className={`${inp} uppercase`}/></div>
+                  <div className="col-span-2"><label style={lblStyle(dark)}>Passenger Name</label><input value={t.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="RAHUL KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Train No</label><input value={t.trainNo} onChange={(e)=>upd({trainNo:e.target.value})} placeholder="16591" className={`${inp(dark)} font-mono`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Train Name</label><input value={t.trainName} onChange={(e)=>upd({trainName:e.target.value.toUpperCase()})} placeholder="HAMPI EXP" className={`${inp(dark)} uppercase`} style={inpStyle(dark)}/></div>
                 </div>
                 <div className="grid grid-cols-5 gap-3">
-                  <div><label className={lbl}>From</label><input value={t.fromStation} onChange={(e)=>upd({fromStation:e.target.value.toUpperCase()})} placeholder="SBC" maxLength={5} className={`${inp} font-mono text-center uppercase`}/></div>
-                  <div><label className={lbl}>To</label><input value={t.toStation} onChange={(e)=>upd({toStation:e.target.value.toUpperCase()})} placeholder="MYS" maxLength={5} className={`${inp} font-mono text-center uppercase`}/></div>
-                  <div><label className={lbl}>Class</label><select value={t.travelClass} onChange={(e)=>upd({travelClass:e.target.value})} className={inp}>{["SL","3A","2A","1A","CC","EC","GN"].map(c=><option key={c}>{c}</option>)}</select></div>
-                  <div><label className={lbl}>Date</label><input type="date" value={t.travelDate} onChange={(e)=>upd({travelDate:e.target.value})} className={inp}/></div>
-                  <div><label className={lbl}>Seat/Berth</label><input value={t.seatNo} onChange={(e)=>upd({seatNo:e.target.value.toUpperCase()})} placeholder="S4 B24" className={`${inp} font-mono uppercase`}/></div>
+                  <div><label style={lblStyle(dark)}>From</label><input value={t.fromStation} onChange={(e)=>upd({fromStation:e.target.value.toUpperCase()})} placeholder="SBC" maxLength={5} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>To</label><input value={t.toStation} onChange={(e)=>upd({toStation:e.target.value.toUpperCase()})} placeholder="MYS" maxLength={5} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Class</label><select value={t.travelClass} onChange={(e)=>upd({travelClass:e.target.value})} className={inp(dark)} style={inpStyle(dark)}>{["SL","3A","2A","1A","CC","EC","GN"].map(c=><option key={c}>{c}</option>)}</select></div>
+                  <div><label style={lblStyle(dark)}>Date</label><input type="date" value={t.travelDate} onChange={(e)=>upd({travelDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Seat/Berth</label><input value={t.seatNo} onChange={(e)=>upd({seatNo:e.target.value.toUpperCase()})} placeholder="S4 B24" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)}/></div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <div><label className={lbl}>PNR</label><input value={t.pnr} onChange={(e)=>upd({pnr:e.target.value.toUpperCase()})} placeholder="1234567890" className={`${inp} font-mono uppercase tracking-widest`}/></div>
-                  <div><label className={lbl}>Ticket Fare (₹)</label><input type="number" value={t.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp} font-bold text-blue-700`}/></div>
-                  <div><label className={lbl}>Service Charge (₹) <span className="text-amber-400">— taxable</span></label><input type="number" value={t.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm font-bold text-amber-700 bg-amber-50 focus:outline-none focus:border-amber-400"/></div>
+                  <div><label style={lblStyle(dark)}>PNR</label><input value={t.pnr} onChange={(e)=>upd({pnr:e.target.value.toUpperCase()})} placeholder="1234567890" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Ticket Fare (₹)</label><input type="number" value={t.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
+                  <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={t.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>
                 </div>
               </>
             );
@@ -381,22 +403,23 @@ function EntryModal({
           {/* Bus */}
           {type === "bus" && (() => {
             const b = item as BusItem;
+            const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
                 <div className="grid grid-cols-4 gap-3">
-                  <div className="col-span-2"><label className={lbl}>Passenger Name</label><input value={b.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="SURESH KUMAR" className={`${inp} uppercase font-semibold`}/></div>
-                  <div><label className={lbl}>From</label><input value={b.fromCity} onChange={(e)=>upd({fromCity:e.target.value})} placeholder="Bangalore" className={inp}/></div>
-                  <div><label className={lbl}>To</label><input value={b.toCity} onChange={(e)=>upd({toCity:e.target.value})} placeholder="Mumbai" className={inp}/></div>
+                  <div className="col-span-2"><label style={lblStyle(dark)}>Passenger Name</label><input value={b.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="SURESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>From</label><input value={b.fromCity} onChange={(e)=>upd({fromCity:e.target.value})} placeholder="Bangalore" className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>To</label><input value={b.toCity} onChange={(e)=>upd({toCity:e.target.value})} placeholder="Mumbai" className={inp(dark)} style={inpStyle(dark)}/></div>
                 </div>
                 <div className="grid grid-cols-4 gap-3">
-                  <div><label className={lbl}>Date</label><input type="date" value={b.travelDate} onChange={(e)=>upd({travelDate:e.target.value})} className={inp}/></div>
-                  <div><label className={lbl}>Depart Time</label><input type="time" value={b.departTime} onChange={(e)=>upd({departTime:e.target.value})} className={inp}/></div>
-                  <div><label className={lbl}>Seat No</label><input value={b.seatNo} onChange={(e)=>upd({seatNo:e.target.value.toUpperCase()})} placeholder="A12" className={`${inp} font-mono uppercase`}/></div>
-                  <div><label className={lbl}>Ticket / PNR</label><input value={b.ticketNo} onChange={(e)=>upd({ticketNo:e.target.value.toUpperCase()})} placeholder="KS1234567" className={`${inp} font-mono uppercase`}/></div>
+                  <div><label style={lblStyle(dark)}>Date</label><input type="date" value={b.travelDate} onChange={(e)=>upd({travelDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Depart Time</label><input type="time" value={b.departTime} onChange={(e)=>upd({departTime:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Seat No</label><input value={b.seatNo} onChange={(e)=>upd({seatNo:e.target.value.toUpperCase()})} placeholder="A12" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Ticket / PNR</label><input value={b.ticketNo} onChange={(e)=>upd({ticketNo:e.target.value.toUpperCase()})} placeholder="KS1234567" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)}/></div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className={lbl}>Ticket Fare (₹)</label><input type="number" value={b.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp} font-bold text-blue-700`}/></div>
-                  <div><label className={lbl}>Service Charge (₹) <span className="text-amber-400">— taxable</span></label><input type="number" value={b.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm font-bold text-amber-700 bg-amber-50 focus:outline-none focus:border-amber-400"/></div>
+                  <div><label style={lblStyle(dark)}>Ticket Fare (₹)</label><input type="number" value={b.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
+                  <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={b.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>
                 </div>
               </>
             );
@@ -408,91 +431,74 @@ function EntryModal({
             const nights = h.checkIn && h.checkOut
               ? Math.max(1, Math.round((new Date(h.checkOut).getTime() - new Date(h.checkIn).getTime()) / 86400000))
               : h.nights || 1;
+            const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
                 {/* Lead Guest */}
-                <div className="p-3 bg-slate-50 rounded-xl space-y-3">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lead Guest</p>
+                <div className="p-3 rounded-xl space-y-3" style={{ background:sectionBg, border:`1px solid ${sectionBorder}` }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color:textMuted }}>Lead Guest</p>
                   <div className="grid grid-cols-4 gap-3">
                     <div className="col-span-2">
-                      <label className={lbl}>Guest Name (Lead)</label>
-                      <input value={h.guestName} onChange={(e)=>upd({guestName:e.target.value.toUpperCase()})} placeholder="RAHUL SHARMA" className={`${inp} uppercase font-semibold`}/>
+                      <label style={lblStyle(dark)}>Guest Name (Lead)</label>
+                      <input value={h.guestName} onChange={(e)=>upd({guestName:e.target.value.toUpperCase()})} placeholder="RAHUL SHARMA" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>Adults</label>
-                      <input type="number" min="1" value={h.adults||1} onChange={(e)=>upd({adults:parseInt(e.target.value)||1})} className={inp}/>
+                      <label style={lblStyle(dark)}>Adults</label>
+                      <input type="number" min="1" value={h.adults||1} onChange={(e)=>upd({adults:parseInt(e.target.value)||1})} className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>Children</label>
-                      <input type="number" min="0" value={h.children||0} onChange={(e)=>upd({children:parseInt(e.target.value)||0})} className={inp}/>
+                      <label style={lblStyle(dark)}>Children</label>
+                      <input type="number" min="0" value={h.children||0} onChange={(e)=>upd({children:parseInt(e.target.value)||0})} className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                   </div>
                 </div>
 
                 {/* Property */}
-                <div className="p-3 bg-blue-50 rounded-xl space-y-3">
-                  <p className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Property</p>
+                <div className="p-3 rounded-xl space-y-3" style={{ background:accentBg, border:`1px solid ${dark?"rgba(0,119,182,0.2)":"#90E0EF"}` }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: dark?"#90E0EF":"#0077B6" }}>Property</p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className={lbl}>Hotel Name</label>
-                      <input value={h.hotelName} onChange={(e)=>upd({hotelName:e.target.value})} placeholder="The Leela Palace" className={`${inp} font-semibold`}/>
+                      <label style={lblStyle(dark)}>Hotel Name</label>
+                      <input value={h.hotelName} onChange={(e)=>upd({hotelName:e.target.value})} placeholder="The Leela Palace" className={`${inp(dark)} font-semibold`} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>City / Destination</label>
-                      <input value={h.hotelCity} onChange={(e)=>upd({hotelCity:e.target.value})} placeholder="Bengaluru" className={inp}/>
+                      <label style={lblStyle(dark)}>City / Destination</label>
+                      <input value={h.hotelCity} onChange={(e)=>upd({hotelCity:e.target.value})} placeholder="Bengaluru" className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                     <div className="col-span-2">
-                      <label className={lbl}>Hotel Address</label>
-                      <input value={h.hotelAddress||""} onChange={(e)=>upd({hotelAddress:e.target.value})} placeholder="Street, Area, City, Country" className={inp}/>
+                      <label style={lblStyle(dark)}>Hotel Address</label>
+                      <input value={h.hotelAddress||""} onChange={(e)=>upd({hotelAddress:e.target.value})} placeholder="Street, Area, City, Country" className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>Hotel Phone</label>
-                      <input value={h.hotelPhone||""} onChange={(e)=>upd({hotelPhone:e.target.value})} placeholder="+91 80 1234 5678" className={inp}/>
+                      <label style={lblStyle(dark)}>Hotel Phone</label>
+                      <input value={h.hotelPhone||""} onChange={(e)=>upd({hotelPhone:e.target.value})} placeholder="+91 80 1234 5678" className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>Hotel Email</label>
-                      <input value={h.hotelEmail||""} onChange={(e)=>upd({hotelEmail:e.target.value})} placeholder="reservations@hotel.com" className={inp}/>
+                      <label style={lblStyle(dark)}>Hotel Email</label>
+                      <input value={h.hotelEmail||""} onChange={(e)=>upd({hotelEmail:e.target.value})} placeholder="reservations@hotel.com" className={inp(dark)} style={inpStyle(dark)}/>
                     </div>
                   </div>
                 </div>
 
                 {/* Stay Details */}
-                <div className="p-3 bg-slate-50 rounded-xl space-y-3">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Stay Details</p>
+                <div className="p-3 rounded-xl space-y-3" style={{ background:sectionBg, border:`1px solid ${sectionBorder}` }}>
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color:textMuted }}>Stay Details</p>
                   <div className="grid grid-cols-4 gap-3">
-                    <div>
-                      <label className={lbl}>Check-In Date</label>
-                      <input type="date" value={h.checkIn} onChange={(e)=>upd({checkIn:e.target.value})} className={inp}/>
-                    </div>
-                    <div>
-                      <label className={lbl}>Check-In Time</label>
-                      <input type="time" value={h.checkInTime||"14:00"} onChange={(e)=>upd({checkInTime:e.target.value})} className={inp}/>
-                    </div>
-                    <div>
-                      <label className={lbl}>Check-Out Date</label>
-                      <input type="date" value={h.checkOut} onChange={(e)=>upd({checkOut:e.target.value})} className={inp}/>
-                    </div>
-                    <div>
-                      <label className={lbl}>Check-Out Time</label>
-                      <input type="time" value={h.checkOutTime||"12:00"} onChange={(e)=>upd({checkOutTime:e.target.value})} className={inp}/>
-                    </div>
+                    <div><label style={lblStyle(dark)}>Check-In Date</label><input type="date" value={h.checkIn} onChange={(e)=>upd({checkIn:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                    <div><label style={lblStyle(dark)}>Check-In Time</label><input type="time" value={h.checkInTime||"14:00"} onChange={(e)=>upd({checkInTime:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                    <div><label style={lblStyle(dark)}>Check-Out Date</label><input type="date" value={h.checkOut} onChange={(e)=>upd({checkOut:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                    <div><label style={lblStyle(dark)}>Check-Out Time</label><input type="time" value={h.checkOutTime||"12:00"} onChange={(e)=>upd({checkOutTime:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
                   </div>
                   <div className="grid grid-cols-4 gap-3">
                     <div>
-                      <label className={lbl}>Nights</label>
-                      <div className="border border-blue-200 bg-blue-50 rounded-lg px-3 py-2 text-sm font-bold text-blue-700 text-center">{nights}N</div>
+                      <label style={lblStyle(dark)}>Nights</label>
+                      <div className="rounded-xl px-3 py-2.5 text-[14px] font-bold text-center" style={{ background:accentBg, color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(0,119,182,0.25)":"#90E0EF"}` }}>{nights}N</div>
                     </div>
+                    <div><label style={lblStyle(dark)}>Rooms</label><input type="number" min="1" value={h.roomCount} onChange={(e)=>upd({roomCount:parseInt(e.target.value)||1})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                    <div><label style={lblStyle(dark)}>Room Type</label><input value={h.roomType} onChange={(e)=>upd({roomType:e.target.value})} placeholder="Deluxe Room" className={inp(dark)} style={inpStyle(dark)}/></div>
                     <div>
-                      <label className={lbl}>Rooms</label>
-                      <input type="number" min="1" value={h.roomCount} onChange={(e)=>upd({roomCount:parseInt(e.target.value)||1})} className={inp}/>
-                    </div>
-                    <div>
-                      <label className={lbl}>Room Type</label>
-                      <input value={h.roomType} onChange={(e)=>upd({roomType:e.target.value})} placeholder="Deluxe Room" className={inp}/>
-                    </div>
-                    <div>
-                      <label className={lbl}>Meal Plan</label>
-                      <select value={h.mealPlan} onChange={(e)=>upd({mealPlan:e.target.value as any})} className={inp}>
+                      <label style={lblStyle(dark)}>Meal Plan</label>
+                      <select value={h.mealPlan} onChange={(e)=>upd({mealPlan:e.target.value as any})} className={inp(dark)} style={inpStyle(dark)}>
                         <option value="EP">EP — Room Only</option>
                         <option value="CP">CP — Breakfast</option>
                         <option value="MAP">MAP — Breakfast &amp; Dinner</option>
@@ -502,12 +508,12 @@ function EntryModal({
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className={lbl}>HCN / Conf. No <span className="text-slate-400 font-normal text-[10px]">— hotel confirmation</span></label>
-                      <input value={h.confirmationNo} onChange={(e)=>upd({confirmationNo:e.target.value.toUpperCase()})} placeholder="HTL123456" className={`${inp} font-mono uppercase`}/>
+                      <label style={lblStyle(dark)}>HCN / Conf. No <span style={{ color:textMuted, fontWeight:400, fontSize:"10px" }}>— hotel confirmation</span></label>
+                      <input value={h.confirmationNo} onChange={(e)=>upd({confirmationNo:e.target.value.toUpperCase()})} placeholder="HTL123456" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)}/>
                     </div>
                     <div>
-                      <label className={lbl}>Booking Ref <span className="text-slate-400 font-normal text-[10px]">— OTA / supplier ref</span></label>
-                      <input value={h.bookingRef||""} onChange={(e)=>upd({bookingRef:e.target.value.toUpperCase()})} placeholder="NH21187503256920" className={`${inp} font-mono uppercase`}/>
+                      <label style={lblStyle(dark)}>Booking Ref <span style={{ color:textMuted, fontWeight:400, fontSize:"10px" }}>— OTA / supplier ref</span></label>
+                      <input value={h.bookingRef||""} onChange={(e)=>upd({bookingRef:e.target.value.toUpperCase()})} placeholder="NH21187503256920" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)}/>
                     </div>
                   </div>
                 </div>
@@ -515,12 +521,12 @@ function EntryModal({
                 {/* Fare */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={lbl}>Room Amount (₹) <span className="text-slate-400 font-normal text-[10px]">— GST exempt</span></label>
-                    <input type="number" value={h.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} placeholder="8500" className={`${inp} font-bold text-blue-700`}/>
+                    <label style={lblStyle(dark)}>Room Amount (₹) <span style={{ color:textMuted, fontWeight:400, fontSize:"10px" }}>— GST exempt</span></label>
+                    <input type="number" value={h.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} placeholder="8500" className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/>
                   </div>
                   <div>
-                    <label className={lbl}>Service Charge (₹) <span className="text-amber-400 text-[10px]">— taxable</span></label>
-                    <input type="number" value={h.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm font-bold text-amber-700 bg-amber-50 focus:outline-none focus:border-amber-400"/>
+                    <label style={lblStyle(dark)}>Service Charge (₹) </label>
+                    <input type="number" value={h.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle}/>
                   </div>
                 </div>
               </>
@@ -533,14 +539,14 @@ function EntryModal({
             return (
               <>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-3"><label className={lbl}>Lead Passenger</label><input value={p.leadPax} onChange={(e)=>upd({leadPax:e.target.value.toUpperCase()})} placeholder="NARENDRA SHARMA" className={`${inp} uppercase font-semibold`}/></div>
-                  <div><label className={lbl}>No. of Pax</label><input type="number" min="1" value={p.paxCount} onChange={(e)=>upd({paxCount:parseInt(e.target.value)||1})} className={inp}/></div>
-                  <div><label className={lbl}>Rate / Person (₹)</label><input type="number" value={p.perPersonRate||""} onChange={(e)=>upd({perPersonRate:parseFloat(e.target.value)||0})} className={`${inp} font-bold text-blue-700`}/></div>
-                  <div><label className={lbl}>Total</label><div className="border border-blue-200 bg-blue-50 rounded-lg px-3 py-2 text-sm font-bold text-blue-700">{fmt((p.perPersonRate||0)*(p.paxCount||1))}</div></div>
-                  <div className="col-span-3"><label className={lbl}>Destinations</label><input value={p.destinations} onChange={(e)=>upd({destinations:e.target.value.toUpperCase()})} placeholder="MYSORE · COORG · OOTY" className={`${inp} uppercase`}/></div>
-                  <div><label className={lbl}>Travel From</label><input type="date" value={p.travelFrom} onChange={(e)=>upd({travelFrom:e.target.value})} className={inp}/></div>
-                  <div><label className={lbl}>Travel To</label><input type="date" value={p.travelTo} onChange={(e)=>upd({travelTo:e.target.value})} className={inp}/></div>
-                  <div className="col-span-3"><label className={lbl}>Inclusions</label><input value={p.inclusions} onChange={(e)=>upd({inclusions:e.target.value})} placeholder="Hotel · Meals · Transport..." className={inp}/></div>
+                  <div className="col-span-3"><label style={lblStyle(dark)}>Lead Passenger</label><input value={p.leadPax} onChange={(e)=>upd({leadPax:e.target.value.toUpperCase()})} placeholder="NARENDRA SHARMA" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>No. of Pax</label><input type="number" min="1" value={p.paxCount} onChange={(e)=>upd({paxCount:parseInt(e.target.value)||1})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Rate / Person (₹)</label><input type="number" value={p.perPersonRate||""} onChange={(e)=>upd({perPersonRate:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
+                  <div><label style={lblStyle(dark)}>Total</label><div className="rounded-xl px-3 py-2.5 text-[14px] font-bold" style={{ background:accentBg, color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(0,119,182,0.25)":"#90E0EF"}` }}>{fmt((p.perPersonRate||0)*(p.paxCount||1))}</div></div>
+                  <div className="col-span-3"><label style={lblStyle(dark)}>Destinations</label><input value={p.destinations} onChange={(e)=>upd({destinations:e.target.value.toUpperCase()})} placeholder="MYSORE · COORG · OOTY" className={`${inp(dark)} uppercase`} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Travel From</label><input type="date" value={p.travelFrom} onChange={(e)=>upd({travelFrom:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div><label style={lblStyle(dark)}>Travel To</label><input type="date" value={p.travelTo} onChange={(e)=>upd({travelTo:e.target.value})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                  <div className="col-span-3"><label style={lblStyle(dark)}>Inclusions</label><input value={p.inclusions} onChange={(e)=>upd({inclusions:e.target.value})} placeholder="Hotel · Meals · Transport..." className={inp(dark)} style={inpStyle(dark)}/></div>
                 </div>
               </>
             );
@@ -549,14 +555,15 @@ function EntryModal({
           {/* Visa */}
           {type === "visa" && (() => {
             const v = item as VisaItem;
+            const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <div className="grid grid-cols-3 gap-3">
-                <div><label className={lbl}>Applicant Name</label><input value={v.applicantName} onChange={(e)=>upd({applicantName:e.target.value.toUpperCase()})} placeholder="FULL NAME" className={`${inp} uppercase font-semibold`}/></div>
-                <div><label className={lbl}>Country</label><input value={v.visaCountry} onChange={(e)=>upd({visaCountry:e.target.value})} placeholder="Thailand" className={inp}/></div>
-                <div><label className={lbl}>Visa Type</label><input value={v.visaType} onChange={(e)=>upd({visaType:e.target.value})} placeholder="Tourist" className={inp}/></div>
-                <div><label className={lbl}>Embassy Fee (₹)</label><input type="number" value={v.embassyFee||""} onChange={(e)=>upd({embassyFee:parseFloat(e.target.value)||0})} className={inp}/></div>
-                <div><label className={lbl}>Service Fee (₹) <span className="text-amber-400">— taxable</span></label><input type="number" value={v.serviceFee||""} onChange={(e)=>upd({serviceFee:parseFloat(e.target.value)||0})} className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm font-bold text-amber-700 bg-amber-50 focus:outline-none focus:border-amber-400"/></div>
-                <div><label className={lbl}>Total</label><div className="border border-blue-200 bg-blue-50 rounded-lg px-3 py-2 text-sm font-bold text-blue-700">{fmt((v.embassyFee||0)+(v.serviceFee||0))}</div></div>
+                <div><label style={lblStyle(dark)}>Applicant Name</label><input value={v.applicantName} onChange={(e)=>upd({applicantName:e.target.value.toUpperCase()})} placeholder="FULL NAME" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                <div><label style={lblStyle(dark)}>Country</label><input value={v.visaCountry} onChange={(e)=>upd({visaCountry:e.target.value})} placeholder="Thailand" className={inp(dark)} style={inpStyle(dark)}/></div>
+                <div><label style={lblStyle(dark)}>Visa Type</label><input value={v.visaType} onChange={(e)=>upd({visaType:e.target.value})} placeholder="Tourist" className={inp(dark)} style={inpStyle(dark)}/></div>
+                <div><label style={lblStyle(dark)}>Embassy Fee (₹)</label><input type="number" value={v.embassyFee||""} onChange={(e)=>upd({embassyFee:parseFloat(e.target.value)||0})} className={inp(dark)} style={inpStyle(dark)}/></div>
+                <div><label style={lblStyle(dark)}>Service Fee (₹) </label><input type="number" value={v.serviceFee||""} onChange={(e)=>upd({serviceFee:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>
+                <div><label style={lblStyle(dark)}>Total</label><div className="rounded-xl px-3 py-2.5 text-[14px] font-bold" style={{ background:accentBg, color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(0,119,182,0.25)":"#90E0EF"}` }}>{fmt((v.embassyFee||0)+(v.serviceFee||0))}</div></div>
               </div>
             );
           })()}
@@ -566,16 +573,16 @@ function EntryModal({
             const g = item as GenericItem;
             return (
               <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2"><label className={lbl}>Description</label><input value={g.description} onChange={(e)=>upd({description:e.target.value})} placeholder="Service description..." className={inp}/></div>
-                <div><label className={lbl}>Amount (₹)</label><input type="number" value={g.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp} font-bold text-blue-700`}/></div>
+                <div className="col-span-2"><label style={lblStyle(dark)}>Description</label><input value={g.description} onChange={(e)=>upd({description:e.target.value})} placeholder="Service description..." className={inp(dark)} style={inpStyle(dark)}/></div>
+                <div><label style={lblStyle(dark)}>Amount (₹)</label><input type="number" value={g.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
               </div>
             );
           })()}
         </div>
 
-        <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={() => onSave(item)} className="px-5 py-2 text-sm font-semibold bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-lg transition-colors">
+        <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop:`1px solid ${dark?"rgba(255,255,255,0.07)":"#E7E0EC"}` }}>
+          <button onClick={onClose} className="px-4 py-2.5 text-[14px] font-semibold rounded-xl" style={{ color:textMuted, border:`1px solid ${dark?"rgba(255,255,255,0.08)":"#E7E0EC"}` }}>Cancel</button>
+          <button onClick={() => onSave(item)} className="px-5 py-2.5 text-[14px] font-semibold text-white rounded-xl" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>
             Save Entry
           </button>
         </div>
@@ -584,7 +591,7 @@ function EntryModal({
   );
 }
 
-/* ── Row summary helpers ── */
+/* -- Row summary helpers -- */
 function getRowLabel(item: InvoiceItem, type: InvoiceType) {
   if (type === "air-intl" || type === "air-dom") {
     const f = item as FlightItem;
@@ -599,9 +606,9 @@ function getRowLabel(item: InvoiceItem, type: InvoiceType) {
 }
 
 function getRowRoute(item: InvoiceItem, type: InvoiceType) {
-  if (type === "air-intl" || type === "air-dom") { const f = item as FlightItem; return f.sectorFrom && f.sectorTo ? `${f.sectorFrom} → ${f.sectorTo}` : "—"; }
-  if (type === "train")   { const t = item as TrainItem;   return t.fromStation && t.toStation ? `${t.fromStation} → ${t.toStation}` : "—"; }
-  if (type === "bus")     { const b = item as BusItem;     return b.fromCity && b.toCity ? `${b.fromCity} → ${b.toCity}` : "—"; }
+  if (type === "air-intl" || type === "air-dom") { const f = item as FlightItem; return f.sectorFrom && f.sectorTo ? `${f.sectorFrom} -> ${f.sectorTo}` : "—"; }
+  if (type === "train")   { const t = item as TrainItem;   return t.fromStation && t.toStation ? `${t.fromStation} -> ${t.toStation}` : "—"; }
+  if (type === "bus")     { const b = item as BusItem;     return b.fromCity && b.toCity ? `${b.fromCity} -> ${b.toCity}` : "—"; }
   if (type === "hotel")   { const h = item as HotelItem;   return h.hotelName ? `${h.hotelName}${h.hotelCity ? `, ${h.hotelCity}` : ""}` : "—"; }
   if (type === "package") { const p = item as PackageItem; return p.destinations || "—"; }
   return "";
@@ -616,7 +623,7 @@ function getRowFlightDate(item: InvoiceItem, type: InvoiceType) {
   return { flight: "", date: "" };
 }
 
-/* ── Table header labels ── */
+/* -- Table header labels -- */
 function colHeaders(type: InvoiceType) {
   const isFare = type === "air-intl" || type === "air-dom" || type === "train" || type === "bus" || type === "hotel";
   return {
@@ -628,8 +635,9 @@ function colHeaders(type: InvoiceType) {
   };
 }
 
-/* ── Main page ── */
+/* -- Main page -- */
 function NewInvoiceContent() {
+  const dark = useAdminDark();
   const router       = useRouter();
   const searchParams = useSearchParams();
   const initType     = (searchParams.get("type") as InvoiceType) || "air-intl";
@@ -759,47 +767,58 @@ function NewInvoiceContent() {
     : type === "train" ? "Add Passenger" : type === "bus" ? "Add Passenger"
     : type === "hotel" ? "Add Room" : "Add Row";
 
+  /* Dark-aware token shortcuts */
+  const pageBg  = dark ? "#111111" : "#F4F0FF";
+  const cardBg  = dark ? "#1C1C1E" : "#FFFFFF";
+  const cardBdr = dark ? "rgba(255,255,255,0.10)" : "#E7E0EC";
+  const txtP    = dark ? "#E6E1E5" : "#1C1B1F";
+  const txtM    = dark ? "#938F99" : "#79747E";
+  const accentC = dark ? "#90E0EF" : "#0077B6";
+  const accentBg2 = dark ? "rgba(0,119,182,0.12)" : "#EDE7F6";
+  const hoverRow = dark ? "rgba(255,255,255,0.03)" : "#FAFAFA";
+
   return (
-    <div className="min-h-full bg-[#f0f4f8]" style={{ fontFamily:"var(--font-inter,'Inter',system-ui,sans-serif)" }}>
+    <div className="min-h-full" style={{ background:pageBg, fontFamily:"var(--font-roboto,Roboto,system-ui,sans-serif)" }}>
       {/* Top bar */}
-      <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4 sticky top-0 z-10">
-        <button onClick={() => router.back()} className="text-slate-400 hover:text-slate-700 transition-colors">
+      <div className="px-6 py-3 flex items-center gap-4 sticky top-0 z-10" style={{ background: dark?"rgba(20,20,20,0.92)":"rgba(255,255,255,0.92)", backdropFilter:"blur(16px)", borderBottom:`1px solid ${cardBdr}` }}>
+        <button onClick={() => router.back()} style={{ color:txtM }}>
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-base font-bold text-slate-900">{editId ? "Edit Invoice" : "Create New Invoice"}</h1>
+        <h1 className="text-[17px] font-bold" style={{ color:txtP, fontFamily:"var(--font-roboto),Roboto,system-ui,sans-serif" }}>{editId ? "Edit Invoice" : "Create New Invoice"}</h1>
 
         {/* Stepper */}
-        <div className="flex items-center gap-2 ml-6 text-xs font-semibold">
-          <span className="flex items-center gap-1.5 text-[#1e3a8a]">
-            <span className="w-5 h-5 bg-[#1e3a8a] text-white rounded-full flex items-center justify-center text-[10px]">1</span>
+        <div className="flex items-center gap-2 ml-6 text-[13px] font-semibold">
+          <span className="flex items-center gap-1.5" style={{ color:accentC }}>
+            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] text-white" style={{ background:accentC }}>1</span>
             Invoice Details
           </span>
-          <div className="w-12 h-px bg-slate-200 mx-1" />
-          <span className="flex items-center gap-1.5 text-slate-400">
-            <span className="w-5 h-5 border-2 border-slate-300 rounded-full flex items-center justify-center text-[10px]">2</span>
+          <div className="w-12 h-px mx-1" style={{ background:cardBdr }} />
+          <span className="flex items-center gap-1.5" style={{ color:txtM }}>
+            <span className="w-5 h-5 border-2 rounded-full flex items-center justify-center text-[10px]" style={{ borderColor:cardBdr }}>2</span>
             Payment &amp; Preview
           </span>
         </div>
 
-        {/* Right: search + bell + avatar */}
         <div className="ml-auto flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-            <input placeholder="Search anything..." className="pl-8 pr-4 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-44 focus:outline-none focus:border-blue-400 transition-colors" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color:txtM }} />
+            <input placeholder="Search anything..." className="pl-8 pr-4 py-1.5 text-[13px] rounded-lg w-44 focus:outline-none"
+              style={{ background: dark?"rgba(255,255,255,0.06)":"#F4F0FF", border:`1px solid ${cardBdr}`, color:txtP }} />
           </div>
-          <button className="relative p-1.5 text-slate-400 hover:text-slate-600">
-            <Bell className="w-4 h-4" />
-          </button>
-          <div className="w-7 h-7 bg-[#1e3a8a] rounded-full flex items-center justify-center">
-            <User className="w-3.5 h-3.5 text-white" />
+          <button className="p-1.5" style={{ color:txtM }}><Bell className="w-4 h-4" /></button>
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-white" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>
+            <User className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>
 
       <div className="p-6 space-y-4">
         {/* Invoice Type */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <p className="text-sm font-bold text-slate-800 mb-3">Invoice Type</p>
+        <div className="rounded-2xl p-5" style={{ background:cardBg, border:`1px solid ${cardBdr}` }}>
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-1 h-5 rounded-full" style={{ background:"linear-gradient(180deg,#0077B6,#0096C7)" }} />
+            <p className="text-[15px] font-bold" style={{ color:txtP }}>Invoice Type</p>
+          </div>
           <div className="flex gap-3 flex-wrap">
             {TYPES.map((t) => {
               const active = type === t.value;
@@ -807,17 +826,18 @@ function NewInvoiceContent() {
                 <button
                   key={t.value}
                   onClick={() => changeType(t.value)}
-                  className="flex flex-col items-center gap-1.5 py-3 px-4 rounded-xl border-2 transition-all min-w-[80px]"
+                  className="flex flex-col items-center gap-2 py-3.5 px-4 rounded-2xl transition-all min-w-[84px]"
                   style={{
-                    borderColor: active ? "#1e3a8a" : "#e2e8f0",
-                    background: active ? "#eff6ff" : "white",
-                    color: active ? "#1e3a8a" : "#64748b",
+                    border: `2px solid ${active ? accentC : cardBdr}`,
+                    background: active ? accentBg2 : (dark ? "rgba(255,255,255,0.03)" : "#FAFAFA"),
+                    color: active ? accentC : txtM,
+                    boxShadow: active ? (dark ? "0 0 16px rgba(0,119,182,0.35)" : "0 4px 16px rgba(0,119,182,0.18)") : "none",
                   }}
                 >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: active ? "#dbeafe" : "#f8fafc" }}>
-                    <t.icon className="w-5 h-5" style={{ color: active ? "#1e3a8a" : "#94a3b8" }} />
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: active ? (dark?"rgba(0,119,182,0.30)":"rgba(0,119,182,0.14)") : (dark?"rgba(255,255,255,0.06)":"#F0ECFA") }}>
+                    <t.icon className="w-5 h-5" style={{ color: active ? accentC : txtM }} />
                   </div>
-                  <span className="text-[11px] font-semibold">{t.label}</span>
+                  <span className="text-[12px] font-semibold">{t.label}</span>
                 </button>
               );
             })}
@@ -827,23 +847,24 @@ function NewInvoiceContent() {
         {/* Invoice Details + Bill To (two column) */}
         <div className="grid grid-cols-5 gap-4">
           {/* Invoice Details */}
-          <div className="col-span-3 bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-slate-800">Invoice Details</p>
+          <div className="col-span-3 rounded-2xl p-5" style={{ background:cardBg, border:`1px solid ${cardBdr}` }}>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-1 h-5 rounded-full" style={{ background:"linear-gradient(180deg,#0077B6,#0096C7)" }} />
+              <p className="text-[15px] font-bold" style={{ color:txtP }}>Invoice Details</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={lbl}>Invoice Date</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inp} />
+                <label style={lblStyle(dark)}>Invoice Date</label>
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inp(dark)} style={inpStyle(dark)} />
               </div>
               <div>
-                <label className={lbl}>SAC Code</label>
-                <input value={sacCode} onChange={(e) => setSacCode(e.target.value)} className={`${inp} font-mono`} />
+                <label style={lblStyle(dark)}>SAC Code</label>
+                <input value={sacCode} onChange={(e) => setSacCode(e.target.value)} className={`${inp(dark)} font-mono`} style={inpStyle(dark)} />
               </div>
               {(type === "air-intl" || type === "air-dom") && (
                 <div className="col-span-2">
-                  <label className={lbl}>Airline Selection</label>
-                  <select value={airline} onChange={(e) => setAirline(e.target.value)} className={inp}>
+                  <label style={lblStyle(dark)}>Airline Selection</label>
+                  <select value={airline} onChange={(e) => setAirline(e.target.value)} className={inp(dark)} style={inpStyle(dark)}>
                     <option value="">Select airline...</option>
                     {AIRLINES.map((a) => <option key={a}>{a}</option>)}
                   </select>
@@ -851,13 +872,13 @@ function NewInvoiceContent() {
               )}
               {(type === "train" || type === "bus") && (
                 <div className="col-span-2">
-                  <label className={lbl}>{type === "train" ? "Train Operator" : "Bus Operator"}</label>
-                  <input value={airline} onChange={(e) => setAirline(e.target.value)} placeholder={type === "train" ? "Indian Railways / IRCTC" : "KSRTC / VRL Travels..."} className={inp} />
+                  <label style={lblStyle(dark)}>{type === "train" ? "Train Operator" : "Bus Operator"}</label>
+                  <input value={airline} onChange={(e) => setAirline(e.target.value)} placeholder={type === "train" ? "Indian Railways / IRCTC" : "KSRTC / VRL Travels..."} className={inp(dark)} style={inpStyle(dark)} />
                 </div>
               )}
               <div>
-                <label className={lbl}>GST Type</label>
-                <select value={gstType} onChange={(e) => setGstType(e.target.value as GSTType)} className={inp}>
+                <label style={lblStyle(dark)}>GST Type</label>
+                <select value={gstType} onChange={(e) => setGstType(e.target.value as GSTType)} className={inp(dark)} style={inpStyle(dark)}>
                   <option value="cgst_sgst">CGST + SGST (Intra-state)</option>
                   <option value="igst">IGST (Inter-state)</option>
                   <option value="none">Without GST</option>
@@ -865,80 +886,89 @@ function NewInvoiceContent() {
               </div>
               {gstType !== "none" && (
                 <div>
-                  <label className={lbl}>GST Rate</label>
-                  <select value={gstRate} onChange={(e) => setGstRate(Number(e.target.value))} className={inp}>
+                  <label style={lblStyle(dark)}>GST Rate</label>
+                  <select value={gstRate} onChange={(e) => setGstRate(Number(e.target.value))} className={inp(dark)} style={inpStyle(dark)}>
                     {GST_RATES[type].map((r) => <option key={r} value={r}>{r}%</option>)}
                   </select>
                 </div>
               )}
               <div className="col-span-2">
-                <label className={lbl}>Notes (optional)</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any notes for the customer..." rows={2} className={`${inp} resize-none`} />
+                <label style={lblStyle(dark)}>Notes (optional)</label>
+                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any notes for the customer..." rows={2} className={`${inp(dark)} resize-none`} style={inpStyle(dark)} />
               </div>
             </div>
           </div>
 
           {/* Bill To */}
-          <div className="col-span-2 bg-white rounded-xl border border-slate-200 p-5">
+          <div className="col-span-2 rounded-2xl p-5" style={{ background:cardBg, border:`1px solid ${cardBdr}` }}>
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-bold text-slate-800">Bill To</p>
+              <div className="flex items-center gap-2.5">
+                <div className="w-1 h-5 rounded-full" style={{ background:"linear-gradient(180deg,#0077B6,#0096C7)" }} />
+                <p className="text-[15px] font-bold" style={{ color:txtP }}>Bill To</p>
+              </div>
               {!customer && (
-                <button onClick={() => setAddingCust(true)} className="text-xs font-semibold text-[#1e3a8a] hover:text-blue-800 flex items-center gap-1">
+                <button onClick={() => setAddingCust(true)} className="text-[13px] font-semibold flex items-center gap-1" style={{ color:accentC }}>
                   <Plus className="w-3 h-3" /> New Customer
                 </button>
               )}
             </div>
 
             {customer ? (
-              <div>
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <div className="font-bold text-[#1e3a8a] text-sm">{customer.name}</div>
-                      {customer.city && <div className="text-slate-500 text-xs mt-0.5">{customer.city}{customer.state ? `, ${customer.state}` : ""}</div>}
-                      {customer.gstin && <div className="text-[#1e3a8a] text-xs mt-1 font-mono font-semibold">GSTIN: {customer.gstin}</div>}
-                    </div>
-                    <button onClick={() => { setCustomer(null); setCustSearch(""); }} className="text-blue-400 hover:text-blue-600 text-xs font-semibold shrink-0">Change</button>
+              <div className="rounded-xl p-4" style={{ background:accentBg2, border:`1px solid ${dark?"rgba(0,119,182,0.2)":"#90E0EF"}` }}>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-bold text-[14px]" style={{ color:accentC }}>{customer.name}</div>
+                    {customer.city && <div className="text-[12px] mt-0.5" style={{ color:txtM }}>{customer.city}{customer.state ? `, ${customer.state}` : ""}</div>}
+                    {customer.gstin && <div className="text-[12px] mt-1 font-mono font-semibold" style={{ color:accentC }}>GSTIN: {customer.gstin}</div>}
                   </div>
+                  <button onClick={() => { setCustomer(null); setCustSearch(""); }} className="text-[12px] font-semibold shrink-0" style={{ color:accentC }}>Change</button>
                 </div>
               </div>
             ) : (
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Customer Search</p>
+                <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color:txtM }}>Customer Search</p>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color:txtM }} />
                   <input
                     value={custSearch}
                     onChange={(e) => { setCustSearch(e.target.value); setCustDropdown(true); }}
                     onFocus={() => setCustDropdown(true)}
                     placeholder="Search by name or mobile..."
-                    className={`${inp} pl-8`}
+                    className={`${inp(dark)} pl-8`}
+                    style={inpStyle(dark)}
                   />
                 </div>
                 {custDropdown && filteredCusts.length > 0 && (
-                  <div className="border border-slate-200 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto bg-white">
+                  <div className="rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto" style={{ background:cardBg, border:`1px solid ${cardBdr}` }}>
                     {filteredCusts.map((c) => (
-                      <button key={c.id} onClick={() => { setCustomer(c); setCustDropdown(false); setCustSearch(""); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
-                        <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-blue-700">{c.name.charAt(0)}</div>
+                      <button key={c.id} onClick={() => { setCustomer(c); setCustDropdown(false); setCustSearch(""); }}
+                        className="flex items-center gap-2.5 w-full px-4 py-2.5 transition-colors text-left" style={{ color:txtP }}>
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-white" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>{c.name.charAt(0)}</div>
                         <div>
-                          <div className="text-sm font-semibold text-slate-800">{c.name}</div>
-                          <div className="text-xs text-slate-400">{c.mobile || c.phone || ""}{c.gstin ? ` · ${c.gstin}` : ""}</div>
+                          <div className="text-[14px] font-semibold" style={{ color:txtP }}>{c.name}</div>
+                          <div className="text-[12px]" style={{ color:txtM }}>{c.mobile || c.phone || ""}{c.gstin ? ` · ${c.gstin}` : ""}</div>
                         </div>
                       </button>
                     ))}
                   </div>
                 )}
                 {addingCust && (
-                  <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
-                    <p className="text-xs font-bold text-[#1e3a8a] uppercase">Quick Add Customer</p>
-                    <input value={newCust.name} onChange={(e)=>setNewCust(f=>({...f,name:e.target.value}))} placeholder="Name *" className={inp} />
-                    <input value={newCust.mobile} onChange={(e)=>setNewCust(f=>({...f,mobile:e.target.value}))} placeholder="Mobile *" className={inp} />
-                    <input value={newCust.gstin} onChange={(e)=>setNewCust(f=>({...f,gstin:e.target.value.toUpperCase()}))} placeholder="GSTIN (optional)" className={`${inp} font-mono`} />
-                    <input value={newCust.city} onChange={(e)=>setNewCust(f=>({...f,city:e.target.value}))} placeholder="City" className={inp} />
-                    <input value={newCust.address} onChange={(e)=>setNewCust(f=>({...f,address:e.target.value}))} placeholder="Address (optional)" className={inp} />
+                  <div className="mt-3 rounded-xl p-4 space-y-3" style={{ background:accentBg2, border:`1px solid ${dark?"rgba(0,119,182,0.2)":"#90E0EF"}` }}>
+                    <p className="text-[12px] font-bold uppercase tracking-wider" style={{ color:accentC }}>Quick Add Customer</p>
+                    {[
+                      { v:newCust.name, p:"Name *", k:"name", mono:false },
+                      { v:newCust.mobile, p:"Mobile *", k:"mobile", mono:false },
+                      { v:newCust.gstin, p:"GSTIN (optional)", k:"gstin", mono:true },
+                      { v:newCust.city, p:"City", k:"city", mono:false },
+                      { v:newCust.address, p:"Address (optional)", k:"address", mono:false },
+                    ].map(({v,p,k,mono}) => (
+                      <input key={k} value={v}
+                        onChange={(e)=>setNewCust(f=>({...f,[k]: k==="gstin"?e.target.value.toUpperCase():e.target.value}))}
+                        placeholder={p} className={`${inp(dark)}${mono?" font-mono":""}`} style={inpStyle(dark)} />
+                    ))}
                     <div className="flex gap-2">
-                      <button onClick={()=>setAddingCust(false)} className="flex-1 py-1.5 text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-white">Cancel</button>
-                      <button onClick={saveNewCust} disabled={!newCust.name||!newCust.mobile} className="flex-1 py-1.5 text-xs font-semibold bg-[#1e3a8a] text-white rounded-lg hover:bg-blue-900 disabled:opacity-40">Add &amp; Select</button>
+                      <button onClick={()=>setAddingCust(false)} className="flex-1 py-1.5 text-[13px] font-semibold rounded-xl" style={{ color:txtM, border:`1px solid ${cardBdr}` }}>Cancel</button>
+                      <button onClick={saveNewCust} disabled={!newCust.name||!newCust.mobile} className="flex-1 py-1.5 text-[13px] font-semibold text-white rounded-xl disabled:opacity-40" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>Add &amp; Select</button>
                     </div>
                   </div>
                 )}
@@ -948,45 +978,51 @@ function NewInvoiceContent() {
         </div>
 
         {/* Service Entries table */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="rounded-2xl p-5" style={{ background:cardBg, border:`1px solid ${cardBdr}` }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-bold text-slate-800">Service Entries</p>
-            <button
-              onClick={openAdd}
-              className="flex items-center gap-2 text-xs font-bold text-white px-4 py-2 rounded-lg transition-colors"
-              style={{ background: "#1e3a8a" }}
-            >
+            <div className="flex items-center gap-2.5">
+              <div className="w-1 h-5 rounded-full" style={{ background:"linear-gradient(180deg,#0077B6,#0096C7)" }} />
+              <p className="text-[15px] font-bold" style={{ color:txtP }}>Service Entries</p>
+            </div>
+            <button onClick={openAdd} className="flex items-center gap-2 text-[13px] font-bold text-white px-4 py-2.5 rounded-xl"
+              style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)", boxShadow:"0 4px 14px rgba(0,119,182,0.35)" }}>
               <Plus className="w-3.5 h-3.5" /> {addLabel}
             </button>
           </div>
 
           {items.length === 0 ? (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl py-10 text-center">
-              <p className="text-slate-400 text-sm">No entries yet</p>
-              <button onClick={openAdd} className="text-[#1e3a8a] text-sm font-semibold mt-1 hover:underline">+ {addLabel}</button>
+            <div className="border-2 border-dashed rounded-2xl py-12 text-center flex flex-col items-center gap-3" style={{ borderColor:cardBdr }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: dark ? "rgba(0,119,182,0.15)" : "rgba(0,119,182,0.08)" }}>
+                <Plus className="w-7 h-7" style={{ color:accentC }} />
+              </div>
+              <div>
+                <p className="text-[14px] font-semibold" style={{ color:txtM }}>No entries yet</p>
+                <p className="text-[12px] mt-0.5" style={{ color: dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.30)" }}>Click the button above to add</p>
+              </div>
+              <button onClick={openAdd} className="text-[13px] font-bold px-4 py-2 rounded-xl text-white" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>+ {addLabel}</button>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-[14px]">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="text-left pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-4">
+                  <tr style={{ borderBottom:`1px solid ${cardBdr}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,119,182,0.04)" }}>
+                    <th className="text-left py-2.5 px-3 rounded-l-lg text-[11px] font-bold uppercase tracking-wider" style={{ color:txtM }}>
                       {type === "visa" ? "APPLICANT" : type === "package" ? "LEAD PAX" : type === "hotel" ? "GUEST" : type === "other" ? "DESCRIPTION" : "PAX NAME"}
                     </th>
                     {type !== "other" && (
-                      <th className="text-left pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-4">{type === "hotel" ? "HOTEL" : "ROUTE"}</th>
+                      <th className="text-left pb-2.5 text-[11px] font-bold uppercase tracking-wider pr-4" style={{ color:txtM }}>{type === "hotel" ? "HOTEL" : "ROUTE"}</th>
                     )}
                     {type !== "other" && type !== "visa" && (
-                      <th className="text-left pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-4">{cols.col3}</th>
+                      <th className="text-left pb-2.5 text-[11px] font-bold uppercase tracking-wider pr-4" style={{ color:txtM }}>{cols.col3}</th>
                     )}
-                    <th className="text-right pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-4">{cols.col4}</th>
+                    <th className="text-right pb-2.5 text-[11px] font-bold uppercase tracking-wider pr-4" style={{ color:txtM }}>{cols.col4}</th>
                     {cols.col5 && (
-                      <th className="text-right pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider pr-4">{cols.col5}</th>
+                      <th className="text-right pb-2.5 text-[11px] font-bold uppercase tracking-wider pr-4" style={{ color:txtM }}>{cols.col5}</th>
                     )}
-                    <th className="text-right pb-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">ACTION</th>
+                    <th className="text-right pb-2.5 text-[11px] font-bold uppercase tracking-wider" style={{ color:txtM }}>ACTION</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody>
                   {items.map((item) => {
                     const row = getRowLabel(item, type);
                     const route = getRowRoute(item, type);
@@ -994,30 +1030,32 @@ function NewInvoiceContent() {
                     const fare = calcItemFare(item, type);
                     const taxable = calcItemTaxable(item, type);
                     return (
-                      <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                      <tr key={item.id} style={{ borderBottom:`1px solid ${cardBdr}` }}
+                        onMouseEnter={e=>(e.currentTarget.style.background=hoverRow)}
+                        onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
                         <td className="py-3 pr-4">
-                          <div className="font-semibold text-slate-800 text-sm">{row.name}</div>
-                          {row.sub && <div className="text-[11px] text-slate-400 mt-0.5">{row.sub}</div>}
+                          <div className="font-semibold text-[14px]" style={{ color:txtP }}>{row.name}</div>
+                          {row.sub && <div className="text-[12px] mt-0.5" style={{ color:txtM }}>{row.sub}</div>}
                         </td>
                         {type !== "other" && (
-                          <td className="py-3 pr-4 font-semibold text-slate-700 text-sm">{route || "—"}</td>
+                          <td className="py-3 pr-4 font-semibold text-[14px]" style={{ color:txtP }}>{route || "—"}</td>
                         )}
                         {type !== "other" && type !== "visa" && (
                           <td className="py-3 pr-4">
-                            <div className="font-semibold text-slate-700 text-sm">{fd.flight || "—"}</div>
-                            {fd.date && <div className="text-[11px] text-slate-400 mt-0.5">{fd.date}</div>}
+                            <div className="font-semibold text-[14px]" style={{ color:txtP }}>{fd.flight || "—"}</div>
+                            {fd.date && <div className="text-[12px] mt-0.5" style={{ color:txtM }}>{fd.date}</div>}
                           </td>
                         )}
-                        <td className="py-3 pr-4 text-right font-semibold text-slate-800">
-                          {fare > 0 ? fmt(fare) : isFareType ? <span className="text-slate-300">—</span> : fmt(taxable)}
+                        <td className="py-3 pr-4 text-right font-semibold" style={{ color:txtP }}>
+                          {fare > 0 ? fmt(fare) : isFareType ? <span style={{ color:txtM }}>—</span> : fmt(taxable)}
                         </td>
                         {cols.col5 && (
-                          <td className="py-3 pr-4 text-right font-semibold text-amber-600">{fmt(taxable)}</td>
+                          <td className="py-3 pr-4 text-right font-semibold" style={{ color:"#D97706" }}>{fmt(taxable)}</td>
                         )}
                         <td className="py-3 text-right">
                           <div className="flex items-center gap-1 justify-end">
-                            <button onClick={() => openEdit(item)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
-                            <button onClick={() => setItems((p) => p.filter((i) => i.id !== item.id))} className="p-1.5 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg" style={{ color:txtM }}><Pencil className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => setItems((p) => p.filter((i) => i.id !== item.id))} className="p-1.5 rounded-lg" style={{ color:"#B3261E" }}><Trash2 className="w-3.5 h-3.5" /></button>
                           </div>
                         </td>
                       </tr>
@@ -1031,51 +1069,54 @@ function NewInvoiceContent() {
 
         {/* Invoice Summary */}
         <div className="flex justify-end">
-          <div className="bg-white rounded-xl border border-slate-200 p-5 w-96">
-            <p className="text-sm font-bold text-slate-800 mb-4">Invoice Summary</p>
-            <div className="space-y-2.5 text-sm">
+          <div className="rounded-2xl p-5 w-96" style={{ background:cardBg, border:`1px solid ${cardBdr}`, boxShadow: dark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,119,182,0.10)" }}>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-1 h-5 rounded-full" style={{ background:"linear-gradient(180deg,#0077B6,#0096C7)" }} />
+              <p className="text-[15px] font-bold" style={{ color:txtP }}>Invoice Summary</p>
+            </div>
+            <div className="space-y-2.5 text-[14px]">
               {isFareType ? (
                 <>
-                  <div className="flex justify-between text-slate-600">
-                    <span>{type === "hotel" ? "Room Fare" : "Ticket Fare"} <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded ml-1">exempt</span></span>
+                  <div className="flex justify-between" style={{ color:txtP }}>
+                    <span>{type === "hotel" ? "Room Fare" : "Ticket Fare"} <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background: dark?"rgba(255,255,255,0.08)":"#F4F0FF", color:txtM }}>exempt</span></span>
                     <span className="font-semibold">{fmt(fareTotal)}</span>
                   </div>
-                  <div className="flex justify-between text-amber-700">
-                    <span>Service Charge <span className="text-[10px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded ml-1">taxable</span></span>
+                  <div className="flex justify-between" style={{ color:"#D97706" }}>
+                    <span>Service Charge <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span>
                     <span className="font-semibold">{fmt(taxableTotal)}</span>
                   </div>
                 </>
               ) : isVisa ? (
                 <>
-                  <div className="flex justify-between text-slate-600"><span>Embassy Fee</span><span className="font-semibold">{fmt(fareTotal)}</span></div>
-                  <div className="flex justify-between text-amber-700"><span>Service Fee <span className="text-[10px] bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded ml-1">taxable</span></span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
+                  <div className="flex justify-between" style={{ color:txtP }}><span>Embassy Fee</span><span className="font-semibold">{fmt(fareTotal)}</span></div>
+                  <div className="flex justify-between" style={{ color:"#D97706" }}><span>Service Fee <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
                 </>
               ) : (
-                <div className="flex justify-between text-slate-600"><span>Taxable Amount</span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
+                <div className="flex justify-between" style={{ color:txtP }}><span>Taxable Amount</span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
               )}
               {gstType === "cgst_sgst" && (
                 <>
-                  <div className="flex justify-between text-slate-500"><span>CGST ({gstRate/2}%)</span><span>{fmt(cgst)}</span></div>
-                  <div className="flex justify-between text-slate-500"><span>SGST ({gstRate/2}%)</span><span>{fmt(sgst)}</span></div>
+                  <div className="flex justify-between" style={{ color:txtM }}><span>CGST ({gstRate/2}%)</span><span>{fmt(cgst)}</span></div>
+                  <div className="flex justify-between" style={{ color:txtM }}><span>SGST ({gstRate/2}%)</span><span>{fmt(sgst)}</span></div>
                 </>
               )}
               {gstType === "igst" && (
-                <div className="flex justify-between text-slate-500"><span>IGST ({gstRate}%)</span><span>{fmt(igst)}</span></div>
+                <div className="flex justify-between" style={{ color:txtM }}><span>IGST ({gstRate}%)</span><span>{fmt(igst)}</span></div>
               )}
-              <div className="border-t border-slate-100 pt-3">
-                <div className="flex justify-between font-bold text-base">
-                  <span className="text-slate-900">Grand Total</span>
-                  <span style={{ color: "#1e3a8a" }}>{fmt(total)}</span>
+              <div className="pt-3 mt-1" style={{ borderTop:`1px solid ${cardBdr}` }}>
+                <div className="flex justify-between font-bold text-[17px] px-3 py-2.5 rounded-xl" style={{ background: dark ? "rgba(0,119,182,0.15)" : "rgba(0,119,182,0.08)" }}>
+                  <span style={{ color:txtP }}>Grand Total</span>
+                  <span style={{ color:accentC }}>{fmt(total)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-5 space-y-2">
+            <div className="mt-5">
               <button
                 onClick={handleSave}
                 disabled={!customer || items.length === 0 || saving}
-                className="w-full py-3 text-sm font-bold text-white rounded-xl transition-colors disabled:opacity-40"
-                style={{ background: "#1e3a8a" }}
+                className="w-full py-3.5 text-[15px] font-bold text-white rounded-xl disabled:opacity-40 transition-all"
+                style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)", boxShadow: (!customer || items.length === 0 || saving) ? "none" : "0 6px 20px rgba(0,119,182,0.45)" }}
               >
                 {saving ? (editId ? "Saving..." : "Creating...") : (editId ? "Save Changes" : "Create Invoice")}
               </button>
@@ -1091,6 +1132,7 @@ function NewInvoiceContent() {
           initial={modalItem}
           onSave={saveEntry}
           onClose={() => { setModalItem(null); setEditingId(null); }}
+          dark={dark}
         />
       )}
     </div>

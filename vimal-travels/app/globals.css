@@ -3,6 +3,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Material 3 Admin Design Tokens ── */
+:root {
+  --m3-primary: #6750A4;
+  --m3-on-primary: #FFFFFF;
+  --m3-primary-container: #EADDFF;
+  --m3-on-primary-container: #21005D;
+  --m3-secondary: #625B71;
+  --m3-secondary-container: #E8DEF8;
+  --m3-surface: #FFFBFE;
+  --m3-surface-dim: #DED8E1;
+  --m3-surface-variant: #E7E0EC;
+  --m3-on-surface: #1C1B1F;
+  --m3-on-surface-variant: #49454F;
+  --m3-outline: #79747E;
+  --m3-outline-variant: #CAC4D0;
+  --m3-scrim: rgba(0,0,0,0.32);
+  --m3-elevation-1: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px 1px rgba(0,0,0,0.07);
+  --m3-elevation-2: 0 1px 2px rgba(0,0,0,0.06), 0 2px 6px 2px rgba(0,0,0,0.08);
+  --m3-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.06);
+  --admin-bg: #F4F0FF;
+  --admin-bg2: #EDE7F6;
+  --admin-sidebar-bg: rgba(255,255,255,0.78);
+  --admin-sidebar-border: rgba(255,255,255,0.65);
+  --admin-card-bg: rgba(255,255,255,0.80);
+  --admin-card-border: rgba(255,255,255,0.62);
+  --admin-text: #1C1B1F;
+  --admin-text-secondary: #49454F;
+  --admin-text-muted: #79747E;
+  --admin-active-bg: #EADDFF;
+  --admin-active-color: #6750A4;
+  --admin-hover-bg: rgba(103,80,164,0.08);
+  --admin-divider: rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+  --m3-primary: #D0BCFF;
+  --m3-on-primary: #381E72;
+  --m3-primary-container: #4F378B;
+  --m3-on-primary-container: #EADDFF;
+  --m3-secondary: #CCC2DC;
+  --m3-secondary-container: #4A4458;
+  --m3-surface: #141218;
+  --m3-surface-dim: #141218;
+  --m3-surface-variant: #49454F;
+  --m3-on-surface: #E6E1E5;
+  --m3-on-surface-variant: #CAC4D0;
+  --m3-outline: #938F99;
+  --m3-outline-variant: #49454F;
+  --admin-bg: #111111;
+  --admin-bg2: #1C1C1E;
+  --admin-sidebar-bg: rgba(20,20,20,0.92);
+  --admin-sidebar-border: rgba(255,255,255,0.07);
+  --admin-card-bg: rgba(30,30,30,0.90);
+  --admin-card-border: rgba(255,255,255,0.08);
+  --admin-text: #E6E1E5;
+  --admin-text-secondary: #CAC4D0;
+  --admin-text-muted: #938F99;
+  --admin-active-bg: rgba(208,188,255,0.15);
+  --admin-active-color: #D0BCFF;
+  --admin-hover-bg: rgba(208,188,255,0.08);
+  --admin-divider: rgba(255,255,255,0.07);
+}
+
 @layer base {
   html { scroll-behavior: smooth; overflow-y: scroll; }
   * { box-sizing: border-box; }

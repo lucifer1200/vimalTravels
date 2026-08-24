@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  getInvoiceById, addPayment, deleteInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
+  getInvoiceById, addPayment, deleteInvoice, addInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
   type Invoice, type FlightItem, type PackageItem, type VisaItem, type GenericItem,
   type TrainItem, type BusItem, type HotelItem, type InvoiceStatus, type PaymentMode, COMPANY, TYPE_LABEL,
 } from "@/lib/billing";
-import { ArrowLeft, Printer, Share2, Plus, X, CheckCircle, ShieldCheck, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Printer, Share2, Plus, X, CheckCircle, ShieldCheck, Pencil, Trash2, Copy } from "lucide-react";
+import { useAdminDark } from "@/lib/useAdminDark";
 
 const STATUS_STYLE: Record<InvoiceStatus, { cls: string; label: string }> = {
   paid:    { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "PAID" },
@@ -27,6 +28,7 @@ const Label = ({ children }: { children: React.ReactNode }) => (
 export default function InvoiceViewPage() {
   const params = useParams();
   const router = useRouter();
+  const dark = useAdminDark();
   const [inv, setInv]           = useState<Invoice | null>(null);
   const [loading, setLoading]   = useState(true);
   const [payModal, setPayModal] = useState(false);
@@ -64,15 +66,15 @@ export default function InvoiceViewPage() {
   };
 
   if (loading) return (
-    <div className="flex items-center justify-center h-full gap-3 text-slate-400 text-sm">
-      <div style={{ width: 18, height: 18, border: "2px solid #CBD5E1", borderTopColor: "#2563EB", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+    <div className="flex items-center justify-center h-full gap-3 text-sm" style={{ color: dark?"#938F99":"#79747E" }}>
+      <div style={{ width:18, height:18, border:"2.5px solid transparent", borderTopColor:"#0077B6", borderRadius:"50%", animation:"spin 0.7s linear infinite" }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       Loading invoice...
     </div>
   );
 
   if (!inv) return (
-    <div className="flex items-center justify-center h-full text-slate-400 text-sm">Invoice not found</div>
+    <div className="flex items-center justify-center h-full text-sm" style={{ color: dark?"#938F99":"#79747E" }}>Invoice not found</div>
   );
 
   const paid       = (inv.payments || []).reduce((s, p) => s + p.amount, 0);
@@ -98,6 +100,32 @@ export default function InvoiceViewPage() {
     router.push("/admin/billing/invoices");
   };
 
+  const handleDuplicate = async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const dup = await addInvoice({
+      type:          inv.type,
+      customer:      inv.customer,
+      customerId:    inv.customerId,
+      date:          today,
+      items:         inv.items,
+      subtotal:      inv.subtotal,
+      serviceCharge: inv.serviceCharge,
+      gstType:       inv.gstType,
+      gstRate:       inv.gstRate,
+      cgst:          inv.cgst,
+      sgst:          inv.sgst,
+      igst:          inv.igst,
+      gst:           inv.gst,
+      taxableAmount: inv.taxableAmount,
+      fareTotal:     inv.fareTotal,
+      total:         inv.total,
+      notes:         inv.notes,
+      status:        "due",
+      payments:      [],
+    });
+    router.push(`/admin/billing/invoices/${dup.id}`);
+  };
+
   const handleAddPayment = async () => {
     if (!payForm.amount || !parseFloat(payForm.amount)) return;
     await addPayment(inv.id, {
@@ -112,9 +140,11 @@ export default function InvoiceViewPage() {
     const phone = (inv.customer.mobile || "").replace(/\D/g, "");
     if (!phone) { alert("Customer mobile number not set"); return; }
 
-    const msg = `Dear ${inv.customer.name},\n\nPlease find your invoice from Vimal Travels:\n\nInvoice No: ${inv.invoiceNo}\nDate: ${fmtDate(inv.date)}\nService: ${TYPE_LABEL[inv.type]}\nAmount: ₹${formatINR(inv.total)}\n\nThank you for choosing Vimal Travels!\n📞 ${COMPANY.mobile1} | ${COMPANY.mobile2}\n✉ ${COMPANY.email}`;
+    const msg = `Dear ${inv.customer.name},\n\nPlease find your invoice from Vimal Travels:\n\nInvoice No: ${inv.invoiceNo}\nDate: ${fmtDate(inv.date)}\nService: ${TYPE_LABEL[inv.type]}\nAmount: ₹${formatINR(inv.total)}\n\nThank you for choosing Vimal Travels!\n" ${COMPANY.mobile1} | ${COMPANY.mobile2}\n ${COMPANY.email}`;
     const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
-    const filename = `${inv.invoiceNo.replace(/\//g, "-")}.pdf`;
+    const custName = (inv.customer?.name || "Customer").replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "_");
+    const svcType  = TYPE_LABEL[inv.type]?.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "_") || inv.type;
+    const filename = `${custName}_${svcType}.pdf`;
 
     const element = document.getElementById("invoice");
     if (!element) { window.open(waUrl, "_blank"); return; }
@@ -148,11 +178,15 @@ export default function InvoiceViewPage() {
   const thCell = (right?: boolean): React.CSSProperties => ({ padding: "7px 10px", textAlign: right ? "right" : "left", fontSize: 7, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
   const tdRow = (alt: boolean) => ({ borderBottom: "1px solid #F1F5F9", background: alt ? "#F8FBFF" : "white" });
 
+  const toolbarBg     = dark ? "rgba(18,18,18,0.97)" : "#FFFFFF";
+  const toolbarBorder = dark ? "rgba(255,255,255,0.09)" : "#E7E0EC";
+  const toolbarText   = dark ? "#E6E1E5" : "#49454F";
+  const toolbarMuted  = dark ? "#938F99" : "#79747E";
+
   return (
-    <div className="min-h-full" style={{ background: "#F3F7FC", ...S }}>
+    <div className="min-h-full" style={{ background: dark?"#111111":"#F4F0FF", ...S, transition:"background 0.3s ease" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        * { font-family: Inter, Arial, sans-serif; }
+        * { font-family: var(--font-roboto), Roboto, Inter, Arial, sans-serif; }
         @media print{
           *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
           body{background:white!important}
@@ -181,62 +215,74 @@ export default function InvoiceViewPage() {
           .inv-gst-details   { margin-bottom:5px!important; padding:5px 10px!important; }
         }
       `}</style>
-      {/* ── TOOLBAR ── */}
-      <div className="print:hidden bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-medium transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Invoices
+      {/* -- TOOLBAR -- */}
+      <div className="print:hidden px-5 py-3 flex items-center gap-3 sticky top-0 z-10"
+        style={{ background: toolbarBg, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", borderBottom:`1px solid ${toolbarBorder}`, transition:"background 0.3s ease" }}>
+        <button onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-[13px] font-semibold px-3 py-2 rounded-xl transition-all"
+          style={{ color: toolbarMuted, background: dark?"rgba(255,255,255,0.04)":"#F8F8F8", border:`1px solid ${toolbarBorder}` }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = toolbarText; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = toolbarMuted; }}>
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
+        {/* Invoice title */}
+        <div className="flex items-center gap-2 mr-2">
+          <span className="text-[15px] font-bold" style={{ color: toolbarText }}>{inv.invoiceNo}</span>
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{
+            background: inv.status === "paid" ? (dark?"rgba(34,197,94,0.15)":"#DCFCE7") : inv.status === "partial" ? (dark?"rgba(245,158,11,0.15)":"#FEF3C7") : (dark?"rgba(239,68,68,0.15)":"#FEE2E2"),
+            color: inv.status === "paid" ? (dark?"#86EFAC":"#15803D") : inv.status === "partial" ? (dark?"#FDE68A":"#B45309") : (dark?"#FCA5A5":"#B91C1C"),
+          }}>{inv.status.toUpperCase()}</span>
+        </div>
+        <div className="flex-1" />
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setDelConfirm(true)}
-            className="flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 border border-red-200 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" /> Delete
+          <button onClick={() => setDelConfirm(true)}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3 py-2 rounded-xl transition-all"
+            style={{ color:"#EF4444", background: dark?"rgba(239,68,68,0.10)":"rgba(239,68,68,0.08)", border:"1px solid rgba(239,68,68,0.20)" }}>
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
-          <button
-            onClick={() => router.push(`/admin/billing/invoices/new?edit=${inv.id}`)}
-            className="flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700 transition-colors"
-          >
+          <button onClick={() => router.push(`/admin/billing/invoices/new?edit=${inv.id}`)}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 rounded-xl transition-all"
+            style={{ color: toolbarText, background: dark?"rgba(255,255,255,0.06)":"#F4F4F4", border:`1px solid ${toolbarBorder}` }}>
             <Pencil className="w-3.5 h-3.5" /> Edit
           </button>
-          <button
-            onClick={() => setPayModal(true)}
-            className="flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700 transition-colors"
-          >
+          <button onClick={() => setPayModal(true)}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 rounded-xl transition-all"
+            style={{ color:"#0077B6", background: dark?"rgba(0,119,182,0.12)":"rgba(0,119,182,0.08)", border:"1px solid rgba(0,119,182,0.25)" }}>
             <Plus className="w-3.5 h-3.5" /> Record Payment
           </button>
-          <button
-            onClick={handleWhatsApp}
-            disabled={pdfLoading}
-            className="flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-lg transition-colors text-white disabled:opacity-60"
-            style={{ background: "#25d366" }}
-          >
+          <button onClick={handleWhatsApp} disabled={pdfLoading}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 rounded-xl transition-all text-white disabled:opacity-60"
+            style={{ background:"#25D366", boxShadow:"0 2px 8px rgba(37,211,102,0.30)" }}>
             <Share2 className="w-3.5 h-3.5" />
-            {pdfLoading ? "Generating PDF…" : "WhatsApp + PDF"}
+            {pdfLoading ? "Generating..." : "WhatsApp"}
           </button>
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
-          >
+          <button onClick={handleDuplicate}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 rounded-xl transition-all"
+            style={{ background:dark?"rgba(255,255,255,0.08)":"#F3EFF6", color:dark?"#C4AAFF":"#7C3AED", border:`1px solid ${dark?"rgba(196,170,255,0.20)":"rgba(124,58,237,0.20)"}` }}
+            title="Create a duplicate of this invoice">
+            <Copy className="w-3.5 h-3.5" /> Duplicate
+          </button>
+          <button onClick={() => window.print()}
+            className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 text-white rounded-xl transition-all"
+            style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)", boxShadow:"0 2px 10px rgba(0,119,182,0.35)" }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,119,182,0.50)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(0,119,182,0.35)"; }}>
             <Printer className="w-3.5 h-3.5" /> Print / PDF
           </button>
         </div>
       </div>
 
-      {/* ── INVOICE CARD ── */}
+      {/* -- INVOICE CARD -- */}
       <div className="p-6 print:p-0 flex justify-center">
         <div
           id="invoice"
           className="bg-white w-full max-w-3xl print:shadow-none print:max-w-none"
           style={{ boxShadow: "0 4px 24px rgba(15,23,42,0.07), 0 1px 4px rgba(15,23,42,0.04)", borderRadius: 14, border: "1px solid #E3EAF3", overflow: "hidden", ...S }}
         >
-          {/* ── PREMIUM RAINBOW ACCENT BAR ── */}
+          {/* -- PREMIUM RAINBOW ACCENT BAR -- */}
           <div style={{ height: 4, background: "linear-gradient(90deg, #2563EB 0%, #06B6D4 25%, #7C3AED 60%, #F59E0B 100%)" }} />
 
-          {/* ── HEADER ── */}
+          {/* -- HEADER -- */}
           <div style={{ background: "linear-gradient(135deg, #ffffff 0%, #F0F7FF 50%, #EBF4FF 100%)", padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", overflow: "hidden", borderBottom: "1px solid #DBEAFE" }}>
             {/* Aviation sky photo — subtle background */}
             <div style={{ position: "absolute", right: 0, top: 0, width: "52%", height: "100%", pointerEvents: "none", overflow: "hidden" }}>
@@ -270,7 +316,7 @@ export default function InvoiceViewPage() {
             {/* Right: badge + meta */}
             <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#EFF6FF", border: "1.5px solid #93C5FD", borderRadius: 999, padding: "5px 16px", marginBottom: 8 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>✈ TAX INVOICE</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>TAX INVOICE</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-end" }}>
                 {[
@@ -287,10 +333,10 @@ export default function InvoiceViewPage() {
             </div>
           </div>
 
-          {/* ── BODY ── */}
+          {/* -- BODY -- */}
           <div id="invoice-body" style={{ padding: "13px 16px" }}>
 
-            {/* ── 3-CARD ROW: Bill To · Service Details · Fare Snapshot ── */}
+            {/* -- 3-CARD ROW: Bill To · Service Details · Fare Snapshot -- */}
             <div className="print-mb-6" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 9 }}>
               {/* Bill To */}
               <div style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: 11, padding: "8px 10px", boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
@@ -301,7 +347,7 @@ export default function InvoiceViewPage() {
                   <span style={{ fontSize: 7, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
                 </div>
                 <div style={{ fontSize: 9.5, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
-                {inv.customer.mobile && <div style={{ fontSize: 7, color: "#64748B", marginTop: 2 }}>📞 {inv.customer.mobile}</div>}
+                {inv.customer.mobile && <div style={{ fontSize: 7, color: "#64748B", marginTop: 2 }}>" {inv.customer.mobile}</div>}
                 {inv.customer.address && <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1, lineHeight: 1.3 }}>{inv.customer.address}</div>}
                 {inv.customer.city && <div style={{ fontSize: 7, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
                 {inv.customer.gstin && <div style={{ fontSize: 7, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "1px 5px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
@@ -311,7 +357,7 @@ export default function InvoiceViewPage() {
               <div style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: 11, padding: "8px 10px", boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 5 }}>
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#7C3AED,#6366F1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <span style={{ fontSize: 8, lineHeight: 1 }}>✈</span>
+                    <span style={{ fontSize: 8, lineHeight: 1 }}></span>
                   </div>
                   <span style={{ fontSize: 7, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
                 </div>
@@ -352,13 +398,13 @@ export default function InvoiceViewPage() {
               </div>
             </div>
 
-            {/* ── FLIGHT ITINERARY HERO (air type) ── */}
+            {/* -- FLIGHT ITINERARY HERO (air type) -- */}
             {isAir && (
               <>
                 {/* Section heading */}
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                   <div style={{ width: 24, height: 24, borderRadius: 7, background: "linear-gradient(135deg,#2563EB,#06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 2px 8px rgba(37,99,235,0.25)" }}>
-                    <span style={{ fontSize: 12, lineHeight: 1 }}>✈</span>
+                    <span style={{ fontSize: 12, lineHeight: 1 }}></span>
                   </div>
                   <div style={{ fontSize: 9.5, fontWeight: 700, color: "#172554", textTransform: "uppercase", letterSpacing: "0.8px" }}>Flight Itinerary</div>
                   <div style={{ flex: 1, height: 1.5, background: "linear-gradient(90deg,#BFDBFE,transparent)" }} />
@@ -390,15 +436,15 @@ export default function InvoiceViewPage() {
                           <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                             {!fc && (
                               <div style={{ width: 22, height: 22, borderRadius: 6, background: "linear-gradient(135deg,#1D4ED8,#2563EB)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                <span style={{ fontSize: 11, lineHeight: 1 }}>✈</span>
+                                <span style={{ fontSize: 11, lineHeight: 1 }}></span>
                               </div>
                             )}
                             <span style={{ fontSize: fc ? 8 : 9, fontWeight: 700, color: "#172554" }}>{inv.airline || TYPE_LABEL[inv.type]}</span>
                             {f.flightNo && <span style={{ fontSize: fc ? 7 : 7.5, fontWeight: 600, color: "#2563EB", background: "#DBEAFE", padding: fc ? "1px 7px" : "2px 9px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{f.flightNo}</span>}
                             {f.flightClass && <span style={{ fontSize: fc ? 7 : 7.5, fontWeight: 600, color: "#7C3AED", background: "#EDE9FE", padding: fc ? "1px 7px" : "2px 9px", borderRadius: 99, border: "1px solid #DDD6FE" }}>{f.flightClass}</span>}
-                            {hasRet && f.returnFlightNo && <span style={{ fontSize: fc ? 6.5 : 7, color: "#6366F1", background: "#EEF2FF", padding: "1px 6px", borderRadius: 99, border: "1px solid #C7D2FE" }}>↩ {f.returnFlightNo}{f.returnFlightClass ? ` · ${f.returnFlightClass}` : ""}</span>}
+                            {hasRet && f.returnFlightNo && <span style={{ fontSize: fc ? 6.5 : 7, color: "#6366F1", background: "#EEF2FF", padding: "1px 6px", borderRadius: 99, border: "1px solid #C7D2FE" }}> {f.returnFlightNo}{f.returnFlightClass ? ` · ${f.returnFlightClass}` : ""}</span>}
                           </div>
-                          <span style={{ fontSize: fc ? 6.5 : 7.5, fontWeight: 700, color: "#15803D", background: "linear-gradient(135deg,#DCFCE7,#BBF7D0)", padding: fc ? "2px 8px" : "3px 11px", borderRadius: 999, border: "1px solid #86EFAC" }}>✓ CONFIRMED</span>
+                          <span style={{ fontSize: fc ? 6.5 : 7.5, fontWeight: 700, color: "#15803D", background: "linear-gradient(135deg,#DCFCE7,#BBF7D0)", padding: fc ? "2px 8px" : "3px 11px", borderRadius: 999, border: "1px solid #86EFAC" }}>CONFIRMED</span>
                         </div>
 
                         {/* Boarding pass body */}
@@ -434,7 +480,7 @@ export default function InvoiceViewPage() {
                               <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center" }}>
                                 <div style={{ flex: 1, height: 1.5, background: "linear-gradient(90deg,#BAE6FD,#2563EB,#818CF8)", borderRadius: 2 }} />
                                 <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", background: "white", padding: "1px 4px", lineHeight: 1 }}>
-                                  <span style={{ fontSize: fc ? 13 : 18, color: "#2563EB", filter: "drop-shadow(0 0 5px rgba(37,99,235,0.4))", lineHeight: 1 }}>✈</span>
+                                  <span style={{ fontSize: fc ? 13 : 18, color: "#2563EB", filter: "drop-shadow(0 0 5px rgba(37,99,235,0.4))", lineHeight: 1 }}></span>
                                 </div>
                               </div>
                               <div style={{ textAlign: "center" }}>
@@ -446,14 +492,14 @@ export default function InvoiceViewPage() {
                             {/* Return */}
                             {hasRet && (
                               <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: retMt, paddingTop: retMt, borderTop: "1px dashed #C7D2FE" }}>
-                                <span style={{ fontSize: 6, fontWeight: 700, color: "#6366F1", textTransform: "uppercase", flexShrink: 0, background: "#EEF2FF", padding: "1px 5px", borderRadius: 4 }}>↩ Ret</span>
+                                <span style={{ fontSize: 6, fontWeight: 700, color: "#6366F1", textTransform: "uppercase", flexShrink: 0, background: "#EEF2FF", padding: "1px 5px", borderRadius: 4 }}> Ret</span>
                                 <div style={{ textAlign: "center" }}>
                                   <div style={{ fontSize: retAptSz, fontWeight: 700, color: "#6366F1", letterSpacing: "-0.5px", lineHeight: 1 }}>{f.returnSectorFrom}</div>
                                   <div style={{ fontSize: 6.5, color: "#94A3B8", marginTop: 1 }}>{f.returnDate ? fmtDate(f.returnDate) : ""}</div>
                                 </div>
                                 <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center" }}>
                                   <div style={{ flex: 1, height: 1.5, background: "#C7D2FE", borderRadius: 2 }} />
-                                  <span style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", fontSize: fc ? 10 : 13, color: "#6366F1", background: "white", padding: "0 3px", lineHeight: 1 }}>✈</span>
+                                  <span style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", fontSize: fc ? 10 : 13, color: "#6366F1", background: "white", padding: "0 3px", lineHeight: 1 }}></span>
                                 </div>
                                 <div style={{ textAlign: "center" }}>
                                   <div style={{ fontSize: retAptSz, fontWeight: 700, color: "#6366F1", letterSpacing: "-0.5px", lineHeight: 1 }}>{f.returnSectorTo}</div>
@@ -555,7 +601,7 @@ export default function InvoiceViewPage() {
                             <div style={{ fontWeight: 600, color: "#334155" }}>{t.trainNo}</div>
                             <div style={{ color: "#64748B" }}>{t.trainName}</div>
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 8, color: "#334155" }}>{t.fromStation} → {t.toStation}</td>
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 8, color: "#334155" }}>{t.fromStation} {'->'} {t.toStation}</td>
                           <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
                           <td style={{ padding: "8px 10px", fontSize: 8 }}>
                             <span style={{ fontWeight: 600, color: "#334155" }}>{t.travelClass}</span>
@@ -590,7 +636,7 @@ export default function InvoiceViewPage() {
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
                           <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 8 }}>{i + 1}</td>
                           <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{b.paxName}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{b.fromCity} → {b.toCity}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{b.fromCity} {'->'} {b.toCity}</td>
                           <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>
                             <div>{b.travelDate ? fmtDate(b.travelDate) : ""}</div>
                             {b.departTime && <div style={{ color: "#94A3B8" }}>{b.departTime}</div>}
@@ -623,11 +669,11 @@ export default function InvoiceViewPage() {
                       <div>
                         <div style={{ fontSize: 10, fontWeight: 700, color: "#172554" }}>{firstH?.hotelName || "Hotel"}</div>
                         <div style={{ fontSize: 8.5, color: "#64748B", marginTop: 2 }}>{firstH?.hotelCity}</div>
-                        {firstH?.hotelAddress && <div style={{ fontSize: 8, color: "#94A3B8", marginTop: 2 }}>📍 {firstH.hotelAddress}</div>}
+                        {firstH?.hotelAddress && <div style={{ fontSize: 8, color: "#94A3B8", marginTop: 2 }}>" {firstH.hotelAddress}</div>}
                       </div>
                       <div style={{ textAlign: "right" }}>
-                        {firstH?.hotelPhone && <div style={{ fontSize: 8.5, color: "#64748B" }}>📞 {firstH.hotelPhone}</div>}
-                        {firstH?.hotelEmail && <div style={{ fontSize: 8.5, color: "#64748B" }}>✉ {firstH.hotelEmail}</div>}
+                        {firstH?.hotelPhone && <div style={{ fontSize: 8.5, color: "#64748B" }}>" {firstH.hotelPhone}</div>}
+                        {firstH?.hotelEmail && <div style={{ fontSize: 8.5, color: "#64748B" }}> {firstH.hotelEmail}</div>}
                       </div>
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 8, background: "#F8FAFC", borderRadius: 8, padding: "8px 10px" }}>
@@ -719,7 +765,7 @@ export default function InvoiceViewPage() {
                             {p.inclusions && <div style={{ fontSize: 7.5, color: "#94A3B8", marginTop: 2 }}>{p.inclusions}</div>}
                           </td>
                           <td style={{ padding: "8px 10px", color: "#334155", fontSize: 8 }}>{p.destinations}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#64748B" }}>{p.travelFrom ? fmtDate(p.travelFrom) : ""} – {p.travelTo ? fmtDate(p.travelTo) : ""}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#64748B" }}>{p.travelFrom ? fmtDate(p.travelFrom) : ""} " {p.travelTo ? fmtDate(p.travelTo) : ""}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{p.paxCount}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{formatINR(p.perPersonRate ?? 0)}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR((p.perPersonRate ?? 0) * (p.paxCount ?? 0))}</td>
@@ -788,7 +834,7 @@ export default function InvoiceViewPage() {
               </div>
             )}
 
-            {/* ── GST + SUMMARY + GRAND TOTAL ── */}
+            {/* -- GST + SUMMARY + GRAND TOTAL -- */}
             <div className="print-section-gap" style={{ display: "flex", gap: 12, marginBottom: 9 }}>
               {/* Left: GST table + words */}
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -847,15 +893,9 @@ export default function InvoiceViewPage() {
                     </div>
                   );
                 })()}
-                {gstTotal > 0 && (
-                  <div className="print-words-compact" style={{ padding: "7px 10px", background: "#FFF9E8", border: "1px solid #F4D98B", borderRadius: 8, marginBottom: 6 }}>
-                    <div style={{ fontSize: 7, fontWeight: 700, color: "#A16207", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 2 }}>Tax in Words</div>
-                    <div style={{ fontSize: 7.5, fontWeight: 500, color: "#78350F" }}>{amountToWords(gstTotal)}</div>
-                  </div>
-                )}
-                <div className="print-words-compact" style={{ padding: "7px 10px", background: "#FFF9E8", border: "1px solid #F4D98B", borderRadius: 8 }}>
-                  <div style={{ fontSize: 7, fontWeight: 700, color: "#A16207", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 2 }}>Amount in Words</div>
-                  <div style={{ fontSize: 7.5, fontWeight: 500, color: "#78350F" }}>{amountToWords(inv.total)}</div>
+                <div style={{ padding: "7px 10px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
+                  <div style={{ fontSize: 6.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 2 }}>Amount in Words</div>
+                  <div style={{ fontSize: 7.5, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
                 </div>
               </div>
 
@@ -906,7 +946,7 @@ export default function InvoiceViewPage() {
                     </div>
                     {inv.status === "paid" && (
                       <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 999, padding: "4px 11px", display: "flex", alignItems: "center", gap: 4 }}>
-                        <span style={{ fontSize: 8, color: "#4ADE80" }}>✓</span>
+                        <span style={{ fontSize: 8, color: "#4ADE80" }}>"</span>
                         <span style={{ fontSize: 7.5, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.5px" }}>PAID</span>
                       </div>
                     )}
@@ -915,7 +955,7 @@ export default function InvoiceViewPage() {
               </div>
             </div>
 
-            {/* ── PAYMENT HISTORY (screen only) ── */}
+            {/* -- PAYMENT HISTORY (screen only) -- */}
             {(inv.payments || []).length > 0 && (
               <div style={{ marginBottom: 8 }} className="print:hidden">
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
@@ -950,7 +990,7 @@ export default function InvoiceViewPage() {
               </div>
             )}
 
-            {/* ── BANK + TERMS ── */}
+            {/* -- BANK + TERMS -- */}
             <div className="print-bank-terms" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13, marginBottom: 9 }}>
               {/* Payment Details */}
               <div>
@@ -996,7 +1036,7 @@ export default function InvoiceViewPage() {
               </div>
             </div>
 
-            {/* ── SIGNATURE ── */}
+            {/* -- SIGNATURE -- */}
             <div className="print-sig-compact" style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", gap: 0, marginBottom: 6 }}>
               <div style={{ paddingRight: 18, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
                 <div style={{ height: 28, borderBottom: "1.5px solid #CBD5E1", marginBottom: 5 }} />
@@ -1012,10 +1052,10 @@ export default function InvoiceViewPage() {
               </div>
             </div>
 
-            {/* ── FOOTER ── */}
+            {/* -- FOOTER -- */}
             <div className="print-footer-compact" style={{ background: "linear-gradient(135deg, #F0F7FF, #F5F9FF)", border: "1px solid #DCE6F2", borderRadius: 12, padding: "11px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: 9, fontWeight: 600, color: "#2563EB", marginBottom: 3 }}>✈ Thank you for choosing Vimal Travels!</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#2563EB", marginBottom: 3 }}>Thank you for choosing Vimal Travels!</div>
                 <div style={{ fontSize: 7, color: "#64748B" }}>This is a computer generated invoice. Certified that the particulars are true and correct.</div>
                 <div style={{ fontSize: 7, color: "#64748B", marginTop: 2 }}>{COMPANY.email} · {COMPANY.mobile1} / {COMPANY.mobile2}</div>
               </div>
@@ -1029,71 +1069,69 @@ export default function InvoiceViewPage() {
         </div>
       </div>
 
-      {/* ── DELETE CONFIRM MODAL ── */}
+      {/* -- DELETE CONFIRM MODAL -- */}
+      {/* -- DELETE CONFIRM -- */}
       {delConfirm && (
-        <div className="print:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+        <div className="print:hidden fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:"rgba(0,0,0,0.55)", backdropFilter:"blur(8px)" }}>
+          <div className="w-full max-w-sm p-6 rounded-2xl" style={{ background: dark?"#1C1C1E":"#FFFFFF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#E7E0EC"}`, boxShadow:"0 24px 64px rgba(0,0,0,0.35)" }}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
-                <Trash2 className="w-5 h-5 text-red-600" />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background:"rgba(186,26,26,0.12)" }}>
+                <Trash2 className="w-5 h-5" style={{ color:"#B3261E" }} />
               </div>
               <div>
-                <h2 className="font-bold text-slate-900">Delete Invoice?</h2>
-                <p className="text-sm text-slate-500 mt-0.5">{inv.invoiceNo} · {inv.customer.name}</p>
+                <h2 className="font-bold text-[16px]" style={{ color: dark?"#E6E1E5":"#1C1B1F", fontFamily:"var(--font-roboto),Roboto,system-ui,sans-serif" }}>Delete Invoice?</h2>
+                <p className="text-[13px] mt-0.5" style={{ color: dark?"#938F99":"#79747E" }}>{inv.invoiceNo} · {inv.customer.name}</p>
               </div>
             </div>
-            <p className="text-sm text-slate-600 mb-5">This action cannot be undone. The invoice and all payment records will be permanently deleted.</p>
+            <p className="text-[14px] mb-5" style={{ color: dark?"#938F99":"#79747E" }}>This action cannot be undone. The invoice and all payment records will be permanently deleted.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDelConfirm(false)} className="flex-1 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                Cancel
-              </button>
-              <button onClick={handleDelete} className="flex-1 py-2.5 text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                Yes, Delete
-              </button>
+              <button onClick={() => setDelConfirm(false)} className="flex-1 py-2.5 text-[14px] font-semibold rounded-xl transition-colors"
+                style={{ color: dark?"#938F99":"#79747E", border:`1px solid ${dark?"rgba(255,255,255,0.08)":"#E7E0EC"}` }}>Cancel</button>
+              <button onClick={handleDelete} className="flex-1 py-2.5 text-[14px] font-semibold text-white rounded-xl" style={{ background:"#B3261E" }}>Yes, Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── PAYMENT MODAL ── */}
+      {/* -- PAYMENT MODAL -- */}
       {payModal && (
-        <div className="print:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <h2 className="font-bold text-slate-900">Record Payment</h2>
-              <button onClick={() => setPayModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+        <div className="print:hidden fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:"rgba(0,0,0,0.55)", backdropFilter:"blur(8px)" }}>
+          <div className="w-full max-w-md rounded-2xl overflow-hidden" style={{ background: dark?"#1C1C1E":"#FFFFFF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#E7E0EC"}`, boxShadow:"0 24px 64px rgba(0,0,0,0.35)" }}>
+            <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom:`1px solid ${dark?"rgba(255,255,255,0.07)":"#E7E0EC"}` }}>
+              <h2 className="font-bold text-[17px]" style={{ color: dark?"#E6E1E5":"#1C1B1F", fontFamily:"var(--font-roboto),Roboto,system-ui,sans-serif" }}>Record Payment</h2>
+              <button onClick={() => setPayModal(false)} style={{ color: dark?"#938F99":"#79747E" }}>
                 <X className="w-4 h-4" />
               </button>
             </div>
             {saved ? (
               <div className="py-12 text-center">
-                <CheckCircle className="w-14 h-14 text-emerald-500 mx-auto mb-3" />
-                <p className="font-bold text-slate-800 text-lg">Payment Recorded!</p>
+                <CheckCircle className="w-14 h-14 mx-auto mb-3" style={{ color:"#22C55E" }} />
+                <p className="font-bold text-[18px]" style={{ color: dark?"#E6E1E5":"#1C1B1F" }}>Payment Recorded!</p>
               </div>
             ) : (
               <div className="p-6 space-y-4">
-                <div className="bg-red-50 rounded-lg p-3 text-sm">
-                  <span className="text-slate-500">Balance Due: </span>
-                  <span className="font-bold text-red-600">₹{formatINR(balance)}</span>
+                <div className="rounded-xl p-3 text-[14px]" style={{ background: dark?"rgba(239,68,68,0.12)":"#FEE2E2" }}>
+                  <span style={{ color: dark?"#938F99":"#79747E" }}>Balance Due: </span>
+                  <span className="font-bold" style={{ color: dark?"#FCA5A5":"#B91C1C" }}>₹{formatINR(balance)}</span>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Amount (₹) *</label>
-                  <input
-                    type="number"
-                    value={payForm.amount}
-                    onChange={(e) => setPayForm((f) => ({ ...f, amount: e.target.value }))}
-                    placeholder={balance.toString()}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
+                {[
+                  { label:"Amount (₹) *", type:"number", value:payForm.amount, onChange:(v:string)=>setPayForm(f=>({...f,amount:v})), placeholder:balance.toString(), mono:true },
+                  { label:"Bank / UPI Name", type:"text", value:payForm.bankName, onChange:(v:string)=>setPayForm(f=>({...f,bankName:v})), placeholder:"ICICI Bank", mono:false },
+                  { label:"Reference / UTR No", type:"text", value:payForm.refNo, onChange:(v:string)=>setPayForm(f=>({...f,refNo:v})), placeholder:"UTR / Txn reference", mono:true },
+                ].map(({ label, type, value, onChange, placeholder, mono }) => (
+                  <div key={label}>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark?"#938F99":"#79747E" }}>{label}</label>
+                    <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+                      className={`w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none transition-colors${mono?" font-mono":""}`}
+                      style={{ background: dark?"rgba(255,255,255,0.06)":"#FAF7FF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#90E0EF"}`, color: dark?"#E6E1E5":"#1C1B1F" }} />
+                  </div>
+                ))}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Mode</label>
-                    <select
-                      value={payForm.mode}
-                      onChange={(e) => setPayForm((f) => ({ ...f, mode: e.target.value as PaymentMode }))}
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400"
-                    >
+                    <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark?"#938F99":"#79747E" }}>Mode</label>
+                    <select value={payForm.mode} onChange={e=>setPayForm(f=>({...f,mode:e.target.value as PaymentMode}))}
+                      className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
+                      style={{ background: dark?"rgba(255,255,255,0.06)":"#FAF7FF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#90E0EF"}`, color: dark?"#E6E1E5":"#1C1B1F" }}>
                       <option value="bank">Bank Transfer</option>
                       <option value="upi">UPI</option>
                       <option value="cash">Cash</option>
@@ -1102,47 +1140,18 @@ export default function InvoiceViewPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Date</label>
-                    <input
-                      type="date"
-                      value={payForm.date}
-                      onChange={(e) => setPayForm((f) => ({ ...f, date: e.target.value }))}
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400"
-                    />
+                    <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark?"#938F99":"#79747E" }}>Date</label>
+                    <input type="date" value={payForm.date} onChange={e=>setPayForm(f=>({...f,date:e.target.value}))}
+                      className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
+                      style={{ background: dark?"rgba(255,255,255,0.06)":"#FAF7FF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#90E0EF"}`, color: dark?"#E6E1E5":"#1C1B1F" }} />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Bank / UPI Name</label>
-                  <input
-                    value={payForm.bankName}
-                    onChange={(e) => setPayForm((f) => ({ ...f, bankName: e.target.value }))}
-                    placeholder="ICICI Bank"
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Reference / UTR No</label>
-                  <input
-                    value={payForm.refNo}
-                    onChange={(e) => setPayForm((f) => ({ ...f, refNo: e.target.value }))}
-                    placeholder="UTR / Txn reference"
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-400"
-                  />
-                </div>
                 <div className="flex gap-3 pt-1">
-                  <button
-                    onClick={() => setPayModal(false)}
-                    className="flex-1 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleAddPayment}
-                    disabled={!payForm.amount}
-                    className="flex-1 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-40 transition-colors"
-                  >
-                    Save Payment
-                  </button>
+                  <button onClick={() => setPayModal(false)} className="flex-1 py-2.5 text-[14px] font-semibold rounded-xl"
+                    style={{ color: dark?"#938F99":"#79747E", border:`1px solid ${dark?"rgba(255,255,255,0.08)":"#E7E0EC"}` }}>Cancel</button>
+                  <button onClick={handleAddPayment} disabled={!payForm.amount}
+                    className="flex-1 py-2.5 text-[14px] font-semibold text-white rounded-xl disabled:opacity-40"
+                    style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>Save Payment</button>
                 </div>
               </div>
             )}
