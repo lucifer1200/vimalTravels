@@ -246,22 +246,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div
       data-theme={dark ? "dark" : "light"}
-      className="flex h-screen overflow-hidden print:block print:h-auto print:overflow-visible"
+      className="flex h-screen overflow-hidden print:block print:h-auto print:overflow-visible md:p-3 md:gap-3"
       style={{
         fontFamily: FONT,
-        padding: "12px",
-        gap: "12px",
         background: dark
           ? "#111111"
           : "radial-gradient(ellipse 65% 55% at 8% 0%,rgba(0,119,182,0.06) 0%,transparent 65%),radial-gradient(ellipse 55% 65% at 92% 0%,rgba(0,150,199,0.045) 0%,transparent 60%),#F4F0FF",
         transition: "background 0.3s ease",
       }}
     >
-      {/* ── SIDEBAR ── */}
+      {/* ── SIDEBAR — desktop only ── */}
       <motion.aside
         animate={{ width: collapsed ? 64 : 224 }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-        className="flex flex-col shrink-0 print:hidden overflow-hidden relative"
+        className="hidden md:flex flex-col shrink-0 print:hidden overflow-hidden relative"
         style={{
           borderRadius: "24px",
           background: dark ? "rgba(20,20,20,0.85)" : "rgba(255,255,255,0.80)",
@@ -398,9 +396,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </motion.aside>
 
-      <main className="flex-1 overflow-auto print:block" style={{ minWidth:0 }}>
+      <main className="flex-1 overflow-auto print:block pb-16 md:pb-0" style={{ minWidth:0 }}>
         {children}
       </main>
+
+      {/* ── BOTTOM NAV — mobile only ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center print:hidden"
+        style={{
+          background: dark ? "rgba(20,20,20,0.95)" : "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+          borderTop: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,119,182,0.12)",
+          boxShadow: dark ? "0 -4px 20px rgba(0,0,0,0.30)" : "0 -4px 20px rgba(0,119,182,0.08)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}>
+        {NAV.filter(item => !item.superOnly || isSuperAdmin).map((item) => {
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link key={item.href} href={item.href}
+              className="flex-1 flex flex-col items-center justify-center py-2.5 gap-1 transition-all"
+              style={{ color: active ? (dark?"#48CAE4":"#0077B6") : (dark?"#938F99":"#79747E") }}>
+              <item.icon className="w-5 h-5" />
+              <span style={{ fontSize:9, fontWeight:700, letterSpacing:"0.04em" }}>{item.label}</span>
+              {active && <div style={{ width:16, height:2, borderRadius:2, background: dark?"#48CAE4":"#0077B6", marginTop:-2 }} />}
+            </Link>
+          );
+        })}
+        <button onClick={logout} className="flex-1 flex flex-col items-center justify-center py-2.5 gap-1"
+          style={{ color: dark?"#938F99":"#79747E" }}>
+          <LogOut className="w-5 h-5" />
+          <span style={{ fontSize:9, fontWeight:700, letterSpacing:"0.04em" }}>Sign Out</span>
+        </button>
+      </nav>
     </div>
   );
 }
