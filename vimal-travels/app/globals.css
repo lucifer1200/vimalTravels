@@ -73,6 +73,13 @@
   h1, h2, h3, h4 { @apply font-display; }
 }
 
+/* Dark theme select options */
+[data-theme="dark"] select option,
+[data-theme="dark"] select {
+  background-color: #1E1E2E;
+  color: #E6E1E5;
+}
+
 /* Hide scrollbar on mobile for admin main area */
 @media (max-width: 767px) {
   main::-webkit-scrollbar { display: none; }

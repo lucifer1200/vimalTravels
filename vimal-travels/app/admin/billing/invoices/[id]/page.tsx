@@ -1131,7 +1131,7 @@ export default function InvoiceViewPage() {
                     <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark?"#938F99":"#79747E" }}>Mode</label>
                     <select value={payForm.mode} onChange={e=>setPayForm(f=>({...f,mode:e.target.value as PaymentMode}))}
                       className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
-                      style={{ background: dark?"rgba(255,255,255,0.06)":"#FAF7FF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#90E0EF"}`, color: dark?"#E6E1E5":"#1C1B1F" }}>
+                      style={{ background: dark?"rgba(255,255,255,0.06)":"#FAF7FF", border:`1px solid ${dark?"rgba(255,255,255,0.14)":"#90E0EF"}`, color: dark?"#E6E1E5":"#1C1B1F", colorScheme: dark?"dark":"light" }}>
                       <option value="bank">Bank Transfer</option>
                       <option value="upi">UPI</option>
                       <option value="cash">Cash</option>

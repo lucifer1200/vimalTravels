@@ -79,6 +79,7 @@ const inpStyle = (dark: boolean): React.CSSProperties => ({
   background: dark ? "rgba(255,255,255,0.07)" : "#FAF7FF",
   border: `1px solid ${dark ? "rgba(255,255,255,0.12)" : "#90E0EF"}`,
   color: dark ? "#E6E1E5" : "#1C1B1F",
+  colorScheme: dark ? "dark" : "light",
 });
 const lblStyle = (dark: boolean): React.CSSProperties => ({
   display:"block", fontSize:"12px", fontWeight:700,
