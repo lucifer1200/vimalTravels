@@ -967,6 +967,11 @@ function NewInvoiceContent() {
                         onChange={(e)=>setNewCust(f=>({...f,[k]: k==="gstin"?e.target.value.toUpperCase():e.target.value}))}
                         placeholder={p} className={`${inp(dark)}${mono?" font-mono":""}`} style={inpStyle(dark)} />
                     ))}
+                    <select value={newCust.type} onChange={(e)=>setNewCust(f=>({...f,type:e.target.value as any}))}
+                      className={inp(dark)} style={inpStyle(dark)}>
+                      <option value="individual">Individual</option>
+                      <option value="corporate">Corporate</option>
+                    </select>
                     <div className="flex gap-2">
                       <button onClick={()=>setAddingCust(false)} className="flex-1 py-1.5 text-[13px] font-semibold rounded-xl" style={{ color:txtM, border:`1px solid ${cardBdr}` }}>Cancel</button>
                       <button onClick={saveNewCust} disabled={!newCust.name||!newCust.mobile} className="flex-1 py-1.5 text-[13px] font-semibold text-white rounded-xl disabled:opacity-40" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>Add &amp; Select</button>

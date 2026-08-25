@@ -24,7 +24,7 @@ async function sha256(text: string): Promise<string> {
 
 const SEED_USERS = [
   { username: "vimaltrls@gmail.com",  password: "Dilip$4440", role: "super_admin" as UserRole, displayName: "Super Admin" },
-  { username: "vimaltrsl1@gmail.com", password: "Mayur$4440", role: "admin"       as UserRole, displayName: "Admin"       },
+  { username: "vimaltrls1@gmail.com", password: "Mayur$4440", role: "admin"       as UserRole, displayName: "Admin"       },
 ];
 
 export async function seedUsers(): Promise<void> {
