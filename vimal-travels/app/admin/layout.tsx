@@ -67,7 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const logout = () => {
     clearSession(); setSession(null); setUsername(""); setPassword("");
-    router.push("/admin/billing");
+    router.push("/admin");
   };
 
   if (loading) return (
