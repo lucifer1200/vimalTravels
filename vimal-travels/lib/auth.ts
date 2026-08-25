@@ -14,7 +14,7 @@ export interface Session {
   loginAt: number;
 }
 
-const USERS_KEY   = "vt_users_v2";
+const USERS_KEY   = "vt_users_v3";
 const SESSION_KEY = "vt_admin_session";
 
 async function sha256(text: string): Promise<string> {
