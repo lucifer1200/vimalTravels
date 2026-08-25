@@ -179,16 +179,24 @@ function extractFromPdfText(text: string): PdfExtracted {
 
 /* -- Entry modal -- */
 function EntryModal({
-  type, initial, onSave, onClose, dark,
+  type, initial, onSave, onSaveMany, onClose, dark, onExtractName,
 }: {
   type: InvoiceType;
   initial: InvoiceItem;
   onSave: (item: InvoiceItem) => void;
+  onSaveMany?: (items: InvoiceItem[]) => void;
   onClose: () => void;
   dark: boolean;
+  onExtractName?: (name: string) => void;
 }) {
   const [item, setItem] = useState<InvoiceItem>({ ...initial });
   const upd = (updates: Partial<InvoiceItem>) => setItem((p) => ({ ...p, ...updates }));
+
+  const isPaxForm = type === "air-intl" || type === "air-dom" || type === "train" || type === "bus" || type === "visa";
+  const initPax = (initial as any).paxName
+    ? [{ id: crypto.randomUUID(), paxNo: (initial as any).paxNo || "001", paxName: (initial as any).paxName || "" }]
+    : [{ id: crypto.randomUUID(), paxNo: "001", paxName: "" }];
+  const [paxRows, setPaxRows] = useState<{ id: string; paxNo: string; paxName: string }[]>(initPax);
 
   const [extracted, setExtracted]   = useState<PdfExtracted | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -240,6 +248,7 @@ function EntryModal({
           if (ext.amount)     updates.amount     = parseFloat(ext.amount) || 0;
           if (ext.date)       updates.travelDate = convertDateToISO(ext.date);
           upd(updates as Partial<InvoiceItem>);
+          if (ext.paxName) { setPaxRows(r => r.map((p,i) => i===0 ? {...p, paxName: ext.paxName!} : p)); onExtractName?.(ext.paxName); }
         } else if (type === "train") {
           const updates: Partial<TrainItem> = {};
           if (ext.paxName) updates.paxName    = ext.paxName;
@@ -247,8 +256,9 @@ function EntryModal({
           if (ext.amount)  updates.amount     = parseFloat(ext.amount) || 0;
           if (ext.date)    updates.travelDate = convertDateToISO(ext.date);
           upd(updates as Partial<InvoiceItem>);
+          if (ext.paxName) { setPaxRows(r => r.map((p,i) => i===0 ? {...p, paxName: ext.paxName!} : p)); onExtractName?.(ext.paxName); }
         } else if (type === "visa") {
-          if (ext.paxName) upd({ applicantName: ext.paxName } as Partial<InvoiceItem>);
+          if (ext.paxName) { upd({ applicantName: ext.paxName } as Partial<InvoiceItem>); setPaxRows(r => r.map((p,i) => i===0 ? {...p, paxName: ext.paxName!} : p)); onExtractName?.(ext.paxName); }
         }
       }
     } catch (err) {
@@ -335,9 +345,17 @@ function EntryModal({
             const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
-                <div className="grid grid-cols-4 gap-3">
-                  <div><label style={lblStyle(dark)}>Pax No</label><input value={f.paxNo} onChange={(e) => upd({paxNo:e.target.value})} placeholder="001" className={inp(dark)} style={inpStyle(dark)} /></div>
-                  <div className="col-span-3"><label style={lblStyle(dark)}>Passenger Name</label><input value={f.paxName} onChange={(e) => upd({paxName:e.target.value.toUpperCase()})} placeholder="RAJESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)} /></div>
+                <div className="space-y-2">
+                  {paxRows.map((pr, idx) => (
+                    <div key={pr.id} className="grid grid-cols-4 gap-3 items-end">
+                      <div><label style={lblStyle(dark)}>Pax No</label><input value={pr.paxNo} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxNo:e.target.value}:p))} placeholder="001" className={inp(dark)} style={inpStyle(dark)} /></div>
+                      <div className="col-span-3 flex gap-2 items-end">
+                        <div className="flex-1"><label style={lblStyle(dark)}>Passenger Name</label><input value={pr.paxName} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxName:e.target.value.toUpperCase()}:p))} placeholder="RAJESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)} /></div>
+                        {paxRows.length > 1 && <button onClick={()=>setPaxRows(r=>r.filter((_,i)=>i!==idx))} className="mb-0.5 p-2 rounded-lg" style={{ color:"#B3261E", border:`1px solid rgba(179,38,30,0.3)` }}>✕</button>}
+                      </div>
+                    </div>
+                  ))}
+                  <button onClick={()=>setPaxRows(r=>[...r,{id:crypto.randomUUID(),paxNo:String(r.length+1).padStart(3,"0"),paxName:""}])} className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg" style={{ color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(255,255,255,0.12)":"#90E0EF"}` }}>+ Add Passenger</button>
                 </div>
                 <div className="p-3 rounded-xl space-y-3" style={{ background:sectionBg, border:`1px solid ${sectionBorder}` }}>
                   <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color:textMuted }}>Outbound</p>
@@ -380,8 +398,16 @@ function EntryModal({
             const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
-                <div className="grid grid-cols-4 gap-3">
-                  <div className="col-span-2"><label style={lblStyle(dark)}>Passenger Name</label><input value={t.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="RAHUL KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                <div className="space-y-2">
+                  {paxRows.map((pr, idx) => (
+                    <div key={pr.id} className="flex gap-2 items-end">
+                      <div className="flex-1"><label style={lblStyle(dark)}>Passenger Name</label><input value={pr.paxName} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxName:e.target.value.toUpperCase()}:p))} placeholder="RAHUL KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                      {paxRows.length > 1 && <button onClick={()=>setPaxRows(r=>r.filter((_,i)=>i!==idx))} className="mb-0.5 p-2 rounded-lg" style={{ color:"#B3261E", border:`1px solid rgba(179,38,30,0.3)` }}>✕</button>}
+                    </div>
+                  ))}
+                  <button onClick={()=>setPaxRows(r=>[...r,{id:crypto.randomUUID(),paxNo:String(r.length+1).padStart(3,"0"),paxName:""}])} className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg" style={{ color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(255,255,255,0.12)":"#90E0EF"}` }}>+ Add Passenger</button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
                   <div><label style={lblStyle(dark)}>Train No</label><input value={t.trainNo} onChange={(e)=>upd({trainNo:e.target.value})} placeholder="16591" className={`${inp(dark)} font-mono`} style={inpStyle(dark)}/></div>
                   <div><label style={lblStyle(dark)}>Train Name</label><input value={t.trainName} onChange={(e)=>upd({trainName:e.target.value.toUpperCase()})} placeholder="HAMPI EXP" className={`${inp(dark)} uppercase`} style={inpStyle(dark)}/></div>
                 </div>
@@ -407,8 +433,16 @@ function EntryModal({
             const scStyle: React.CSSProperties = { background: dark?"rgba(251,191,36,0.10)":"#FFFBEB", border:`1px solid ${dark?"rgba(251,191,36,0.25)":"#FDE68A"}`, color: dark?"#FCD34D":"#92400E" };
             return (
               <>
-                <div className="grid grid-cols-4 gap-3">
-                  <div className="col-span-2"><label style={lblStyle(dark)}>Passenger Name</label><input value={b.paxName} onChange={(e)=>upd({paxName:e.target.value.toUpperCase()})} placeholder="SURESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                <div className="space-y-2">
+                  {paxRows.map((pr, idx) => (
+                    <div key={pr.id} className="flex gap-2 items-end">
+                      <div className="flex-1"><label style={lblStyle(dark)}>Passenger Name</label><input value={pr.paxName} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxName:e.target.value.toUpperCase()}:p))} placeholder="SURESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)}/></div>
+                      {paxRows.length > 1 && <button onClick={()=>setPaxRows(r=>r.filter((_,i)=>i!==idx))} className="mb-0.5 p-2 rounded-lg" style={{ color:"#B3261E", border:`1px solid rgba(179,38,30,0.3)` }}>✕</button>}
+                    </div>
+                  ))}
+                  <button onClick={()=>setPaxRows(r=>[...r,{id:crypto.randomUUID(),paxNo:String(r.length+1).padStart(3,"0"),paxName:""}])} className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg" style={{ color: dark?"#90E0EF":"#0077B6", border:`1px solid ${dark?"rgba(255,255,255,0.12)":"#90E0EF"}` }}>+ Add Passenger</button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
                   <div><label style={lblStyle(dark)}>From</label><input value={b.fromCity} onChange={(e)=>upd({fromCity:e.target.value})} placeholder="Bangalore" className={inp(dark)} style={inpStyle(dark)}/></div>
                   <div><label style={lblStyle(dark)}>To</label><input value={b.toCity} onChange={(e)=>upd({toCity:e.target.value})} placeholder="Mumbai" className={inp(dark)} style={inpStyle(dark)}/></div>
                 </div>
@@ -583,8 +617,17 @@ function EntryModal({
 
         <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop:`1px solid ${dark?"rgba(255,255,255,0.07)":"#E7E0EC"}` }}>
           <button onClick={onClose} className="px-4 py-2.5 text-[14px] font-semibold rounded-xl" style={{ color:textMuted, border:`1px solid ${dark?"rgba(255,255,255,0.08)":"#E7E0EC"}` }}>Cancel</button>
-          <button onClick={() => onSave(item)} className="px-5 py-2.5 text-[14px] font-semibold text-white rounded-xl" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>
-            Save Entry
+          <button onClick={() => {
+            if (isPaxForm && paxRows.length > 1 && onSaveMany) {
+              const shared = { ...item };
+              const entries = paxRows.map((pr) => ({ ...shared, id: crypto.randomUUID(), paxNo: pr.paxNo, paxName: pr.paxName, applicantName: pr.paxName } as InvoiceItem));
+              onSaveMany(entries);
+            } else {
+              const firstPax = paxRows[0];
+              onSave({ ...item, paxNo: firstPax?.paxNo ?? (item as any).paxNo, paxName: firstPax?.paxName ?? (item as any).paxName, applicantName: firstPax?.paxName ?? (item as any).applicantName } as InvoiceItem);
+            }
+          }} className="px-5 py-2.5 text-[14px] font-semibold text-white rounded-xl" style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)" }}>
+            Save Entry{isPaxForm && paxRows.length > 1 ? ` (${paxRows.length} pax)` : ""}
           </button>
         </div>
       </div>
@@ -700,6 +743,11 @@ function NewInvoiceContent() {
     } else {
       setItems((prev) => [...prev, item]);
     }
+    setModalItem(null); setEditingId(null);
+  };
+
+  const saveManyEntries = (newItems: InvoiceItem[]) => {
+    setItems((prev) => [...prev, ...newItems]);
     setModalItem(null); setEditingId(null);
   };
 
@@ -1137,8 +1185,10 @@ function NewInvoiceContent() {
           type={type}
           initial={modalItem}
           onSave={saveEntry}
+          onSaveMany={saveManyEntries}
           onClose={() => { setModalItem(null); setEditingId(null); }}
           dark={dark}
+          onExtractName={(name) => { if (!customer) setCustSearch(name); }}
         />
       )}
     </div>
