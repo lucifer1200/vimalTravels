@@ -523,11 +523,13 @@ export default function InvoiceViewPage() {
                               <div style={{ fontSize: 6, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>Base Fare</div>
                               <div style={{ fontSize: fareNumSz, fontWeight: 700, color: "#172554", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(f.amount)}</div>
                             </div>
+                            {gstTotal > 0 && <>
                             <div style={{ width: "65%", height: 0, borderTop: "1.5px dashed #BFDBFE" }} />
                             <div style={{ position: "relative", textAlign: "center", width: "100%" }}>
                               <div style={{ fontSize: 6, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>Svc Charge</div>
                               <div style={{ fontSize: fareNumSz, fontWeight: 700, color: "#D97706", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(f.serviceCharge || 0)}</div>
                             </div>
+                            </>}
                           </div>
 
                         </div>
@@ -585,7 +587,7 @@ export default function InvoiceViewPage() {
                 <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
-                      {["#","Passenger","Train","Route","Date","Class / Seat","PNR","Fare (₹)","Svc (₹)"].map((h, i) => (
+                      {["#","Passenger","Train","Route","Date","Class / Seat","PNR","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
                         <th key={i} style={{ ...thCell(i >= 7) }}>{h}</th>
                       ))}
                     </tr>
@@ -609,7 +611,7 @@ export default function InvoiceViewPage() {
                           </td>
                           <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 8 }}>{t.pnr}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(t.amount)}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(t.serviceCharge || 0)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(t.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
@@ -624,7 +626,7 @@ export default function InvoiceViewPage() {
                 <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
-                      {["#","Passenger","Route","Date / Time","Seat","Ticket No","Fare (₹)","Svc (₹)"].map((h, i) => (
+                      {["#","Passenger","Route","Date / Time","Seat","Ticket No","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
                         <th key={i} style={{ ...thCell(i >= 6) }}>{h}</th>
                       ))}
                     </tr>
@@ -644,7 +646,7 @@ export default function InvoiceViewPage() {
                           <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, fontSize: 8, color: "#334155" }}>{b.seatNo}</td>
                           <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 8 }}>{b.ticketNo}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(b.amount)}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(b.serviceCharge || 0)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(b.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
@@ -702,7 +704,7 @@ export default function InvoiceViewPage() {
                     <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
                       <thead>
                         <tr style={{ ...tblH }}>
-                          {["#","Lead Guest","Room Type","Check-In","Check-Out","Nights","Meal","HCN / Ref","Room Fare (₹)","Svc (₹)"].map((h, i) => (
+                          {["#","Lead Guest","Room Type","Check-In","Check-Out","Nights","Meal","HCN / Ref","Room Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
                             <th key={i} style={{ ...thCell(i >= 8), whiteSpace: "nowrap" }}>{h}</th>
                           ))}
                         </tr>
@@ -733,7 +735,7 @@ export default function InvoiceViewPage() {
                                 {h.bookingRef && <div style={{ color: "#64748B" }}>{h.bookingRef}</div>}
                               </td>
                               <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(h.amount)}</td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(h.serviceCharge || 0)}</td>
+                              {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(h.serviceCharge || 0)}</td>}
                             </tr>
                           );
                         })}

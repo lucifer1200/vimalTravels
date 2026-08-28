@@ -1140,15 +1140,17 @@ function NewInvoiceContent() {
                     <span>{type === "hotel" ? "Room Fare" : "Ticket Fare"} <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background: dark?"rgba(255,255,255,0.08)":"#F4F0FF", color:txtM }}>exempt</span></span>
                     <span className="font-semibold">{fmt(fareTotal)}</span>
                   </div>
-                  <div className="flex justify-between" style={{ color:"#D97706" }}>
-                    <span>Service Charge <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span>
-                    <span className="font-semibold">{fmt(taxableTotal)}</span>
-                  </div>
+                  {gstType !== "none" && (
+                    <div className="flex justify-between" style={{ color:"#D97706" }}>
+                      <span>Service Charge <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span>
+                      <span className="font-semibold">{fmt(taxableTotal)}</span>
+                    </div>
+                  )}
                 </>
               ) : isVisa ? (
                 <>
                   <div className="flex justify-between" style={{ color:txtP }}><span>Embassy Fee</span><span className="font-semibold">{fmt(fareTotal)}</span></div>
-                  <div className="flex justify-between" style={{ color:"#D97706" }}><span>Service Fee <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
+                  {gstType !== "none" && <div className="flex justify-between" style={{ color:"#D97706" }}><span>Service Fee <span className="text-[10px] px-1.5 py-0.5 rounded ml-1" style={{ background:"rgba(217,119,6,0.12)", color:"#D97706" }}>taxable</span></span><span className="font-semibold">{fmt(taxableTotal)}</span></div>}
                 </>
               ) : (
                 <div className="flex justify-between" style={{ color:txtP }}><span>Taxable Amount</span><span className="font-semibold">{fmt(taxableTotal)}</span></div>
