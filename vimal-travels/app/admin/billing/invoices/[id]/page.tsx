@@ -404,7 +404,6 @@ export default function InvoiceViewPage() {
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#172554", textTransform: "uppercase", letterSpacing: "0.8px" }}>Flight Itinerary</div>
                   <div style={{ flex: 1, height: 1.5, background: "linear-gradient(90deg,#BFDBFE,transparent)" }} />
-                  {inv.airline && <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", background: "linear-gradient(135deg,#EFF6FF,#DBEAFE)", padding: "4px 13px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{inv.airline}</span>}
                 </div>
 
                 {/* Premium flight cards — auto-compact when multiple items */}
