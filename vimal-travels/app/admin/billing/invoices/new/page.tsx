@@ -179,7 +179,7 @@ function extractFromPdfText(text: string): PdfExtracted {
 
 /* -- Entry modal -- */
 function EntryModal({
-  type, initial, onSave, onSaveMany, onClose, dark, onExtractName,
+  type, initial, onSave, onSaveMany, onClose, dark, onExtractName, gstType,
 }: {
   type: InvoiceType;
   initial: InvoiceItem;
@@ -188,6 +188,7 @@ function EntryModal({
   onClose: () => void;
   dark: boolean;
   onExtractName?: (name: string) => void;
+  gstType?: string;
 }) {
   const [item, setItem] = useState<InvoiceItem>({ ...initial });
   const upd = (updates: Partial<InvoiceItem>) => setItem((p) => ({ ...p, ...updates }));
@@ -383,10 +384,12 @@ function EntryModal({
                     <label style={lblStyle(dark)}>Base Fare (₹) <span style={{ color:textMuted, fontWeight:400 }}>— exempt</span></label>
                     <input type="number" value={f.amount||""} onChange={(e) => upd({amount:parseFloat(e.target.value)||0})} placeholder="4500" className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }} />
                   </div>
-                  <div>
-                    <label style={lblStyle(dark)}>Service Charge (₹)</label>
-                    <input type="number" value={f.serviceCharge||""} onChange={(e) => upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle} />
-                  </div>
+                  {gstType !== "none" && (
+                    <div>
+                      <label style={lblStyle(dark)}>Service Charge (₹)</label>
+                      <input type="number" value={f.serviceCharge||""} onChange={(e) => upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle} />
+                    </div>
+                  )}
                 </div>
               </>
             );
@@ -421,7 +424,7 @@ function EntryModal({
                 <div className="grid grid-cols-3 gap-3">
                   <div><label style={lblStyle(dark)}>PNR</label><input value={t.pnr} onChange={(e)=>upd({pnr:e.target.value.toUpperCase()})} placeholder="1234567890" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)}/></div>
                   <div><label style={lblStyle(dark)}>Ticket Fare (₹)</label><input type="number" value={t.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
-                  <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={t.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>
+                  {gstType !== "none" && <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={t.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>}
                 </div>
               </>
             );
@@ -454,7 +457,7 @@ function EntryModal({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div><label style={lblStyle(dark)}>Ticket Fare (₹)</label><input type="number" value={b.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/></div>
-                  <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={b.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>
+                  {gstType !== "none" && <div><label style={lblStyle(dark)}>Service Charge (₹) </label><input type="number" value={b.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} className={`${inp(dark)} font-bold`} style={scStyle}/></div>}
                 </div>
               </>
             );
@@ -559,10 +562,12 @@ function EntryModal({
                     <label style={lblStyle(dark)}>Room Amount (₹) <span style={{ color:textMuted, fontWeight:400, fontSize:"10px" }}>— GST exempt</span></label>
                     <input type="number" value={h.amount||""} onChange={(e)=>upd({amount:parseFloat(e.target.value)||0})} placeholder="8500" className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }}/>
                   </div>
-                  <div>
-                    <label style={lblStyle(dark)}>Service Charge (₹) </label>
-                    <input type="number" value={h.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle}/>
-                  </div>
+                  {gstType !== "none" && (
+                    <div>
+                      <label style={lblStyle(dark)}>Service Charge (₹) </label>
+                      <input type="number" value={h.serviceCharge||""} onChange={(e)=>upd({serviceCharge:parseFloat(e.target.value)||0})} placeholder="500" className={`${inp(dark)} font-bold`} style={scStyle}/>
+                    </div>
+                  )}
                 </div>
               </>
             );
@@ -1189,6 +1194,7 @@ function NewInvoiceContent() {
           onClose={() => { setModalItem(null); setEditingId(null); }}
           dark={dark}
           onExtractName={(name) => { if (!customer) setCustSearch(name); }}
+          gstType={gstType}
         />
       )}
     </div>
