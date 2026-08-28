@@ -305,9 +305,9 @@ export default function InvoiceViewPage() {
             </div>
             {/* Left: logo + agency */}
             <div style={{ display: "flex", alignItems: "center", gap: 12, position: "relative", zIndex: 1 }}>
-              <div style={{ height: 44, width: 120, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ height: 58, width: 155, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <img src={logoB64} alt="Vimal Travels"
-                  style={{ height: 44, width: "auto", maxWidth: 120, objectFit: "contain" }}
+                  style={{ height: 58, width: "auto", maxWidth: 155, objectFit: "contain" }}
                   onError={(e) => {
                     const el = e.target as HTMLImageElement;
                     el.style.display = "none";
@@ -321,9 +321,8 @@ export default function InvoiceViewPage() {
               </div>
               <div>
                 <div style={{ fontSize: 26, fontWeight: 700, color: "#172554", letterSpacing: "-0.5px", lineHeight: 1 }}>VIMAL TRAVELS</div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: "#2563EB", letterSpacing: "1px", textTransform: "uppercase", marginTop: 3 }}>Premium Travel Services</div>
-                <div style={{ fontSize: 9.5, color: "#64748B", marginTop: 3 }}>{COMPANY.address}</div>
-                <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 2 }}>GSTIN: {COMPANY.gstin}</div>
+                <div style={{ fontSize: 9.5, color: "#475569", marginTop: 4 }}>{COMPANY.address}</div>
+                <div style={{ fontSize: 9, color: "#334155", marginTop: 2, fontWeight: 600 }}>GSTIN: {COMPANY.gstin}</div>
               </div>
             </div>
             {/* Right: badge + meta */}
@@ -340,8 +339,8 @@ export default function InvoiceViewPage() {
                   ["SERVICE", TYPE_LABEL[inv.type]],
                 ].map(([lbl, val]) => (
                   <div key={lbl} style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
-                    <span style={{ fontSize: 8.5, fontWeight: 500, color: "#94A3B8" }}>{lbl}</span>
-                    <span style={{ fontSize: lbl === "INVOICE NO" ? 13 : 10.5, fontWeight: lbl === "INVOICE NO" ? 700 : 600, color: lbl === "INVOICE NO" ? "#172554" : "#1E293B", fontFamily: lbl === "INVOICE NO" ? "monospace" : "inherit" }}>{val}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: "#64748B" }}>{lbl}</span>
+                    <span style={{ fontSize: lbl === "INVOICE NO" ? 15 : 12, fontWeight: lbl === "INVOICE NO" ? 700 : 600, color: lbl === "INVOICE NO" ? "#172554" : "#1E293B", fontFamily: lbl === "INVOICE NO" ? "monospace" : "inherit" }}>{val}</span>
                   </div>
                 ))}
               </div>
@@ -359,7 +358,7 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#2563EB,#06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 7, color: "white", fontWeight: 700, lineHeight: 1 }}>B</span>
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
                 {inv.customer.mobile && <div style={{ fontSize: 11.5, color: "#64748B", marginTop: 3 }}>" {inv.customer.mobile}</div>}
@@ -374,7 +373,7 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#7C3AED,#6366F1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 8, lineHeight: 1 }}></span>
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
                 </div>
                 {([
                   ["Type", TYPE_LABEL[inv.type]],
