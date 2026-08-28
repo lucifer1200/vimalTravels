@@ -6,7 +6,7 @@ export type CustomerType   = "individual" | "corporate";
 export type InvoiceType    = "air-intl" | "air-dom" | "train" | "bus" | "hotel" | "package" | "visa" | "other";
 export type GSTType        = "cgst_sgst" | "igst" | "none";
 export type PaymentMode    = "cash" | "upi" | "bank" | "cheque" | "card" | "other";
-export type InvoiceStatus  = "paid" | "partial" | "due";
+export type InvoiceStatus  = "paid" | "partial" | "due" | "cancelled";
 export type VoucherStatus  = "pending" | "confirmed" | "cancelled";
 export type MealPlan       = "EP" | "CP" | "MAP" | "AP";
 

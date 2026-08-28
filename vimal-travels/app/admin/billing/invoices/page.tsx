@@ -323,6 +323,7 @@ function InvoicesPageContent() {
   const paid    = periodFiltered.filter((i) => i.status === "paid");
   const due     = periodFiltered.filter((i) => i.status === "due");
   const partial = periodFiltered.filter((i) => i.status === "partial");
+  const cancelled = periodFiltered.filter((i) => i.status === "cancelled");
   const totalRevenue = paid.reduce((s, i) => s + i.total, 0);
 
   const typeTabs: { label: string; value: Filter }[] = [
@@ -337,9 +338,10 @@ function InvoicesPageContent() {
   ];
 
   const statusTabs: { label: string; value: Filter; count: number; dot: string; bg: string; text: string }[] = [
-    { label:"Due",     value:"due",     count:due.length,     dot:"#EF4444", bg: dark?"rgba(239,68,68,0.15)":"#FEE2E2",  text: dark?"#FCA5A5":"#B91C1C" },
-    { label:"Partial", value:"partial", count:partial.length, dot:"#F59E0B", bg: dark?"rgba(245,158,11,0.15)":"#FEF3C7", text: dark?"#FDE68A":"#B45309" },
-    { label:"Paid",    value:"paid",    count:paid.length,    dot:"#22C55E", bg: dark?"rgba(34,197,94,0.15)":"#DCFCE7",  text: dark?"#86EFAC":"#15803D" },
+    { label:"Due",       value:"due",       count:due.length,       dot:"#EF4444", bg: dark?"rgba(239,68,68,0.15)":"#FEE2E2",  text: dark?"#FCA5A5":"#B91C1C" },
+    { label:"Partial",   value:"partial",   count:partial.length,   dot:"#F59E0B", bg: dark?"rgba(245,158,11,0.15)":"#FEF3C7", text: dark?"#FDE68A":"#B45309" },
+    { label:"Paid",      value:"paid",      count:paid.length,      dot:"#22C55E", bg: dark?"rgba(34,197,94,0.15)":"#DCFCE7",  text: dark?"#86EFAC":"#15803D" },
+    { label:"Cancelled", value:"cancelled", count:cancelled.length, dot:"#94A3B8", bg: dark?"rgba(148,163,184,0.15)":"#F1F5F9", text: dark?"#94A3B8":"#64748B" },
   ];
 
   /* -- Theme tokens -- */
@@ -652,8 +654,8 @@ function InvoicesPageContent() {
               const invDays = Math.floor((new Date().getTime() - new Date(inv.date).getTime()) / 86400000);
               const isOverdue = inv.status !== "paid" && invDays > 30;
               const sc = dark
-                ? { paid:{bg:"rgba(34,197,94,0.15)",text:"#86EFAC",dot:"#22C55E"}, partial:{bg:"rgba(245,158,11,0.15)",text:"#FDE68A",dot:"#F59E0B"}, due:{bg:"rgba(239,68,68,0.15)",text:"#FCA5A5",dot:"#EF4444"} }[inv.status]
-                : { paid:{bg:"#DCFCE7",text:"#15803D",dot:"#22C55E"}, partial:{bg:"#FEF3C7",text:"#B45309",dot:"#F59E0B"}, due:{bg:"#FEE2E2",text:"#B91C1C",dot:"#EF4444"} }[inv.status];
+                ? { paid:{bg:"rgba(34,197,94,0.15)",text:"#86EFAC",dot:"#22C55E"}, partial:{bg:"rgba(245,158,11,0.15)",text:"#FDE68A",dot:"#F59E0B"}, due:{bg:"rgba(239,68,68,0.15)",text:"#FCA5A5",dot:"#EF4444"}, cancelled:{bg:"rgba(148,163,184,0.15)",text:"#94A3B8",dot:"#64748B"} }[inv.status]
+                : { paid:{bg:"#DCFCE7",text:"#15803D",dot:"#22C55E"}, partial:{bg:"#FEF3C7",text:"#B45309",dot:"#F59E0B"}, due:{bg:"#FEE2E2",text:"#B91C1C",dot:"#EF4444"}, cancelled:{bg:"#F1F5F9",text:"#64748B",dot:"#94A3B8"} }[inv.status];
               return (
                 <motion.div key={inv.id} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.05*Math.min(idx,8) }}>
                   {/* Mobile card */}

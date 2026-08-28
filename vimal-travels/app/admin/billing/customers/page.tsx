@@ -22,8 +22,8 @@ const TYPE_BG: Record<string, string> = {
   "air-intl":"#DBEAFE","air-dom":"#EDE9FE",train:"#D1FAE5",bus:"#FEF3C7",
   hotel:"#CFFAFE",package:"#FCE7F3",visa:"#E0F2FE",other:"#F1F5F9",
 };
-const STATUS_DOT: Record<InvoiceStatus, string> = { paid:"#22C55E", partial:"#F59E0B", due:"#EF4444" };
-const STATUS_LBL: Record<InvoiceStatus, string> = { paid:"Paid", partial:"Partial", due:"Due" };
+const STATUS_DOT: Record<InvoiceStatus, string> = { paid:"#22C55E", partial:"#F59E0B", due:"#EF4444", cancelled:"#94A3B8" };
+const STATUS_LBL: Record<InvoiceStatus, string> = { paid:"Paid", partial:"Partial", due:"Due", cancelled:"Cancelled" };
 
 const EMPTY: Omit<Customer, "id" | "code" | "createdAt"> = {
   name: "", mobile: "", email: "", address: "", city: "", state: "Karnataka",

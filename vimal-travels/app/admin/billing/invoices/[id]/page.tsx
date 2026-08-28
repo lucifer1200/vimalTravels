@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  getInvoiceById, addPayment, deleteInvoice, addInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
+  getInvoiceById, addPayment, deleteInvoice, addInvoice, saveInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
   type Invoice, type FlightItem, type PackageItem, type VisaItem, type GenericItem,
   type TrainItem, type BusItem, type HotelItem, type InvoiceStatus, type PaymentMode, COMPANY, TYPE_LABEL,
 } from "@/lib/billing";
@@ -10,9 +10,10 @@ import { ArrowLeft, Printer, Share2, Plus, X, CheckCircle, ShieldCheck, Pencil, 
 import { useAdminDark } from "@/lib/useAdminDark";
 
 const STATUS_STYLE: Record<InvoiceStatus, { cls: string; label: string }> = {
-  paid:    { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "PAID" },
-  partial: { cls: "bg-amber-50 text-amber-700 border-amber-200",       label: "PARTIALLY PAID" },
-  due:     { cls: "bg-red-50 text-red-600 border-red-200",             label: "UNPAID" },
+  paid:      { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "PAID" },
+  partial:   { cls: "bg-amber-50 text-amber-700 border-amber-200",       label: "PARTIALLY PAID" },
+  due:       { cls: "bg-red-50 text-red-600 border-red-200",             label: "UNPAID" },
+  cancelled: { cls: "bg-slate-100 text-slate-500 border-slate-300",      label: "CANCELLED" },
 };
 
 /* thin divider */
@@ -98,6 +99,11 @@ export default function InvoiceViewPage() {
   const handleDelete = async () => {
     await deleteInvoice(inv.id);
     router.push("/admin/billing/invoices");
+  };
+
+  const handleCancel = async () => {
+    await saveInvoice({ ...inv, status: "cancelled" });
+    router.refresh();
   };
 
   const handleDuplicate = async () => {
@@ -229,12 +235,19 @@ export default function InvoiceViewPage() {
         <div className="flex items-center gap-2 mr-2">
           <span className="text-[15px] font-bold" style={{ color: toolbarText }}>{inv.invoiceNo}</span>
           <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{
-            background: inv.status === "paid" ? (dark?"rgba(34,197,94,0.15)":"#DCFCE7") : inv.status === "partial" ? (dark?"rgba(245,158,11,0.15)":"#FEF3C7") : (dark?"rgba(239,68,68,0.15)":"#FEE2E2"),
-            color: inv.status === "paid" ? (dark?"#86EFAC":"#15803D") : inv.status === "partial" ? (dark?"#FDE68A":"#B45309") : (dark?"#FCA5A5":"#B91C1C"),
+            background: inv.status === "paid" ? (dark?"rgba(34,197,94,0.15)":"#DCFCE7") : inv.status === "partial" ? (dark?"rgba(245,158,11,0.15)":"#FEF3C7") : inv.status === "cancelled" ? (dark?"rgba(148,163,184,0.15)":"#F1F5F9") : (dark?"rgba(239,68,68,0.15)":"#FEE2E2"),
+            color: inv.status === "paid" ? (dark?"#86EFAC":"#15803D") : inv.status === "partial" ? (dark?"#FDE68A":"#B45309") : inv.status === "cancelled" ? (dark?"#94A3B8":"#64748B") : (dark?"#FCA5A5":"#B91C1C"),
           }}>{inv.status.toUpperCase()}</span>
         </div>
         <div className="flex-1" />
         <div className="flex items-center gap-2">
+          {inv.status !== "cancelled" && (
+            <button onClick={handleCancel}
+              className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 rounded-xl transition-all"
+              style={{ color:"#64748B", background: dark?"rgba(148,163,184,0.10)":"rgba(148,163,184,0.10)", border:"1px solid rgba(148,163,184,0.30)" }}>
+              Cancel Invoice
+            </button>
+          )}
           <button onClick={() => setDelConfirm(true)}
             className="flex items-center gap-1.5 text-[13px] font-semibold px-3 py-2 rounded-xl transition-all"
             style={{ color:"#EF4444", background: dark?"rgba(239,68,68,0.10)":"rgba(239,68,68,0.08)", border:"1px solid rgba(239,68,68,0.20)" }}>
