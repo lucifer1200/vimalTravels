@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, FileText, BarChart2,
+  LayoutDashboard, Users, FileText, BarChart2, Trash2,
   LogOut, PanelLeftClose, PanelLeftOpen, Eye, EyeOff,
   ShieldCheck, Shield, User, Lock, BarChart3, Globe, Moon, Sun,
 } from "lucide-react";
@@ -15,6 +15,7 @@ const NAV = [
   { href: "/admin/billing/customers", icon: Users,           label: "Customers", superOnly: false },
   { href: "/admin/billing/invoices",  icon: FileText,        label: "Invoices",  superOnly: false },
   { href: "/admin/billing/reports",   icon: BarChart2,       label: "Reports",   superOnly: true  },
+  { href: "/admin/billing/trash",     icon: Trash2,          label: "Trash",     superOnly: false },
 ];
 
 const HERO = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&auto=format&fit=crop&q=80";

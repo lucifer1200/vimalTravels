@@ -50,7 +50,8 @@ create table if not exists invoices (
   notes           text,
   status          text not null default 'due',
   payments        jsonb not null default '[]',
-  created_at      timestamptz default now()
+  created_at      timestamptz default now(),
+  deleted_at      timestamptz
 );
 
 -- Enquiries

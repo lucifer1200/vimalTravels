@@ -194,6 +194,7 @@ export interface Invoice {
   status: InvoiceStatus;
   payments: Payment[];
   createdAt: string;
+  deletedAt?: string;
 }
 
 // ── Voucher ───────────────────────────────────────────────────────────────────
@@ -418,7 +419,7 @@ export async function getInvoices(): Promise<Invoice[]> {
     .select("*")
     .order("created_at", { ascending: false });
   if (error) { console.error(error); return []; }
-  return (data || []).map(dbToInvoice);
+  return (data || []).map(dbToInvoice).filter(i => !i.deletedAt);
 }
 
 export async function nextInvoiceNo(type: InvoiceType, gstType?: GSTType, date?: string): Promise<string> {
@@ -463,6 +464,30 @@ export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
 }
 
 export async function deleteInvoice(id: string): Promise<void> {
+  const inv = await getInvoice(id);
+  if (!inv) return;
+  await saveInvoice({ ...inv, deletedAt: new Date().toISOString() });
+}
+
+export async function getDeletedInvoices(): Promise<Invoice[]> {
+  const { data, error } = await getSupabase()
+    .from("invoices")
+    .select("*")
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+  if (error) { console.error(error); return []; }
+  return (data || []).map(dbToInvoice);
+}
+
+export async function restoreInvoice(id: string): Promise<void> {
+  const inv = await getInvoice(id);
+  if (!inv) return;
+  const updated = { ...inv };
+  delete updated.deletedAt;
+  await saveInvoice(updated);
+}
+
+export async function permanentDeleteInvoice(id: string): Promise<void> {
   await getSupabase().from("invoices").delete().eq("id", id);
 }
 
@@ -510,6 +535,7 @@ function invoiceToDb(inv: Invoice): Record<string, unknown> {
     notes:          inv.notes,
     status:         inv.status,
     payments:       inv.payments ?? [],
+    deleted_at:     inv.deletedAt ?? null,
   };
 }
 
@@ -541,6 +567,7 @@ function dbToInvoice(row: Record<string, unknown>): Invoice {
     status:        row.status as InvoiceStatus,
     payments:      (row.payments as Payment[]) ?? [],
     createdAt:     row.created_at as string,
+    deletedAt:     row.deleted_at as string | undefined,
   };
 }
 
