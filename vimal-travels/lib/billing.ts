@@ -426,8 +426,8 @@ export async function nextInvoiceNo(type: InvoiceType, gstType?: GSTType, date?:
   const ng  = gstType === "none";
   const key = ng ? `${type}-ng-${fy}` : `${type}-${fy}`;
   const seq = await incrementCounter(key);
-  const prefix = ng ? TYPE_PREFIX[type] + "-NG" : TYPE_PREFIX[type];
-  return `${prefix}-${String(seq).padStart(4, "0")}/${fy}`;
+  const prefix = ng ? TYPE_PREFIX[type] + "NG" : TYPE_PREFIX[type];
+  return `${prefix}${String(seq).padStart(8, "0")}`;
 }
 
 export async function addInvoice(
