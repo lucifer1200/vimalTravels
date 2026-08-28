@@ -305,9 +305,9 @@ export default function InvoiceViewPage() {
             </div>
             {/* Left: logo + agency */}
             <div style={{ display: "flex", alignItems: "center", gap: 12, position: "relative", zIndex: 1 }}>
-              <div style={{ height: 58, width: 155, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ height: 60, width: 140, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                 <img src={logoB64} alt="Vimal Travels"
-                  style={{ height: 58, width: "auto", maxWidth: 155, objectFit: "contain" }}
+                  style={{ height: 60, width: "auto", maxWidth: 140, objectFit: "contain" }}
                   onError={(e) => {
                     const el = e.target as HTMLImageElement;
                     el.style.display = "none";
@@ -327,8 +327,8 @@ export default function InvoiceViewPage() {
             </div>
             {/* Right: badge + meta */}
             <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#EFF6FF", border: "1.5px solid #93C5FD", borderRadius: 999, padding: "5px 16px", marginBottom: 8 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#EFF6FF", border: "1.5px solid #93C5FD", borderRadius: 999, padding: "5px 16px", marginBottom: 8, whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px", whiteSpace: "nowrap" }}>
                   {gstTotal > 0 ? "TAX INVOICE" : inv.type === "air-intl" ? "INTERNATIONAL AIR TICKET INVOICE" : inv.type === "air-dom" ? "DOMESTIC AIR TICKET INVOICE" : inv.type === "train" ? "TRAIN TICKET INVOICE" : inv.type === "bus" ? "BUS TICKET INVOICE" : inv.type === "hotel" ? "HOTEL BOOKING INVOICE" : inv.type === "visa" ? "VISA SERVICE INVOICE" : inv.type === "package" ? "PACKAGE INVOICE" : "INVOICE"}
                 </span>
               </div>
