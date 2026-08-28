@@ -351,21 +351,21 @@ export default function InvoiceViewPage() {
           {/* -- BODY -- */}
           <div id="invoice-body" style={{ padding: "13px 16px" }}>
 
-            {/* -- 3-CARD ROW: Bill To · Service Details · Fare Snapshot -- */}
-            <div className="print-mb-6" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 9 }}>
+            {/* -- 2-CARD ROW: Bill To · Service Details -- */}
+            <div className="print-mb-6" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 11 }}>
               {/* Bill To */}
               <div style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: 11, padding: "8px 10px", boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 5 }}>
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#2563EB,#06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 7, color: "white", fontWeight: 700, lineHeight: 1 }}>B</span>
                   </div>
-                  <span style={{ fontSize: 8.5, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
-                {inv.customer.mobile && <div style={{ fontSize: 10, color: "#64748B", marginTop: 3 }}>" {inv.customer.mobile}</div>}
-                {inv.customer.address && <div style={{ fontSize: 9.5, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>{inv.customer.address}</div>}
-                {inv.customer.city && <div style={{ fontSize: 9.5, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
-                {inv.customer.gstin && <div style={{ fontSize: 9, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "2px 6px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
+                {inv.customer.mobile && <div style={{ fontSize: 11.5, color: "#64748B", marginTop: 3 }}>" {inv.customer.mobile}</div>}
+                {inv.customer.address && <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>{inv.customer.address}</div>}
+                {inv.customer.city && <div style={{ fontSize: 11, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
+                {inv.customer.gstin && <div style={{ fontSize: 10, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "2px 6px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
               </div>
 
               {/* Service Details */}
@@ -374,7 +374,7 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#7C3AED,#6366F1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 8, lineHeight: 1 }}></span>
                   </div>
-                  <span style={{ fontSize: 8, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
                 </div>
                 {([
                   ["Type", TYPE_LABEL[inv.type]],
@@ -385,32 +385,13 @@ export default function InvoiceViewPage() {
                   inv.gstType !== "none" ? ["GST Type", inv.gstType === "cgst_sgst" ? "CGST + SGST" : "IGST"] : null,
                   inv.customer.stateCode ? ["Supply", `${inv.customer.state} (${inv.customer.stateCode})`] : null,
                 ] as (string[] | null)[]).filter(Boolean).map(row => (
-                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 2.5 }}>
-                    <span style={{ fontSize: 8, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
-                    <span style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>{row![1]}</span>
+                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontSize: 9.5, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
+                    <span style={{ fontSize: 10.5, fontWeight: 600, color: "#1E293B" }}>{row![1]}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Fare Snapshot — compact secondary card, no duplicate Grand Total */}
-              <div style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: 11, padding: "8px 10px", boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 5 }}>
-                  <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#06B6D4,#0EA5E9)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <span style={{ fontSize: 8, color: "white", fontWeight: 700, lineHeight: 1 }}>₹</span>
-                  </div>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: "#0891B2", textTransform: "uppercase", letterSpacing: "0.5px" }}>Fare Snapshot</span>
-                </div>
-                {([
-                  [isHotel ? "Room Fare" : isFareType ? "Ticket Fare" : isVisa ? "Embassy Fee" : "Sub Total", formatINR(isFareType ? (inv.fareTotal ?? inv.subtotal ?? 0) : isVisa ? embassyTotal : (inv.subtotal ?? 0))],
-                  (isFareType || isVisa) && gstTotal > 0 ? [isVisa ? "Service Fee" : "Service Charge", formatINR(inv.taxableAmount || 0)] : null,
-                  gstTotal > 0 ? [`GST @ ${inv.gstRate || 0}%`, formatINR(gstTotal)] : null,
-                ] as (string[] | null)[]).filter(Boolean).map(row => (
-                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                    <span style={{ fontSize: 8.5, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
-                    <span style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>₹{row![1]}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* -- FLIGHT ITINERARY HERO (air type) -- */}
@@ -421,9 +402,9 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 24, height: 24, borderRadius: 7, background: "linear-gradient(135deg,#2563EB,#06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 2px 8px rgba(37,99,235,0.25)" }}>
                     <span style={{ fontSize: 12, lineHeight: 1 }}></span>
                   </div>
-                  <div style={{ fontSize: 9.5, fontWeight: 700, color: "#172554", textTransform: "uppercase", letterSpacing: "0.8px" }}>Flight Itinerary</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#172554", textTransform: "uppercase", letterSpacing: "0.8px" }}>Flight Itinerary</div>
                   <div style={{ flex: 1, height: 1.5, background: "linear-gradient(90deg,#BFDBFE,transparent)" }} />
-                  {inv.airline && <span style={{ fontSize: 7.5, fontWeight: 700, color: "#2563EB", background: "linear-gradient(135deg,#EFF6FF,#DBEAFE)", padding: "3px 11px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{inv.airline}</span>}
+                  {inv.airline && <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", background: "linear-gradient(135deg,#EFF6FF,#DBEAFE)", padding: "4px 13px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{inv.airline}</span>}
                 </div>
 
                 {/* Premium flight cards — auto-compact when multiple items */}
@@ -432,17 +413,14 @@ export default function InvoiceViewPage() {
                     const f = item as FlightItem;
                     const hasRet = !!(f.returnSectorFrom && f.returnDate);
                     // Size tokens: compact when 2+ items, ultra-compact when 4+ items
-                    const airportSz  = fcc ? 17 : fc ? 21 : 26;
-                    const paxNameSz  = fcc ? 10 : fc ? 12 : 14;
-                    const pnrSz      = fcc ? 8  : fc ? 8.5 : 9.5;
-                    const bodyPad    = fcc ? "5px 9px" : fc ? "7px 11px" : "11px 14px";
-                    const topPad     = fcc ? "4px 10px" : fc ? "5px 11px" : "7px 13px";
-                    const retAptSz   = fcc ? 13 : fc ? 15 : 18;
+                    const airportSz  = fcc ? 20 : fc ? 24 : 32;
+                    const paxNameSz  = fcc ? 12 : fc ? 14 : 17;
+                    const pnrSz      = fcc ? 9  : fc ? 10 : 11;
+                    const bodyPad    = fcc ? "6px 10px" : fc ? "9px 13px" : "13px 16px";
+                    const topPad     = fcc ? "5px 11px" : fc ? "6px 12px" : "8px 14px";
+                    const retAptSz   = fcc ? 15 : fc ? 18 : 22;
                     const retMt      = fcc ? 4  : fc ? 5 : 8;
-                    const stubW      = fcc ? 82 : fc ? 92 : 108;
-                    const stubPad    = fcc ? "6px 7px" : fc ? "8px 9px" : "12px 11px";
-                    const fareNumSz  = fcc ? 11 : fc ? 12 : 15;
-                    const paxMb      = fcc ? 4  : fc ? 6 : 10;
+                    const paxMb      = fcc ? 5  : fc ? 7 : 12;
                     const cardRadius = fc ? 10 : 14;
                     return (
                       <div key={item.id} style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: cardRadius, overflow: "hidden", boxShadow: "0 3px 12px rgba(15,23,42,0.06)" }}>
@@ -454,12 +432,12 @@ export default function InvoiceViewPage() {
                                 <span style={{ fontSize: 11, lineHeight: 1 }}></span>
                               </div>
                             )}
-                            <span style={{ fontSize: fc ? 8 : 9, fontWeight: 700, color: "#172554" }}>{inv.airline || TYPE_LABEL[inv.type]}</span>
-                            {f.flightNo && <span style={{ fontSize: fc ? 7 : 7.5, fontWeight: 600, color: "#2563EB", background: "#DBEAFE", padding: fc ? "1px 7px" : "2px 9px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{f.flightNo}</span>}
-                            {f.flightClass && <span style={{ fontSize: fc ? 7 : 7.5, fontWeight: 600, color: "#7C3AED", background: "#EDE9FE", padding: fc ? "1px 7px" : "2px 9px", borderRadius: 99, border: "1px solid #DDD6FE" }}>{f.flightClass}</span>}
-                            {hasRet && f.returnFlightNo && <span style={{ fontSize: fc ? 6.5 : 7, color: "#6366F1", background: "#EEF2FF", padding: "1px 6px", borderRadius: 99, border: "1px solid #C7D2FE" }}> {f.returnFlightNo}{f.returnFlightClass ? ` · ${f.returnFlightClass}` : ""}</span>}
+                            <span style={{ fontSize: fc ? 10 : 11, fontWeight: 700, color: "#172554" }}>{inv.airline || TYPE_LABEL[inv.type]}</span>
+                            {f.flightNo && <span style={{ fontSize: fc ? 9 : 10, fontWeight: 600, color: "#2563EB", background: "#DBEAFE", padding: fc ? "2px 8px" : "2px 10px", borderRadius: 99, border: "1px solid #BFDBFE" }}>{f.flightNo}</span>}
+                            {f.flightClass && <span style={{ fontSize: fc ? 9 : 10, fontWeight: 600, color: "#7C3AED", background: "#EDE9FE", padding: fc ? "2px 8px" : "2px 10px", borderRadius: 99, border: "1px solid #DDD6FE" }}>{f.flightClass}</span>}
+                            {hasRet && f.returnFlightNo && <span style={{ fontSize: fc ? 8 : 9, color: "#6366F1", background: "#EEF2FF", padding: "2px 7px", borderRadius: 99, border: "1px solid #C7D2FE" }}> {f.returnFlightNo}{f.returnFlightClass ? ` · ${f.returnFlightClass}` : ""}</span>}
                           </div>
-                          <span style={{ fontSize: fc ? 6.5 : 7.5, fontWeight: 700, color: "#15803D", background: "linear-gradient(135deg,#DCFCE7,#BBF7D0)", padding: fc ? "2px 8px" : "3px 11px", borderRadius: 999, border: "1px solid #86EFAC" }}>CONFIRMED</span>
+                          <span style={{ fontSize: fc ? 8.5 : 10, fontWeight: 700, color: "#15803D", background: "linear-gradient(135deg,#DCFCE7,#BBF7D0)", padding: fc ? "3px 10px" : "4px 13px", borderRadius: 999, border: "1px solid #86EFAC" }}>CONFIRMED</span>
                         </div>
 
                         {/* Boarding pass body */}
@@ -478,12 +456,6 @@ export default function InvoiceViewPage() {
                                   </div>
                                 )}
                               </div>
-                              {!fc && (
-                                <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontSize: 6.5, fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>Class</div>
-                                  <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554" }}>{f.flightClass || "Economy"}</div>
-                                </div>
-                              )}
                             </div>
 
                             {/* Route */}
@@ -524,28 +496,6 @@ export default function InvoiceViewPage() {
                             )}
                           </div>
 
-                          {/* Perforated tear line */}
-                          <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 12 }}>
-                            <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", width: 12, height: 6, background: "#F3F7FC", borderRadius: "0 0 8px 8px", border: "1px solid #DCE6F2", borderTop: "none", zIndex: 2 }} />
-                            <div style={{ width: 0, height: "100%", borderLeft: "1.5px dashed #93C5FD", marginLeft: 6 }} />
-                            <div style={{ position: "absolute", bottom: -1, left: "50%", transform: "translateX(-50%)", width: 12, height: 6, background: "#F3F7FC", borderRadius: "8px 8px 0 0", border: "1px solid #DCE6F2", borderBottom: "none", zIndex: 2 }} />
-                          </div>
-
-                          {/* RIGHT: fare stub */}
-                          <div style={{ width: stubW, flexShrink: 0, padding: stubPad, background: "linear-gradient(160deg,#F8FBFF 0%,#EFF6FF 100%)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: fc ? 6 : 10, position: "relative", overflow: "hidden" }}>
-                            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, #BFDBFE 1px, transparent 1px)", backgroundSize: "9px 9px", opacity: 0.35, pointerEvents: "none" }} />
-                            <div style={{ position: "relative", textAlign: "center", width: "100%" }}>
-                              <div style={{ fontSize: 6, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>Base Fare</div>
-                              <div style={{ fontSize: fareNumSz, fontWeight: 700, color: "#172554", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(f.amount)}</div>
-                            </div>
-                            {gstTotal > 0 && <>
-                            <div style={{ width: "65%", height: 0, borderTop: "1.5px dashed #BFDBFE" }} />
-                            <div style={{ position: "relative", textAlign: "center", width: "100%" }}>
-                              <div style={{ fontSize: 6, fontWeight: 700, color: "#F59E0B", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 2 }}>Svc Charge</div>
-                              <div style={{ fontSize: fareNumSz, fontWeight: 700, color: "#D97706", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(f.serviceCharge || 0)}</div>
-                            </div>
-                            </>}
-                          </div>
 
                         </div>
                       </div>
