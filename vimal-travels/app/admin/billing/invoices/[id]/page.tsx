@@ -387,7 +387,7 @@ export default function InvoiceViewPage() {
                 </div>
                 {([
                   [isHotel ? "Room Fare" : isFareType ? "Ticket Fare" : isVisa ? "Embassy Fee" : "Sub Total", formatINR(isFareType ? (inv.fareTotal ?? inv.subtotal ?? 0) : isVisa ? embassyTotal : (inv.subtotal ?? 0))],
-                  (isFareType || isVisa) ? [isVisa ? "Service Fee" : "Service Charge", formatINR(inv.taxableAmount || 0)] : null,
+                  (isFareType || isVisa) && gstTotal > 0 ? [isVisa ? "Service Fee" : "Service Charge", formatINR(inv.taxableAmount || 0)] : null,
                   gstTotal > 0 ? [`GST @ ${inv.gstRate || 0}%`, formatINR(gstTotal)] : null,
                 ] as (string[] | null)[]).filter(Boolean).map(row => (
                   <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 2.5 }}>
@@ -908,10 +908,10 @@ export default function InvoiceViewPage() {
                       label: isHotel ? "Room Fare (GST Exempt)" : isFareType ? "Ticket Fare (GST Exempt)" : isVisa ? "Embassy / Govt Fee (Exempt)" : "Sub Total",
                       value: formatINR(isFareType ? (inv.fareTotal ?? inv.subtotal ?? 0) : isVisa ? embassyTotal : (inv.subtotal ?? 0)),
                     },
-                    ...(isFareType || isVisa ? [{
+                    ...(isFareType || isVisa ? (gstTotal > 0 ? [{
                       label: isHotel ? "Service Charge (Taxable)" : isVisa ? "Service Fee (Taxable)" : "Service Charge (Taxable)",
                       value: formatINR(inv.taxableAmount || 0),
-                    }] : []),
+                    }] : []) : []),
                     ...(gstTotal > 0 ? [{ label: `GST @ ${inv.gstRate || 0}%`, value: formatINR(gstTotal) }] : []),
                   ].map((r, i) => (
                     <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", borderBottom: "1px solid #F1F5F9", fontSize: 8, color: "#64748B" }}>
@@ -919,18 +919,10 @@ export default function InvoiceViewPage() {
                       <span style={{ fontWeight: 600, color: "#1E293B", fontVariantNumeric: "tabular-nums" }}>{r.value}</span>
                     </div>
                   ))}
-                  {paid > 0 && (
-                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", borderBottom: "1px solid #F1F5F9", fontSize: 8, background: "#ECFDF3" }}>
-                      <span style={{ fontWeight: 600, color: "#16A34A" }}>Amount Paid</span>
-                      <span style={{ fontWeight: 700, color: "#16A34A", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(paid)}</span>
-                    </div>
-                  )}
-                  {inv.status !== "paid" && (
-                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", fontSize: 8, background: "#FEF2F2" }}>
-                      <span style={{ fontWeight: 600, color: "#DC2626" }}>Balance Due</span>
-                      <span style={{ fontWeight: 700, color: "#DC2626", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(balance)}</span>
-                    </div>
-                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", fontSize: 8, background: "#EFF6FF" }}>
+                    <span style={{ fontWeight: 700, color: "#1E40AF" }}>Gross Total</span>
+                    <span style={{ fontWeight: 700, color: "#1E40AF", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(inv.total)}</span>
+                  </div>
                 </div>
                 {/* Grand Total card */}
                 <div className="print-grand-compact" style={{ background: "linear-gradient(135deg, #1E40AF 0%, #312E81 60%, #3730A3 100%)", borderRadius: 14, padding: "15px 17px", boxShadow: "0 8px 24px rgba(30,64,175,0.20), 0 2px 8px rgba(49,46,129,0.10)", position: "relative", overflow: "hidden" }}>

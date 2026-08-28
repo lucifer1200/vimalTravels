@@ -258,11 +258,11 @@ export const TYPE_LABEL_FULL: Record<InvoiceType, string> = {
 import { getSupabase } from "./supabase";
 
 const TYPE_PREFIX: Record<InvoiceType, string> = {
-  "air-intl": "VT-AIR",
-  "air-dom":  "VT-DOM",
+  "air-intl": "ITI",
+  "air-dom":  "MDI",
   train:      "VT-TRN",
   bus:        "VT-BUS",
-  hotel:      "VT-HTL",
+  hotel:      "MHI",
   package:    "VT-PKG",
   visa:       "VT-VIS",
   other:      "VT-INV",
