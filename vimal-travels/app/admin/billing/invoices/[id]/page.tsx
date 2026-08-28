@@ -178,7 +178,7 @@ export default function InvoiceViewPage() {
   const F = { fontFamily: "var(--font-inter,'Inter',system-ui,sans-serif)" };
 
   const S = { fontFamily: "Inter, Arial, sans-serif" };
-  const secTitle = { fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" as const, marginBottom: 6 };
+  const secTitle = { fontSize: 10, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" as const, marginBottom: 7 };
   const cardBase = { background: "#FFFFFF", border: "1px solid #DCE6F2", borderRadius: 12, padding: 11, boxShadow: "0 3px 12px rgba(15,23,42,0.05)" };
   const tblH = { background: "#EFF6FF", borderBottom: "1px solid #BFDBFE" };
   const thCell = (right?: boolean): React.CSSProperties => ({ padding: "8px 10px", textAlign: right ? "right" : "left", fontSize: 8, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
@@ -320,10 +320,10 @@ export default function InvoiceViewPage() {
                   }} />
               </div>
               <div>
-                <div style={{ fontSize: 23, fontWeight: 700, color: "#172554", letterSpacing: "-0.5px", lineHeight: 1 }}>VIMAL TRAVELS</div>
-                <div style={{ fontSize: 8.5, fontWeight: 600, color: "#2563EB", letterSpacing: "1px", textTransform: "uppercase", marginTop: 2.5 }}>Premium Travel Services</div>
-                <div style={{ fontSize: 7.5, color: "#64748B", marginTop: 2 }}>{COMPANY.address}</div>
-                <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1 }}>GSTIN: {COMPANY.gstin}</div>
+                <div style={{ fontSize: 26, fontWeight: 700, color: "#172554", letterSpacing: "-0.5px", lineHeight: 1 }}>VIMAL TRAVELS</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "#2563EB", letterSpacing: "1px", textTransform: "uppercase", marginTop: 3 }}>Premium Travel Services</div>
+                <div style={{ fontSize: 9.5, color: "#64748B", marginTop: 3 }}>{COMPANY.address}</div>
+                <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 2 }}>GSTIN: {COMPANY.gstin}</div>
               </div>
             </div>
             {/* Right: badge + meta */}
@@ -340,8 +340,8 @@ export default function InvoiceViewPage() {
                   ["SERVICE", TYPE_LABEL[inv.type]],
                 ].map(([lbl, val]) => (
                   <div key={lbl} style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
-                    <span style={{ fontSize: 7, fontWeight: 500, color: "#94A3B8" }}>{lbl}</span>
-                    <span style={{ fontSize: lbl === "INVOICE NO" ? 11 : 8.5, fontWeight: lbl === "INVOICE NO" ? 700 : 600, color: lbl === "INVOICE NO" ? "#172554" : "#1E293B", fontFamily: lbl === "INVOICE NO" ? "monospace" : "inherit" }}>{val}</span>
+                    <span style={{ fontSize: 8.5, fontWeight: 500, color: "#94A3B8" }}>{lbl}</span>
+                    <span style={{ fontSize: lbl === "INVOICE NO" ? 13 : 10.5, fontWeight: lbl === "INVOICE NO" ? 700 : 600, color: lbl === "INVOICE NO" ? "#172554" : "#1E293B", fontFamily: lbl === "INVOICE NO" ? "monospace" : "inherit" }}>{val}</span>
                   </div>
                 ))}
               </div>
@@ -359,13 +359,13 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#2563EB,#06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 7, color: "white", fontWeight: 700, lineHeight: 1 }}>B</span>
                   </div>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
+                  <span style={{ fontSize: 8.5, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
-                {inv.customer.mobile && <div style={{ fontSize: 8.5, color: "#64748B", marginTop: 2 }}>" {inv.customer.mobile}</div>}
-                {inv.customer.address && <div style={{ fontSize: 8.5, color: "#94A3B8", marginTop: 1, lineHeight: 1.3 }}>{inv.customer.address}</div>}
-                {inv.customer.city && <div style={{ fontSize: 8.5, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
-                {inv.customer.gstin && <div style={{ fontSize: 8, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "1px 5px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
+                {inv.customer.mobile && <div style={{ fontSize: 10, color: "#64748B", marginTop: 3 }}>" {inv.customer.mobile}</div>}
+                {inv.customer.address && <div style={{ fontSize: 9.5, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>{inv.customer.address}</div>}
+                {inv.customer.city && <div style={{ fontSize: 9.5, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
+                {inv.customer.gstin && <div style={{ fontSize: 9, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "2px 6px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
               </div>
 
               {/* Service Details */}
@@ -878,9 +878,9 @@ export default function InvoiceViewPage() {
                     })()}
                   </>
                 )}
-                <div style={{ padding: "8px 11px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
-                  <div style={{ fontSize: 7.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 3 }}>Amount in Words</div>
-                  <div style={{ fontSize: 9, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
+                <div style={{ padding: "9px 12px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
+                  <div style={{ fontSize: 8.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 3 }}>Amount in Words</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
                 </div>
               </div>
 
@@ -917,9 +917,9 @@ export default function InvoiceViewPage() {
                   <div style={{ position: "absolute", left: -10, top: 10, width: 50, height: 50, borderRadius: "50%", background: "rgba(255,255,255,0.01)", pointerEvents: "none" }} />
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
                     <div>
-                      <div style={{ fontSize: 7, fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 6 }}>Grand Total</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.6px", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>₹{formatINR(inv.total)}</div>
-                      <div style={{ fontSize: 7, color: "rgba(255,255,255,0.38)", marginTop: 6 }}>All amounts in INR · Inclusive of all taxes</div>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 6 }}>Grand Total</div>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.6px", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>₹{formatINR(inv.total)}</div>
+                      <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.38)", marginTop: 6 }}>All amounts in INR · Inclusive of all taxes</div>
                     </div>
                     {inv.status === "paid" && (
                       <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 999, padding: "4px 11px", display: "flex", alignItems: "center", gap: 4 }}>
@@ -975,7 +975,7 @@ export default function InvoiceViewPage() {
                   <ShieldCheck style={{ width: 11, height: 11, color: "#2563EB" }} />
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>Payment Details</div>
                 </div>
-                <div style={{ background: "#F8FBFF", border: "1px solid #DBEAFE", borderRadius: 10, padding: "10px 12px" }}>
+                <div style={{ background: "#F8FBFF", border: "1px solid #DBEAFE", borderRadius: 10, padding: "11px 13px" }}>
                   {[
                     ["Account Name", "VIMAL TRAVELS"],
                     ["Bank", COMPANY.bank],
@@ -983,14 +983,14 @@ export default function InvoiceViewPage() {
                     ["IFSC Code", COMPANY.ifsc],
                     ["Branch", COMPANY.branch],
                   ].map(([label, value]) => (
-                    <div key={label} style={{ display: "flex", justifyContent: "space-between", paddingBottom: 5, paddingTop: 5, borderBottom: "1px solid #EBF4FF" }}>
-                      <span style={{ fontSize: 8.5, fontWeight: 500, color: "#64748B" }}>{label}</span>
-                      <span style={{ fontSize: 9, fontWeight: 600, color: label === "Account No" || label === "IFSC Code" ? "#172554" : "#1E293B", fontFamily: label === "Account No" || label === "IFSC Code" ? "monospace" : "inherit" }}>{value}</span>
+                    <div key={label} style={{ display: "flex", justifyContent: "space-between", paddingBottom: 6, paddingTop: 6, borderBottom: "1px solid #EBF4FF" }}>
+                      <span style={{ fontSize: 10, fontWeight: 500, color: "#64748B" }}>{label}</span>
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: label === "Account No" || label === "IFSC Code" ? "#172554" : "#1E293B", fontFamily: label === "Account No" || label === "IFSC Code" ? "monospace" : "inherit" }}>{value}</span>
                     </div>
                   ))}
-                  <div style={{ marginTop: 7, display: "flex", alignItems: "center", gap: 4 }}>
-                    <ShieldCheck style={{ width: 10, height: 10, color: "#2563EB" }} />
-                    <span style={{ fontSize: 7, fontWeight: 500, color: "#2563EB" }}>Primary Business Account — Secure Transfer</span>
+                  <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 4 }}>
+                    <ShieldCheck style={{ width: 11, height: 11, color: "#2563EB" }} />
+                    <span style={{ fontSize: 8.5, fontWeight: 500, color: "#2563EB" }}>Primary Business Account — Secure Transfer</span>
                   </div>
                 </div>
               </div>
@@ -1001,7 +1001,7 @@ export default function InvoiceViewPage() {
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>Terms & Conditions</div>
                 </div>
                 <div style={{ padding: "9px 12px", background: "#FFFFFF", border: "1px solid #E8ECFF", borderRadius: 10 }}>
-                  <ol style={{ fontSize: 8.5, color: "#64748B", lineHeight: 1.5, paddingLeft: 14, margin: 0 }}>
+                  <ol style={{ fontSize: 9.5, color: "#64748B", lineHeight: 1.6, paddingLeft: 16, margin: 0 }}>
                     <li style={{ marginBottom: 4 }}>Payment is due within 15 days of invoice date.</li>
                     <li style={{ marginBottom: 4 }}>Interest @ 24% p.a. will be charged on delayed payments.</li>
                     <li style={{ marginBottom: 4 }}>No refund without original invoice.</li>
@@ -1017,28 +1017,28 @@ export default function InvoiceViewPage() {
             <div className="print-sig-compact" style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", gap: 0, marginBottom: 6 }}>
               <div style={{ paddingRight: 18, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
                 <div style={{ height: 28, borderBottom: "1.5px solid #CBD5E1", marginBottom: 5 }} />
-                <div style={{ fontSize: 7, fontWeight: 600, color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px" }}>Customer Signature</div>
-                <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1 }}>{inv.customer.name}</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px" }}>Customer Signature</div>
+                <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 1 }}>{inv.customer.name}</div>
               </div>
               <div style={{ background: "linear-gradient(to bottom, transparent, #CBD5E1, transparent)", margin: "4px 0" }} />
               <div style={{ paddingLeft: 18, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                <div style={{ fontSize: 14, color: "#172554", fontStyle: "italic", marginBottom: 4, fontFamily: "Georgia, serif" }}>Vimal Travels</div>
+                <div style={{ fontSize: 16, color: "#172554", fontStyle: "italic", marginBottom: 4, fontFamily: "Georgia, serif" }}>Vimal Travels</div>
                 <div style={{ height: 1.5, width: "100%", background: "linear-gradient(90deg, transparent, #CBD5E1)", marginBottom: 5 }} />
-                <div style={{ fontSize: 7, fontWeight: 600, color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px" }}>Authorised Signatory</div>
-                <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1 }}>For Vimal Travels</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px" }}>Authorised Signatory</div>
+                <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 1 }}>For Vimal Travels</div>
               </div>
             </div>
 
             {/* -- FOOTER -- */}
             <div className="print-footer-compact" style={{ background: "linear-gradient(135deg, #F0F7FF, #F5F9FF)", border: "1px solid #DCE6F2", borderRadius: 12, padding: "11px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: 9, fontWeight: 600, color: "#2563EB", marginBottom: 3 }}>Thank you for choosing Vimal Travels!</div>
-                <div style={{ fontSize: 7, color: "#64748B" }}>This is a computer generated invoice. Certified that the particulars are true and correct.</div>
-                <div style={{ fontSize: 7, color: "#64748B", marginTop: 2 }}>{COMPANY.email} · {COMPANY.mobile1} / {COMPANY.mobile2}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#2563EB", marginBottom: 3 }}>Thank you for choosing Vimal Travels!</div>
+                <div style={{ fontSize: 8.5, color: "#64748B" }}>This is a computer generated invoice. Certified that the particulars are true and correct.</div>
+                <div style={{ fontSize: 8.5, color: "#64748B", marginTop: 2 }}>{COMPANY.email} · {COMPANY.mobile1} / {COMPANY.mobile2}</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 7, color: "#94A3B8", marginBottom: 2 }}>FY {fy}</div>
-                <div style={{ fontSize: 7.5, fontWeight: 600, color: "#2563EB" }}>IATA Certified Agency</div>
+                <div style={{ fontSize: 8.5, color: "#94A3B8", marginBottom: 2 }}>FY {fy}</div>
+                <div style={{ fontSize: 9, fontWeight: 600, color: "#2563EB" }}>IATA Certified Agency</div>
               </div>
             </div>
 
