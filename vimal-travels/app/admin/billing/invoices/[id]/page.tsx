@@ -330,7 +330,7 @@ export default function InvoiceViewPage() {
             <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#EFF6FF", border: "1.5px solid #93C5FD", borderRadius: 999, padding: "5px 16px", marginBottom: 8 }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>
-                  {inv.type === "air-intl" ? "INTERNATIONAL AIR TICKET INVOICE" : inv.type === "air-dom" ? "DOMESTIC AIR TICKET INVOICE" : inv.type === "train" ? "TRAIN TICKET INVOICE" : inv.type === "bus" ? "BUS TICKET INVOICE" : inv.type === "hotel" ? "HOTEL BOOKING INVOICE" : inv.type === "visa" ? "VISA SERVICE INVOICE" : inv.type === "package" ? "PACKAGE INVOICE" : "TAX INVOICE"}
+                  {gstTotal > 0 ? "TAX INVOICE" : inv.type === "air-intl" ? "INTERNATIONAL AIR TICKET INVOICE" : inv.type === "air-dom" ? "DOMESTIC AIR TICKET INVOICE" : inv.type === "train" ? "TRAIN TICKET INVOICE" : inv.type === "bus" ? "BUS TICKET INVOICE" : inv.type === "hotel" ? "HOTEL BOOKING INVOICE" : inv.type === "visa" ? "VISA SERVICE INVOICE" : inv.type === "package" ? "PACKAGE INVOICE" : "INVOICE"}
                 </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-end" }}>
@@ -890,7 +890,7 @@ export default function InvoiceViewPage() {
                 <div style={{ border: "1px solid #DBEAFE", borderRadius: 10, overflow: "hidden", marginBottom: 7 }}>
                   {[
                     {
-                      label: isHotel ? "Room Fare" : isFareType ? "Ticket Fare" : isVisa ? "Embassy / Govt Fee" : "Sub Total",
+                      label: isHotel ? (gstTotal > 0 ? "Room Fare (GST Exempt)" : "Room Fare") : isFareType ? (gstTotal > 0 ? "Ticket Fare (GST Exempt)" : "Ticket Fare") : isVisa ? (gstTotal > 0 ? "Embassy / Govt Fee (Exempt)" : "Embassy / Govt Fee") : "Sub Total",
                       value: formatINR(isFareType ? (inv.fareTotal ?? inv.subtotal ?? 0) : isVisa ? embassyTotal : (inv.subtotal ?? 0)),
                     },
                     ...(isFareType || isVisa ? (gstTotal > 0 ? [{
