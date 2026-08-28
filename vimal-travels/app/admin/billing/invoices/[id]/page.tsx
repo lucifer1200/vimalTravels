@@ -181,7 +181,7 @@ export default function InvoiceViewPage() {
   const secTitle = { fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" as const, marginBottom: 6 };
   const cardBase = { background: "#FFFFFF", border: "1px solid #DCE6F2", borderRadius: 12, padding: 11, boxShadow: "0 3px 12px rgba(15,23,42,0.05)" };
   const tblH = { background: "#EFF6FF", borderBottom: "1px solid #BFDBFE" };
-  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "7px 10px", textAlign: right ? "right" : "left", fontSize: 7, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
+  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "8px 10px", textAlign: right ? "right" : "left", fontSize: 8, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
   const tdRow = (alt: boolean) => ({ borderBottom: "1px solid #F1F5F9", background: alt ? "#F8FBFF" : "white" });
 
   const toolbarBg     = dark ? "rgba(18,18,18,0.97)" : "#FFFFFF";
@@ -329,7 +329,9 @@ export default function InvoiceViewPage() {
             {/* Right: badge + meta */}
             <div style={{ textAlign: "right", position: "relative", zIndex: 1 }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#EFF6FF", border: "1.5px solid #93C5FD", borderRadius: 999, padding: "5px 16px", marginBottom: 8 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>TAX INVOICE</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#2563EB", letterSpacing: "1.2px" }}>
+                  {inv.type === "air-intl" ? "INTERNATIONAL AIR TICKET INVOICE" : inv.type === "air-dom" ? "DOMESTIC AIR TICKET INVOICE" : inv.type === "train" ? "TRAIN TICKET INVOICE" : inv.type === "bus" ? "BUS TICKET INVOICE" : inv.type === "hotel" ? "HOTEL BOOKING INVOICE" : inv.type === "visa" ? "VISA SERVICE INVOICE" : inv.type === "package" ? "PACKAGE INVOICE" : "TAX INVOICE"}
+                </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "flex-end" }}>
                 {[
@@ -359,11 +361,11 @@ export default function InvoiceViewPage() {
                   </div>
                   <span style={{ fontSize: 7, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To</span>
                 </div>
-                <div style={{ fontSize: 9.5, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
-                {inv.customer.mobile && <div style={{ fontSize: 7, color: "#64748B", marginTop: 2 }}>" {inv.customer.mobile}</div>}
-                {inv.customer.address && <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1, lineHeight: 1.3 }}>{inv.customer.address}</div>}
-                {inv.customer.city && <div style={{ fontSize: 7, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
-                {inv.customer.gstin && <div style={{ fontSize: 7, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "1px 5px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{inv.customer.name}</div>
+                {inv.customer.mobile && <div style={{ fontSize: 8.5, color: "#64748B", marginTop: 2 }}>" {inv.customer.mobile}</div>}
+                {inv.customer.address && <div style={{ fontSize: 8.5, color: "#94A3B8", marginTop: 1, lineHeight: 1.3 }}>{inv.customer.address}</div>}
+                {inv.customer.city && <div style={{ fontSize: 8.5, color: "#94A3B8" }}>{inv.customer.city}{inv.customer.state ? `, ${inv.customer.state}` : ""}{inv.customer.stateCode ? ` — ${inv.customer.stateCode}` : ""}</div>}
+                {inv.customer.gstin && <div style={{ fontSize: 8, color: "#2563EB", marginTop: 3, fontFamily: "monospace", fontWeight: 600, background: "#EFF6FF", display: "inline-block", padding: "1px 5px", borderRadius: 4 }}>GSTIN: {inv.customer.gstin}</div>}
               </div>
 
               {/* Service Details */}
@@ -372,7 +374,7 @@ export default function InvoiceViewPage() {
                   <div style={{ width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#7C3AED,#6366F1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 8, lineHeight: 1 }}></span>
                   </div>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
+                  <span style={{ fontSize: 8, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px" }}>Service Details</span>
                 </div>
                 {([
                   ["Type", TYPE_LABEL[inv.type]],
@@ -383,9 +385,9 @@ export default function InvoiceViewPage() {
                   inv.gstType !== "none" ? ["GST Type", inv.gstType === "cgst_sgst" ? "CGST + SGST" : "IGST"] : null,
                   inv.customer.stateCode ? ["Supply", `${inv.customer.state} (${inv.customer.stateCode})`] : null,
                 ] as (string[] | null)[]).filter(Boolean).map(row => (
-                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-                    <span style={{ fontSize: 7, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
-                    <span style={{ fontSize: 7.5, fontWeight: 600, color: "#1E293B" }}>{row![1]}</span>
+                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 2.5 }}>
+                    <span style={{ fontSize: 8, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
+                    <span style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>{row![1]}</span>
                   </div>
                 ))}
               </div>
@@ -403,9 +405,9 @@ export default function InvoiceViewPage() {
                   (isFareType || isVisa) && gstTotal > 0 ? [isVisa ? "Service Fee" : "Service Charge", formatINR(inv.taxableAmount || 0)] : null,
                   gstTotal > 0 ? [`GST @ ${inv.gstRate || 0}%`, formatINR(gstTotal)] : null,
                 ] as (string[] | null)[]).filter(Boolean).map(row => (
-                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 2.5 }}>
-                    <span style={{ fontSize: 7, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
-                    <span style={{ fontSize: 7.5, fontWeight: 600, color: "#1E293B" }}>₹{row![1]}</span>
+                  <div key={row![0]} style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                    <span style={{ fontSize: 8.5, color: "#94A3B8", fontWeight: 500 }}>{row![0]}</span>
+                    <span style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>₹{row![1]}</span>
                   </div>
                 ))}
               </div>
@@ -430,9 +432,9 @@ export default function InvoiceViewPage() {
                     const f = item as FlightItem;
                     const hasRet = !!(f.returnSectorFrom && f.returnDate);
                     // Size tokens: compact when 2+ items, ultra-compact when 4+ items
-                    const airportSz  = fcc ? 16 : fc ? 19 : 24;
-                    const paxNameSz  = fcc ? 9  : fc ? 10 : 12;
-                    const pnrSz      = fcc ? 7  : fc ? 7.5 : 8;
+                    const airportSz  = fcc ? 17 : fc ? 21 : 26;
+                    const paxNameSz  = fcc ? 10 : fc ? 12 : 14;
+                    const pnrSz      = fcc ? 8  : fc ? 8.5 : 9.5;
                     const bodyPad    = fcc ? "5px 9px" : fc ? "7px 11px" : "11px 14px";
                     const topPad     = fcc ? "4px 10px" : fc ? "5px 11px" : "7px 13px";
                     const retAptSz   = fcc ? 13 : fc ? 15 : 18;
@@ -468,7 +470,7 @@ export default function InvoiceViewPage() {
                             {/* Passenger row */}
                             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: paxMb }}>
                               <div>
-                                <div style={{ fontSize: 6, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 1 }}>Passenger</div>
+                                <div style={{ fontSize: 7.5, fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 1 }}>Passenger</div>
                                 <div style={{ fontSize: paxNameSz, fontWeight: 700, color: "#172554", lineHeight: 1.2 }}>{f.paxName}</div>
                                 {(f.airlinePnr || f.paxNo) && (
                                   <div style={{ fontSize: pnrSz, fontWeight: 700, color: "#2563EB", fontFamily: "monospace", letterSpacing: "0.06em", marginTop: fc ? 2 : 4, background: "#EFF6FF", padding: fc ? "1px 5px" : "2px 8px", borderRadius: 4, display: "inline-block", border: "1px solid #BFDBFE" }}>
@@ -551,38 +553,6 @@ export default function InvoiceViewPage() {
                   })}
                 </div>
 
-                {/* Invoice & GST Details — max 5 cols, multi-segment PNR support */}
-                {(() => {
-                  // Collect all PNRs across all segments (multi-leg support)
-                  const allPnrs = inv.items
-                    .map((it) => (it as FlightItem).airlinePnr)
-                    .filter(Boolean)
-                    .filter((v, i, a) => a.indexOf(v) === i); // unique
-                  const pnrDisplay = allPnrs.length > 0 ? allPnrs.join(" · ") : null;
-
-                  const cols: [string, string][] = ([
-                    ["Service", TYPE_LABEL[inv.type]],
-                    ...(inv.airline ? [["Airline", inv.airline]] : []),
-                    ...(pnrDisplay ? [["PNR", pnrDisplay]] : []),
-                    ["SAC Code", inv.sacCode || "996425"],
-                    ...(inv.customer.stateCode ? [["Place of Supply", `${inv.customer.state} (${inv.customer.stateCode})`]] : []),
-                    ...(inv.gstType !== "none" ? [["GST Type", inv.gstType === "cgst_sgst" ? "CGST + SGST" : "IGST"]] : []),
-                  ] as [string, string][]).slice(0, 5); // hard cap at 5 columns
-
-                  return (
-                    <div style={{ background: "#F8FBFF", border: "1px solid #DCE6F2", borderRadius: 10, padding: "8px 13px", marginBottom: 9 }}>
-                      <div style={{ fontSize: 7, fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.7px", marginBottom: 7 }}>Invoice &amp; GST Details</div>
-                      <div style={{ display: "flex", gap: 0 }}>
-                        {cols.map(([label, value], i) => (
-                          <div key={label} style={{ flex: 1, padding: "0 9px", borderRight: i < cols.length - 1 ? "1px solid #DCE6F2" : "none", minWidth: 0 }}>
-                            <div style={{ fontSize: 6.5, fontWeight: 600, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.4px", marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</div>
-                            <div style={{ fontSize: 7.5, fontWeight: 600, color: "#1E293B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })()}
               </>
             )}
 
@@ -597,7 +567,7 @@ export default function InvoiceViewPage() {
             {/* TRAIN TABLE */}
             {isTrain && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Passenger","Train","Route","Date","Class / Seat","PNR","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -636,7 +606,7 @@ export default function InvoiceViewPage() {
             {/* BUS TABLE */}
             {isBus && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Passenger","Route","Date / Time","Seat","Ticket No","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -714,7 +684,7 @@ export default function InvoiceViewPage() {
                     )}
                   </div>
                   <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                    <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                    <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                       <thead>
                         <tr style={{ ...tblH }}>
                           {["#","Lead Guest","Room Type","Check-In","Check-Out","Nights","Meal","HCN / Ref","Room Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -762,7 +732,7 @@ export default function InvoiceViewPage() {
             {/* PACKAGE TABLE */}
             {isPkg && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["Lead Passenger","Destination","Travel Period","Pax","Rate / Person","Amount (₹)"].map((h, i) => (
@@ -795,7 +765,7 @@ export default function InvoiceViewPage() {
             {/* VISA TABLE */}
             {isVisa && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["Applicant","Country","Visa Type","Embassy Fee","Service Fee","Total (₹)"].map((h, i) => (
@@ -825,7 +795,7 @@ export default function InvoiceViewPage() {
             {/* OTHER TABLE */}
             {inv.type === "other" && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 8, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Description","Amount (₹)"].map((h, i) => (
@@ -853,64 +823,64 @@ export default function InvoiceViewPage() {
             <div className="print-section-gap" style={{ display: "flex", gap: 12, marginBottom: 9 }}>
               {/* Left: GST table + words */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7 }}>
-                  <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>GST Summary</div>
-                  <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F59E0B", flexShrink: 0 }} />
-                </div>
-                {(() => {
-                  const taxLbl = isHotel ? "Service Charge" : isVisa ? "Service Fee" : isFareType ? "Service Charge" : isPkg ? "Package Value" : "Taxable Value";
-                  const taxCell = (
-                    <td style={{ padding: "6px 9px", textAlign: "right" }}>
-                      <div style={{ fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(inv.taxableAmount || 0)}</div>
-                      <div style={{ fontSize: 7, color: "#94A3B8", marginTop: 1 }}>on {taxLbl}</div>
-                    </td>
-                  );
-                  return (
-                    <div style={{ border: "1px solid #E2E8F0", borderRadius: 9, overflow: "hidden", marginBottom: 6 }}>
-                      <table style={{ width: "100%", fontSize: 8, borderCollapse: "collapse" }}>
-                        <thead>
-                          <tr style={{ ...tblH }}>
-                            {["Category","Rate","Taxable Amt","GST Amt"].map((h, i) => (
-                              <th key={i} style={{ ...thCell(i >= 2) }}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {inv.gstType === "cgst_sgst" ? (
-                            <>
-                              <tr style={{ borderBottom: "1px solid #F1F5F9" }}>
-                                <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>CGST</td>
-                                <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>{(inv.gstRate || 0) / 2}%</td>
-                                {taxCell}
-                                <td style={{ padding: "6px 9px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(inv.cgst || 0)}</td>
-                              </tr>
-                              <tr>
-                                <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>SGST</td>
-                                <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>{(inv.gstRate || 0) / 2}%</td>
-                                {taxCell}
-                                <td style={{ padding: "6px 9px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(inv.sgst || 0)}</td>
-                              </tr>
-                            </>
-                          ) : inv.gstType === "igst" ? (
-                            <tr>
-                              <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>IGST</td>
-                              <td style={{ padding: "6px 9px", fontSize: 8, color: "#334155" }}>{inv.gstRate}%</td>
-                              {taxCell}
-                              <td style={{ padding: "6px 9px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(inv.igst || 0)}</td>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <td colSpan={4} style={{ padding: "6px 9px", color: "#94A3B8", textAlign: "center", fontStyle: "italic", fontSize: 8 }}>GST not applicable for this invoice</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                {gstTotal > 0 && (
+                  <>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7 }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>GST Summary</div>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#F59E0B", flexShrink: 0 }} />
                     </div>
-                  );
-                })()}
-                <div style={{ padding: "7px 10px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
-                  <div style={{ fontSize: 6.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 2 }}>Amount in Words</div>
-                  <div style={{ fontSize: 7.5, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
+                    {(() => {
+                      const taxLbl = isHotel ? "Service Charge" : isVisa ? "Service Fee" : isFareType ? "Service Charge" : isPkg ? "Package Value" : "Taxable Value";
+                      const taxCell = (
+                        <td style={{ padding: "7px 10px", textAlign: "right" }}>
+                          <div style={{ fontWeight: 600, color: "#1E293B", fontSize: 9 }}>{formatINR(inv.taxableAmount || 0)}</div>
+                          <div style={{ fontSize: 7.5, color: "#94A3B8", marginTop: 1 }}>on {taxLbl}</div>
+                        </td>
+                      );
+                      return (
+                        <div style={{ border: "1px solid #E2E8F0", borderRadius: 9, overflow: "hidden", marginBottom: 6 }}>
+                          <table style={{ width: "100%", fontSize: 9, borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr style={{ ...tblH }}>
+                                {["Category","Rate","Taxable Amt","GST Amt"].map((h, i) => (
+                                  <th key={i} style={{ ...thCell(i >= 2) }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {inv.gstType === "cgst_sgst" ? (
+                                <>
+                                  <tr style={{ borderBottom: "1px solid #F1F5F9" }}>
+                                    <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>CGST</td>
+                                    <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>{(inv.gstRate || 0) / 2}%</td>
+                                    {taxCell}
+                                    <td style={{ padding: "7px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 9 }}>{formatINR(inv.cgst || 0)}</td>
+                                  </tr>
+                                  <tr>
+                                    <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>SGST</td>
+                                    <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>{(inv.gstRate || 0) / 2}%</td>
+                                    {taxCell}
+                                    <td style={{ padding: "7px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 9 }}>{formatINR(inv.sgst || 0)}</td>
+                                  </tr>
+                                </>
+                              ) : (
+                                <tr>
+                                  <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>IGST</td>
+                                  <td style={{ padding: "7px 10px", fontSize: 9, color: "#334155" }}>{inv.gstRate}%</td>
+                                  {taxCell}
+                                  <td style={{ padding: "7px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 9 }}>{formatINR(inv.igst || 0)}</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
+                <div style={{ padding: "8px 11px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
+                  <div style={{ fontSize: 7.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 3 }}>Amount in Words</div>
+                  <div style={{ fontSize: 9, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
                 </div>
               </div>
 
@@ -920,7 +890,7 @@ export default function InvoiceViewPage() {
                 <div style={{ border: "1px solid #DBEAFE", borderRadius: 10, overflow: "hidden", marginBottom: 7 }}>
                   {[
                     {
-                      label: isHotel ? "Room Fare (GST Exempt)" : isFareType ? "Ticket Fare (GST Exempt)" : isVisa ? "Embassy / Govt Fee (Exempt)" : "Sub Total",
+                      label: isHotel ? "Room Fare" : isFareType ? "Ticket Fare" : isVisa ? "Embassy / Govt Fee" : "Sub Total",
                       value: formatINR(isFareType ? (inv.fareTotal ?? inv.subtotal ?? 0) : isVisa ? embassyTotal : (inv.subtotal ?? 0)),
                     },
                     ...(isFareType || isVisa ? (gstTotal > 0 ? [{
@@ -929,12 +899,12 @@ export default function InvoiceViewPage() {
                     }] : []) : []),
                     ...(gstTotal > 0 ? [{ label: `GST @ ${inv.gstRate || 0}%`, value: formatINR(gstTotal) }] : []),
                   ].map((r, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", borderBottom: "1px solid #F1F5F9", fontSize: 8, color: "#64748B" }}>
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 11px", borderBottom: "1px solid #F1F5F9", fontSize: 9.5, color: "#64748B" }}>
                       <span>{r.label}</span>
                       <span style={{ fontWeight: 600, color: "#1E293B", fontVariantNumeric: "tabular-nums" }}>{r.value}</span>
                     </div>
                   ))}
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", fontSize: 8, background: "#EFF6FF" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 11px", fontSize: 10, background: "#EFF6FF" }}>
                     <span style={{ fontWeight: 700, color: "#1E40AF" }}>Gross Total</span>
                     <span style={{ fontWeight: 700, color: "#1E40AF", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(inv.total)}</span>
                   </div>
@@ -1014,8 +984,8 @@ export default function InvoiceViewPage() {
                     ["Branch", COMPANY.branch],
                   ].map(([label, value]) => (
                     <div key={label} style={{ display: "flex", justifyContent: "space-between", paddingBottom: 5, paddingTop: 5, borderBottom: "1px solid #EBF4FF" }}>
-                      <span style={{ fontSize: 7, fontWeight: 500, color: "#64748B" }}>{label}</span>
-                      <span style={{ fontSize: 8, fontWeight: 600, color: label === "Account No" || label === "IFSC Code" ? "#172554" : "#1E293B", fontFamily: label === "Account No" || label === "IFSC Code" ? "monospace" : "inherit" }}>{value}</span>
+                      <span style={{ fontSize: 8.5, fontWeight: 500, color: "#64748B" }}>{label}</span>
+                      <span style={{ fontSize: 9, fontWeight: 600, color: label === "Account No" || label === "IFSC Code" ? "#172554" : "#1E293B", fontFamily: label === "Account No" || label === "IFSC Code" ? "monospace" : "inherit" }}>{value}</span>
                     </div>
                   ))}
                   <div style={{ marginTop: 7, display: "flex", alignItems: "center", gap: 4 }}>
@@ -1031,7 +1001,7 @@ export default function InvoiceViewPage() {
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>Terms & Conditions</div>
                 </div>
                 <div style={{ padding: "9px 12px", background: "#FFFFFF", border: "1px solid #E8ECFF", borderRadius: 10 }}>
-                  <ol style={{ fontSize: 7, color: "#64748B", lineHeight: 1.4, paddingLeft: 14, margin: 0 }}>
+                  <ol style={{ fontSize: 8.5, color: "#64748B", lineHeight: 1.5, paddingLeft: 14, margin: 0 }}>
                     <li style={{ marginBottom: 4 }}>Payment is due within 15 days of invoice date.</li>
                     <li style={{ marginBottom: 4 }}>Interest @ 24% p.a. will be charged on delayed payments.</li>
                     <li style={{ marginBottom: 4 }}>No refund without original invoice.</li>
