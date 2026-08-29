@@ -206,7 +206,7 @@ export default function InvoiceViewPage() {
   const secTitle = { fontSize: 10, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" as const, marginBottom: 7 };
   const cardBase = { background: "#FFFFFF", border: "1px solid #DCE6F2", borderRadius: 12, padding: 11, boxShadow: "0 3px 12px rgba(15,23,42,0.05)" };
   const tblH = { background: "#EFF6FF", borderBottom: "1px solid #BFDBFE" };
-  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "9px 10px", textAlign: right ? "right" : "left", fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
+  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "7px 8px", textAlign: right ? "right" : "left", fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
   const tdRow = (alt: boolean) => ({ borderBottom: "1px solid #F1F5F9", background: alt ? "#F8FBFF" : "white" });
 
   const toolbarBg     = dark ? "rgba(18,18,18,0.97)" : "#FFFFFF";
@@ -373,10 +373,10 @@ export default function InvoiceViewPage() {
           </div>
 
           {/* -- BODY -- */}
-          <div id="invoice-body" style={{ padding: "13px 16px" }}>
+          <div id="invoice-body" style={{ padding: "8px 12px" }}>
 
             {/* -- 2-CARD ROW: Bill To · Service Details -- */}
-            <div className="print-mb-6" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 11 }}>
+            <div className="print-mb-6" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 7 }}>
               {/* Bill To */}
               <div style={{ background: "#fff", border: "1px solid #DCE6F2", borderRadius: 11, padding: "8px 10px", boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 5 }}>
@@ -531,7 +531,7 @@ export default function InvoiceViewPage() {
 
             {/* Non-air section heading */}
             {!isAir && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#172554", letterSpacing: "0.5px", textTransform: "uppercase" }}>{isTrain ? "Train Booking" : isBus ? "Bus Booking" : isHotel ? "Hotel Reservation" : isPkg ? "Package Details" : isVisa ? "Visa Application" : "Service Entries"}</div>
                 <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
               </div>
@@ -539,7 +539,7 @@ export default function InvoiceViewPage() {
 
             {/* TRAIN TABLE */}
             {isTrain && (
-              <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
+              <div style={{ marginBottom: 8, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
                 <table className="w-full" style={{ fontSize: 13, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
@@ -553,21 +553,21 @@ export default function InvoiceViewPage() {
                       const t = item as TrainItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "9px 10px", color: "#94A3B8", width: 24, fontSize: 12 }}>{i + 1}</td>
-                          <td style={{ padding: "9px 10px", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{t.paxName}</td>
-                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontSize: 12 }}>
+                          <td style={{ padding: "6px 8px", color: "#94A3B8", width: 24, fontSize: 12 }}>{i + 1}</td>
+                          <td style={{ padding: "6px 8px", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{t.paxName}</td>
+                          <td style={{ padding: "6px 8px", fontFamily: "monospace", fontSize: 12 }}>
                             <div style={{ fontWeight: 700, color: "#334155" }}>{t.trainNo}</div>
                             <div style={{ color: "#64748B", fontSize: 11 }}>{t.trainName}</div>
                           </td>
-                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#1E293B" }}>{t.fromStation} {'->'} {t.toStation}</td>
-                          <td style={{ padding: "9px 10px", fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
-                          <td style={{ padding: "9px 10px", fontSize: 13 }}>
+                          <td style={{ padding: "6px 8px", fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#1E293B" }}>{t.fromStation} {'->'} {t.toStation}</td>
+                          <td style={{ padding: "6px 8px", fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
+                          <td style={{ padding: "6px 8px", fontSize: 13 }}>
                             <span style={{ fontWeight: 700, color: "#334155" }}>{t.travelClass}</span>
                             {t.seatNo && <span style={{ color: "#94A3B8", marginLeft: 4, fontSize: 11 }}>· {t.seatNo}</span>}
                           </td>
-                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontWeight: 700, color: "#172554", fontSize: 12 }}>{t.pnr}</td>
-                          <td style={{ padding: "9px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{formatINR(t.amount)}</td>
-                          {gstTotal > 0 && <td style={{ padding: "9px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 13 }}>{formatINR(t.serviceCharge || 0)}</td>}
+                          <td style={{ padding: "6px 8px", fontFamily: "monospace", fontWeight: 700, color: "#172554", fontSize: 12 }}>{t.pnr}</td>
+                          <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{formatINR(t.amount)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 13 }}>{formatINR(t.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
@@ -793,7 +793,7 @@ export default function InvoiceViewPage() {
             )}
 
             {/* -- GST + SUMMARY + GRAND TOTAL -- */}
-            <div className="print-section-gap" style={{ display: "flex", gap: 12, marginBottom: 9 }}>
+            <div className="print-section-gap" style={{ display: "flex", gap: 10, marginBottom: 6 }}>
               {/* Left: GST table + words */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 {gstTotal > 0 && (
@@ -851,7 +851,7 @@ export default function InvoiceViewPage() {
                     })()}
                   </>
                 )}
-                <div style={{ padding: "9px 12px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
+                <div style={{ padding: "6px 10px", background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 8 }}>
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#0369A1", letterSpacing: "0.6px", textTransform: "uppercase", marginBottom: 3 }}>Amount in Words</div>
                   <div style={{ fontSize: 10.5, fontWeight: 600, color: "#0C4A6E" }}>{amountToWords(inv.total)}</div>
                 </div>
@@ -883,7 +883,7 @@ export default function InvoiceViewPage() {
                   </div>
                 </div>
                 {/* Grand Total card */}
-                <div className="print-grand-compact" style={{ background: "linear-gradient(135deg, #1E40AF 0%, #312E81 60%, #3730A3 100%)", borderRadius: 14, padding: "15px 17px", boxShadow: "0 8px 24px rgba(30,64,175,0.20), 0 2px 8px rgba(49,46,129,0.10)", position: "relative", overflow: "hidden" }}>
+                <div className="print-grand-compact" style={{ background: "linear-gradient(135deg, #1E40AF 0%, #312E81 60%, #3730A3 100%)", borderRadius: 14, padding: "11px 14px", boxShadow: "0 8px 24px rgba(30,64,175,0.20), 0 2px 8px rgba(49,46,129,0.10)", position: "relative", overflow: "hidden" }}>
                   {/* Very subtle background decoration */}
                   <div style={{ position: "absolute", right: -18, top: -18, width: 90, height: 90, borderRadius: "50%", background: "rgba(255,255,255,0.02)", pointerEvents: "none" }} />
                   <div style={{ position: "absolute", right: 30, bottom: -25, width: 70, height: 70, borderRadius: "50%", background: "rgba(255,255,255,0.015)", pointerEvents: "none" }} />
@@ -891,7 +891,7 @@ export default function InvoiceViewPage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
                     <div>
                       <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 6 }}>Grand Total</div>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.6px", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>₹{formatINR(inv.total)}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.6px", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>₹{formatINR(inv.total)}</div>
                       <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.38)", marginTop: 6 }}>All amounts in INR · Inclusive of all taxes</div>
                     </div>
                     {inv.status === "paid" && (
@@ -951,14 +951,14 @@ export default function InvoiceViewPage() {
             )}
 
             {/* -- BANK + TERMS -- */}
-            <div className="print-bank-terms" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13, marginBottom: 9 }}>
+            <div className="print-bank-terms" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 6 }}>
               {/* Payment Details */}
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
                   <ShieldCheck style={{ width: 11, height: 11, color: "#2563EB" }} />
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>Payment Details</div>
                 </div>
-                <div style={{ background: "#F8FBFF", border: "1px solid #DBEAFE", borderRadius: 10, padding: "11px 13px" }}>
+                <div style={{ background: "#F8FBFF", border: "1px solid #DBEAFE", borderRadius: 10, padding: "7px 11px" }}>
                   {[
                     ["Account Name", "VIMAL TRAVELS"],
                     ["Bank", COMPANY.bank],
@@ -966,7 +966,7 @@ export default function InvoiceViewPage() {
                     ["IFSC Code", COMPANY.ifsc],
                     ["Branch", COMPANY.branch],
                   ].map(([label, value]) => (
-                    <div key={label} style={{ display: "flex", justifyContent: "space-between", paddingBottom: 6, paddingTop: 6, borderBottom: "1px solid #EBF4FF" }}>
+                    <div key={label} style={{ display: "flex", justifyContent: "space-between", paddingBottom: 4, paddingTop: 4, borderBottom: "1px solid #EBF4FF" }}>
                       <span style={{ fontSize: 10, fontWeight: 500, color: "#64748B" }}>{label}</span>
                       <span style={{ fontSize: 10.5, fontWeight: 700, color: label === "Account No" || label === "IFSC Code" ? "#172554" : "#1E293B", fontFamily: label === "Account No" || label === "IFSC Code" ? "monospace" : "inherit" }}>{value}</span>
                     </div>
@@ -979,11 +979,11 @@ export default function InvoiceViewPage() {
               </div>
               {/* Terms */}
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,#7C3AED,#6366F1)", flexShrink: 0 }} />
                   <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" }}>Terms & Conditions</div>
                 </div>
-                <div style={{ padding: "9px 12px", background: "#FFFFFF", border: "1px solid #E8ECFF", borderRadius: 10 }}>
+                <div style={{ padding: "6px 10px", background: "#FFFFFF", border: "1px solid #E8ECFF", borderRadius: 10 }}>
                   <ol style={{ fontSize: 9.5, color: "#64748B", lineHeight: 1.6, paddingLeft: 16, margin: 0 }}>
                     <li style={{ marginBottom: 4 }}>Payment is due within 15 days of invoice date.</li>
                     <li style={{ marginBottom: 4 }}>Interest @ 24% p.a. will be charged on delayed payments.</li>
@@ -1013,7 +1013,7 @@ export default function InvoiceViewPage() {
             </div>
 
             {/* -- FOOTER -- */}
-            <div className="print-footer-compact" style={{ background: "linear-gradient(135deg, #F0F7FF, #F5F9FF)", border: "1px solid #DCE6F2", borderRadius: 12, padding: "11px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="print-footer-compact" style={{ background: "linear-gradient(135deg, #F0F7FF, #F5F9FF)", border: "1px solid #DCE6F2", borderRadius: 12, padding: "7px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: "#2563EB", marginBottom: 3 }}>Thank you for choosing Vimal Travels!</div>
                 <div style={{ fontSize: 8.5, color: "#64748B" }}>This is a computer generated invoice. Certified that the particulars are true and correct.</div>
