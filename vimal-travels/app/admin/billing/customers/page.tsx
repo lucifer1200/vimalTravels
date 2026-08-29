@@ -59,21 +59,21 @@ function printLedger(cust: Customer, custInvoices: Invoice[]) {
     const bal  = inv.total - paid;
     const st   = inv.status || "due";
     return `<tr style="border-bottom:1px solid #f1f5f9;background:${i%2===0?"white":"#f8fbff"}">
-      <td style="padding:9px 12px;font-size:11px;color:#94a3b8">${i+1}</td>
-      <td style="padding:9px 12px;font-family:monospace;font-weight:700;font-size:11.5px;color:#0077B6">${inv.invoiceNo}</td>
-      <td style="padding:9px 12px;font-size:11px;color:#334155">${fmtDate(inv.date)}</td>
-      <td style="padding:9px 12px;font-size:11px;color:#334155">${TYPE_LABEL[inv.type]}</td>
-      <td style="padding:9px 12px;font-size:11.5px;text-align:right;font-weight:600;color:#172554">₹${formatINR(inv.total)}</td>
-      <td style="padding:9px 12px;font-size:11.5px;text-align:right;color:#16a34a;font-weight:600">${paid>0?"₹"+formatINR(paid):"—"}</td>
-      <td style="padding:9px 12px;font-size:11.5px;text-align:right;color:${bal>0?"#dc2626":"#16a34a"};font-weight:700">${bal>0?"₹"+formatINR(bal):"—"}</td>
-      <td style="padding:9px 12px;text-align:center"><span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;${statusStyle[st]}">${statusLabel[st]}</span></td>
+      <td style="padding:10px 13px;font-size:13px;color:#94a3b8">${i+1}</td>
+      <td style="padding:10px 13px;font-family:monospace;font-weight:700;font-size:13px;color:#0077B6">${inv.invoiceNo}</td>
+      <td style="padding:10px 13px;font-size:13px;color:#334155">${fmtDate(inv.date)}</td>
+      <td style="padding:10px 13px;font-size:13px;color:#334155">${TYPE_LABEL[inv.type]}</td>
+      <td style="padding:10px 13px;font-size:13px;text-align:right;font-weight:600;color:#172554">₹${formatINR(inv.total)}</td>
+      <td style="padding:10px 13px;font-size:13px;text-align:right;color:#16a34a;font-weight:600">${paid>0?"₹"+formatINR(paid):"—"}</td>
+      <td style="padding:10px 13px;font-size:13px;text-align:right;color:${bal>0?"#dc2626":"#16a34a"};font-weight:700">${bal>0?"₹"+formatINR(bal):"—"}</td>
+      <td style="padding:10px 13px;text-align:center"><span style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;${statusStyle[st]}">${statusLabel[st]}</span></td>
     </tr>`;
   }).join("");
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/>
   <title>Ledger — ${cust.name}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}body{background:#F3F7FC;color:#1e293b}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:white!important;margin:0;padding:0}.no-print{display:none!important}@page{margin:8mm 10mm;size:A4}.card{box-shadow:none!important;border:none!important;border-radius:0!important;margin:0!important;max-width:100%!important}}.card{background:white;max-width:210mm;margin:20px auto;box-shadow:0 4px 24px rgba(15,23,42,0.08);border-radius:14px;border:1px solid #E3EAF3;overflow:hidden}table{width:100%;border-collapse:collapse}th{background:#F3EFF6;color:#0077B6;padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-align:left;border-bottom:1.5px solid #90E0EF}th.r{text-align:right}.no-print{display:block}@media print{.no-print{display:none}}</style>
+  <style>*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}body{background:#F3F7FC;color:#1e293b}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:white!important;margin:0;padding:0}.no-print{display:none!important}@page{margin:8mm 10mm;size:A4}.card{box-shadow:none!important;border:none!important;border-radius:0!important;margin:0!important;max-width:100%!important}}.card{background:white;max-width:210mm;margin:20px auto;box-shadow:0 4px 24px rgba(15,23,42,0.08);border-radius:14px;border:1px solid #E3EAF3;overflow:hidden}table{width:100%;border-collapse:collapse}th{background:#F3EFF6;color:#0077B6;padding:10px 13px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-align:left;border-bottom:1.5px solid #90E0EF}th.r{text-align:right}.no-print{display:block}@media print{.no-print{display:none}}</style>
   </head><body>
   <div style="max-width:210mm;margin:0 auto;padding:16px;text-align:right;display:flex;justify-content:flex-end;gap:10px" class="no-print">
     <button onclick="window.print()" style="background:linear-gradient(135deg,#0077B6,#0096C7);color:white;border:none;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,119,182,0.25)">Print / Save PDF</button>
@@ -123,16 +123,16 @@ function printLedger(cust: Customer, custInvoices: Invoice[]) {
       </div>
     </div>
     <div style="padding:16px 20px">
-      <div style="font-size:9px;font-weight:700;color:#1C1B1F;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px">Invoice History</div>
+      <div style="font-size:12px;font-weight:700;color:#1C1B1F;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px">Invoice History</div>
       <table>
         <thead><tr><th>#</th><th>Invoice No</th><th>Date</th><th>Service</th><th class="r">Amount</th><th class="r">Paid</th><th class="r">Balance</th><th style="text-align:center">Status</th></tr></thead>
         <tbody>${rows}</tbody>
         <tfoot>
           <tr style="background:#F3EFF6;border-top:1.5px solid #90E0EF">
-            <td colspan="4" style="padding:10px 12px;font-size:11px;font-weight:700;color:#1C1B1F">TOTAL</td>
-            <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:12px;color:#1C1B1F">₹${formatINR(totalBilled)}</td>
-            <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:12px;color:#16a34a">₹${formatINR(totalPaid)}</td>
-            <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:12px;color:${outstanding>0?"#dc2626":"#16a34a"}">₹${formatINR(outstanding)}</td>
+            <td colspan="4" style="padding:10px 13px;font-size:13px;font-weight:700;color:#1C1B1F">TOTAL</td>
+            <td style="padding:10px 13px;text-align:right;font-weight:700;font-size:13px;color:#1C1B1F">₹${formatINR(totalBilled)}</td>
+            <td style="padding:10px 13px;text-align:right;font-weight:700;font-size:13px;color:#16a34a">₹${formatINR(totalPaid)}</td>
+            <td style="padding:10px 13px;text-align:right;font-weight:700;font-size:13px;color:${outstanding>0?"#dc2626":"#16a34a"}">₹${formatINR(outstanding)}</td>
             <td></td>
           </tr>
         </tfoot>

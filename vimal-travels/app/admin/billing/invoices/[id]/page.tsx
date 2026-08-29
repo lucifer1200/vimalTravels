@@ -532,7 +532,7 @@ export default function InvoiceViewPage() {
             {/* Non-air section heading */}
             {!isAir && (
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
-                <div style={{ fontSize: 8.5, fontWeight: 700, color: "#172554", letterSpacing: "0.5px", textTransform: "uppercase" }}>{isTrain ? "Train Booking" : isBus ? "Bus Booking" : isHotel ? "Hotel Reservation" : isPkg ? "Package Details" : isVisa ? "Visa Application" : "Service Entries"}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#172554", letterSpacing: "0.5px", textTransform: "uppercase" }}>{isTrain ? "Train Booking" : isBus ? "Bus Booking" : isHotel ? "Hotel Reservation" : isPkg ? "Package Details" : isVisa ? "Visa Application" : "Service Entries"}</div>
                 <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
               </div>
             )}
@@ -540,7 +540,7 @@ export default function InvoiceViewPage() {
             {/* TRAIN TABLE */}
             {isTrain && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Passenger","Train","Route","Date","Class / Seat","PNR","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -553,21 +553,21 @@ export default function InvoiceViewPage() {
                       const t = item as TrainItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 8 }}>{i + 1}</td>
-                          <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{t.paxName}</td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 8 }}>
+                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 10 }}>{i + 1}</td>
+                          <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{t.paxName}</td>
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 10 }}>
                             <div style={{ fontWeight: 600, color: "#334155" }}>{t.trainNo}</div>
                             <div style={{ color: "#64748B" }}>{t.trainName}</div>
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 8, color: "#334155" }}>{t.fromStation} {'->'} {t.toStation}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8 }}>
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 10, color: "#334155" }}>{t.fromStation} {'->'} {t.toStation}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 11 }}>
                             <span style={{ fontWeight: 600, color: "#334155" }}>{t.travelClass}</span>
                             {t.seatNo && <span style={{ color: "#94A3B8", marginLeft: 4 }}>· {t.seatNo}</span>}
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 8 }}>{t.pnr}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(t.amount)}</td>
-                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(t.serviceCharge || 0)}</td>}
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 10 }}>{t.pnr}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{formatINR(t.amount)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 11 }}>{formatINR(t.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
@@ -579,7 +579,7 @@ export default function InvoiceViewPage() {
             {/* BUS TABLE */}
             {isBus && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Passenger","Route","Date / Time","Seat","Ticket No","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -592,17 +592,17 @@ export default function InvoiceViewPage() {
                       const b = item as BusItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 8 }}>{i + 1}</td>
-                          <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{b.paxName}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{b.fromCity} {'->'} {b.toCity}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>
+                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 10 }}>{i + 1}</td>
+                          <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{b.paxName}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>{b.fromCity} {'->'} {b.toCity}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>
                             <div>{b.travelDate ? fmtDate(b.travelDate) : ""}</div>
                             {b.departTime && <div style={{ color: "#94A3B8" }}>{b.departTime}</div>}
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, fontSize: 8, color: "#334155" }}>{b.seatNo}</td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 8 }}>{b.ticketNo}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(b.amount)}</td>
-                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(b.serviceCharge || 0)}</td>}
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, fontSize: 10, color: "#334155" }}>{b.seatNo}</td>
+                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 10 }}>{b.ticketNo}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{formatINR(b.amount)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 11 }}>{formatINR(b.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
@@ -657,7 +657,7 @@ export default function InvoiceViewPage() {
                     )}
                   </div>
                   <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                    <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                    <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                       <thead>
                         <tr style={{ ...tblH }}>
                           {["#","Lead Guest","Room Type","Check-In","Check-Out","Nights","Meal","HCN / Ref","Room Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -670,28 +670,28 @@ export default function InvoiceViewPage() {
                           const h = item as HotelItem;
                           return (
                             <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                              <td style={{ padding: "8px 10px", color: "#94A3B8", width: 20, fontSize: 8 }}>{i + 1}</td>
-                              <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>
+                              <td style={{ padding: "8px 10px", color: "#94A3B8", width: 20, fontSize: 10 }}>{i + 1}</td>
+                              <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>
                                 {h.guestName}
-                                {(h.adults || h.children) && <div style={{ fontSize: 7.5, color: "#94A3B8", marginTop: 1 }}>{h.adults || 1} ADT{(h.children || 0) > 0 ? ` · ${h.children} CHD` : ""}</div>}
+                                {(h.adults || h.children) && <div style={{ fontSize: 9.5, color: "#94A3B8", marginTop: 1 }}>{h.adults || 1} ADT{(h.children || 0) > 0 ? ` · ${h.children} CHD` : ""}</div>}
                               </td>
-                              <td style={{ padding: "8px 10px", color: "#334155", fontSize: 8 }}>{h.roomType}</td>
-                              <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>
+                              <td style={{ padding: "8px 10px", color: "#334155", fontSize: 10 }}>{h.roomType}</td>
+                              <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>
                                 <div style={{ fontWeight: 600 }}>{h.checkIn ? fmtDate(h.checkIn) : ""}</div>
-                                {h.checkInTime && <div style={{ color: "#64748B", fontSize: 7.5 }}>{fmtTime(h.checkInTime)}</div>}
+                                {h.checkInTime && <div style={{ color: "#64748B", fontSize: 9 }}>{fmtTime(h.checkInTime)}</div>}
                               </td>
-                              <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>
+                              <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>
                                 <div style={{ fontWeight: 600 }}>{h.checkOut ? fmtDate(h.checkOut) : ""}</div>
-                                {h.checkOutTime && <div style={{ color: "#64748B", fontSize: 7.5 }}>{fmtTime(h.checkOutTime)}</div>}
+                                {h.checkOutTime && <div style={{ color: "#64748B", fontSize: 9 }}>{fmtTime(h.checkOutTime)}</div>}
                               </td>
-                              <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 700, fontSize: 8, color: "#172554" }}>{h.nights}N</td>
-                              <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{h.mealPlan}</td>
-                              <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 7.5, color: "#172554" }}>
+                              <td style={{ padding: "8px 10px", textAlign: "center", fontWeight: 700, fontSize: 11, color: "#172554" }}>{h.nights}N</td>
+                              <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>{h.mealPlan}</td>
+                              <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 9.5, color: "#172554" }}>
                                 {h.confirmationNo && <div>{h.confirmationNo}</div>}
                                 {h.bookingRef && <div style={{ color: "#64748B" }}>{h.bookingRef}</div>}
                               </td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(h.amount)}</td>
-                              {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 8 }}>{formatINR(h.serviceCharge || 0)}</td>}
+                              <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{formatINR(h.amount)}</td>
+                              {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 11 }}>{formatINR(h.serviceCharge || 0)}</td>}
                             </tr>
                           );
                         })}
@@ -705,7 +705,7 @@ export default function InvoiceViewPage() {
             {/* PACKAGE TABLE */}
             {isPkg && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["Lead Passenger","Destination","Travel Period","Pax","Rate / Person","Amount (₹)"].map((h, i) => (
@@ -718,14 +718,14 @@ export default function InvoiceViewPage() {
                       const p = item as PackageItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>
+                          <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>
                             {p.leadPax}{(p.paxCount ?? 0) > 1 ? ` +${(p.paxCount ?? 0) - 1}` : ""}
-                            {p.inclusions && <div style={{ fontSize: 7.5, color: "#94A3B8", marginTop: 2 }}>{p.inclusions}</div>}
+                            {p.inclusions && <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 2 }}>{p.inclusions}</div>}
                           </td>
-                          <td style={{ padding: "8px 10px", color: "#334155", fontSize: 8 }}>{p.destinations}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#64748B" }}>{p.travelFrom ? fmtDate(p.travelFrom) : ""} " {p.travelTo ? fmtDate(p.travelTo) : ""}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{p.paxCount}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{formatINR(p.perPersonRate ?? 0)}</td>
+                          <td style={{ padding: "8px 10px", color: "#334155", fontSize: 11 }}>{p.destinations}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 11, color: "#64748B" }}>{p.travelFrom ? fmtDate(p.travelFrom) : ""} " {p.travelTo ? fmtDate(p.travelTo) : ""}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{p.paxCount}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(p.perPersonRate ?? 0)}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR((p.perPersonRate ?? 0) * (p.paxCount ?? 0))}</td>
                         </tr>
                       );
@@ -738,7 +738,7 @@ export default function InvoiceViewPage() {
             {/* VISA TABLE */}
             {isVisa && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["Applicant","Country","Visa Type","Embassy Fee","Service Fee","Total (₹)"].map((h, i) => (
@@ -751,11 +751,11 @@ export default function InvoiceViewPage() {
                       const v = item as VisaItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{v.applicantName}</td>
+                          <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{v.applicantName}</td>
                           <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{v.visaCountry}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#64748B" }}>{v.visaType}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{formatINR(v.embassyFee ?? 0)}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 8, color: "#334155" }}>{formatINR(v.serviceFee ?? 0)}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 11, color: "#64748B" }}>{v.visaType}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(v.embassyFee ?? 0)}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(v.serviceFee ?? 0)}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR((v.embassyFee ?? 0) + (v.serviceFee ?? 0))}</td>
                         </tr>
                       );
@@ -768,7 +768,7 @@ export default function InvoiceViewPage() {
             {/* OTHER TABLE */}
             {inv.type === "other" && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 9.5, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Description","Amount (₹)"].map((h, i) => (
@@ -781,8 +781,8 @@ export default function InvoiceViewPage() {
                       const g = item as GenericItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 32, fontSize: 8 }}>{i + 1}</td>
-                          <td style={{ padding: "8px 10px", color: "#334155", fontSize: 8 }}>{g.description}</td>
+                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 32, fontSize: 10 }}>{i + 1}</td>
+                          <td style={{ padding: "8px 10px", color: "#334155", fontSize: 11 }}>{g.description}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(g.amount)}</td>
                         </tr>
                       );
@@ -807,7 +807,7 @@ export default function InvoiceViewPage() {
                       const taxCell = (
                         <td style={{ padding: "7px 10px", textAlign: "right" }}>
                           <div style={{ fontWeight: 600, color: "#1E293B", fontSize: 9 }}>{formatINR(inv.taxableAmount || 0)}</div>
-                          <div style={{ fontSize: 7.5, color: "#94A3B8", marginTop: 1 }}>on {taxLbl}</div>
+                          <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 1 }}>on {taxLbl}</div>
                         </td>
                       );
                       return (
