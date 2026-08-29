@@ -501,6 +501,24 @@ export async function addPayment(invoiceId: string, payment: Omit<Payment, "id">
   await saveInvoice(inv);
 }
 
+export async function deletePayment(invoiceId: string, paymentId: string): Promise<void> {
+  const inv = await getInvoice(invoiceId);
+  if (!inv) return;
+  inv.payments = (inv.payments || []).filter(p => p.id !== paymentId);
+  const totalPaid = inv.payments.reduce((s, p) => s + p.amount, 0);
+  inv.status = totalPaid >= inv.total ? "paid" : totalPaid > 0 ? "partial" : "due";
+  await saveInvoice(inv);
+}
+
+export async function updatePayment(invoiceId: string, paymentId: string, updates: Partial<Omit<Payment, "id">>): Promise<void> {
+  const inv = await getInvoice(invoiceId);
+  if (!inv) return;
+  inv.payments = (inv.payments || []).map(p => p.id === paymentId ? { ...p, ...updates } : p);
+  const totalPaid = inv.payments.reduce((s, p) => s + p.amount, 0);
+  inv.status = totalPaid >= inv.total ? "paid" : totalPaid > 0 ? "partial" : "due";
+  await saveInvoice(inv);
+}
+
 export function computeStatus(inv: Invoice): InvoiceStatus {
   const paid = (inv.payments || []).reduce((s, p) => s + p.amount, 0);
   if (paid <= 0) return "due";

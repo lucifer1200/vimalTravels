@@ -550,35 +550,55 @@ export default function CustomersPage() {
                       const invPaid = (inv.payments || []).reduce((s, p) => s + p.amount, 0);
                       const invBal  = inv.total - invPaid;
                       return (
-                        <Link key={inv.id} href={`/admin/billing/invoices/${inv.id}`}
-                          className="flex items-center gap-3 px-5 py-4 transition-colors group"
-                          style={{ borderBottom:`1px solid ${T.divider}` }}
-                          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.rowHover; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
-                          <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-                            style={{ background: TYPE_BG[inv.type] || "#F1F5F9" }}>
-                            <Icon className="w-4 h-4" style={{ color: TYPE_COLOR[inv.type] || "#475569" }} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[12px] font-bold" style={{ color: T.primary }}>{inv.invoiceNo}</span>
-                              <span className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                                style={{ background: STATUS_DOT[inv.status] + "22", color: STATUS_DOT[inv.status] }}>
-                                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: STATUS_DOT[inv.status] }} />
-                                {STATUS_LBL[inv.status]}
-                              </span>
+                        <div key={inv.id} style={{ borderBottom:`1px solid ${T.divider}` }}>
+                          <Link href={`/admin/billing/invoices/${inv.id}`}
+                            className="flex items-center gap-3 px-5 py-4 transition-colors group"
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.rowHover; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+                            <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
+                              style={{ background: TYPE_BG[inv.type] || "#F1F5F9" }}>
+                              <Icon className="w-4 h-4" style={{ color: TYPE_COLOR[inv.type] || "#475569" }} />
                             </div>
-                            <div className="text-[12px] mt-0.5" style={{ color: T.textMuted }}>{TYPE_LABEL[inv.type]} · {fmtDate(inv.date)}</div>
-                            {invBal > 0 && inv.status !== "paid" && (
-                              <div className="text-[12px] font-semibold mt-0.5" style={{ color:"#EF4444" }}>Due: ₹{formatINR(invBal)}</div>
-                            )}
-                          </div>
-                          <div className="text-right shrink-0">
-                            <div className="font-bold text-[14px] tabular-nums" style={{ color: T.text }}>₹{formatINR(inv.total)}</div>
-                            {invPaid > 0 && <div className="text-[12px] font-semibold" style={{ color:"#22C55E" }}>₹{formatINR(invPaid)} paid</div>}
-                          </div>
-                          <ChevronRight className="w-4 h-4 shrink-0 transition-colors" style={{ color: T.textMuted }} />
-                        </Link>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-[12px] font-bold" style={{ color: T.primary }}>{inv.invoiceNo}</span>
+                                <span className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                  style={{ background: STATUS_DOT[inv.status] + "22", color: STATUS_DOT[inv.status] }}>
+                                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: STATUS_DOT[inv.status] }} />
+                                  {STATUS_LBL[inv.status]}
+                                </span>
+                              </div>
+                              <div className="text-[12px] mt-0.5" style={{ color: T.textMuted }}>{TYPE_LABEL[inv.type]} · {fmtDate(inv.date)}</div>
+                              {invBal > 0 && inv.status !== "paid" && (
+                                <div className="text-[12px] font-semibold mt-0.5" style={{ color:"#EF4444" }}>Due: ₹{formatINR(invBal)}</div>
+                              )}
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="font-bold text-[14px] tabular-nums" style={{ color: T.text }}>₹{formatINR(inv.total)}</div>
+                              {invPaid > 0 && <div className="text-[12px] font-semibold" style={{ color:"#22C55E" }}>₹{formatINR(invPaid)} paid</div>}
+                            </div>
+                            <ChevronRight className="w-4 h-4 shrink-0 transition-colors" style={{ color: T.textMuted }} />
+                          </Link>
+                          {/* Payment history rows */}
+                          {(inv.payments || []).length > 0 && (
+                            <div style={{ background: dark ? "rgba(0,0,0,0.15)" : "#F8FAFC", borderTop: `1px solid ${T.divider}`, padding: "6px 20px 8px 20px" }}>
+                              {inv.payments.map((p) => (
+                                <div key={p.id} className="flex items-center justify-between py-1.5">
+                                  <div className="flex items-center gap-2">
+                                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", flexShrink: 0 }} />
+                                    <span className="text-[11px]" style={{ color: T.textMuted }}>
+                                      {p.mode === "bank" ? "Bank Transfer" : p.mode === "upi" ? "UPI" : p.mode === "cash" ? "Cash" : p.mode === "cheque" ? "Cheque" : "Card"}
+                                      {p.bankName ? ` · ${p.bankName}` : ""}
+                                      {p.refNo ? ` · ${p.refNo}` : ""}
+                                    </span>
+                                    <span className="text-[11px] font-semibold" style={{ color: T.textMuted }}>{fmtDate(p.date)}</span>
+                                  </div>
+                                  <span className="text-[12px] font-bold tabular-nums" style={{ color: "#22C55E" }}>₹{formatINR(p.amount)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>

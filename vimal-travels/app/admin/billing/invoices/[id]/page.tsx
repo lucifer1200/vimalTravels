@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  getInvoiceById, addPayment, deleteInvoice, addInvoice, saveInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
+  getInvoiceById, addPayment, deletePayment, updatePayment, deleteInvoice, addInvoice, saveInvoice, formatINR, fmtDate, amountToWords, getFinancialYear,
   type Invoice, type FlightItem, type PackageItem, type VisaItem, type GenericItem,
   type TrainItem, type BusItem, type HotelItem, type InvoiceStatus, type PaymentMode, COMPANY, TYPE_LABEL,
 } from "@/lib/billing";
@@ -41,6 +41,9 @@ export default function InvoiceViewPage() {
   const [saved, setSaved] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [logoB64, setLogoB64] = useState<string>("/vimal-logo.jpeg");
+  const [editPayId, setEditPayId] = useState<string | null>(null);
+  const [editPayForm, setEditPayForm] = useState({ amount: "", mode: "bank" as PaymentMode, refNo: "", bankName: "", date: "" });
+  const [delPayId, setDelPayId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -140,6 +143,28 @@ export default function InvoiceViewPage() {
     });
     setSaved(true);
     setTimeout(() => { setSaved(false); setPayModal(false); reload(); }, 1200);
+  };
+
+  const openEditPay = (p: { id: string; amount: number; mode?: PaymentMode; refNo?: string; bankName?: string; date: string }) => {
+    setEditPayId(p.id);
+    setEditPayForm({ amount: String(p.amount), mode: p.mode || "bank", refNo: p.refNo || "", bankName: p.bankName || "", date: p.date });
+  };
+
+  const handleEditPayment = async () => {
+    if (!editPayId || !editPayForm.amount) return;
+    await updatePayment(inv.id, editPayId, {
+      amount: parseFloat(editPayForm.amount), mode: editPayForm.mode,
+      refNo: editPayForm.refNo, bankName: editPayForm.bankName, date: editPayForm.date,
+    });
+    setEditPayId(null);
+    reload();
+  };
+
+  const handleDeletePayment = async () => {
+    if (!delPayId) return;
+    await deletePayment(inv.id, delPayId);
+    setDelPayId(null);
+    reload();
   };
 
   const handleWhatsApp = async () => {
@@ -888,19 +913,29 @@ export default function InvoiceViewPage() {
                   <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
                   <span className={`text-[9px] font-bold uppercase px-2.5 py-1 rounded-full border ${statusCfg.cls}`}>{statusCfg.label}</span>
                 </div>
-                <div style={{ border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
+                <div style={{ border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#E2E8F0"}`, borderRadius: 12, overflow: "hidden" }}>
                   {inv.payments.map((p, i) => (
-                    <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderBottom: i < inv.payments.length - 1 ? "1px solid #F1F5F9" : "none" }}>
-                      <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#ECFDF3", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", borderBottom: i < inv.payments.length - 1 ? `1px solid ${dark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}` : "none", background: dark ? "rgba(255,255,255,0.02)" : "#fff" }}>
+                      <div style={{ width: 30, height: 30, borderRadius: "50%", background: "#ECFDF3", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <CheckCircle className="w-4 h-4 text-emerald-600" />
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#E2E8F0" : "#1E293B" }}>
                           {p.mode === "bank" ? "Bank Transfer" : p.mode === "upi" ? "UPI Payment" : p.mode === "cash" ? "Cash" : p.mode === "cheque" ? "Cheque" : "Card"}
                         </div>
-                        <div style={{ fontSize: 8, color: "#94A3B8" }}>{p.bankName && `${p.bankName}`}{p.refNo ? ` · Ref: ${p.refNo}` : ""}{p.date ? ` · ${fmtDate(p.date)}` : ""}</div>
+                        <div style={{ fontSize: 11, color: dark ? "#94A3B8" : "#64748B", marginTop: 2 }}>
+                          {fmtDate(p.date)}{p.bankName ? ` · ${p.bankName}` : ""}{p.refNo ? ` · Ref: ${p.refNo}` : ""}
+                        </div>
                       </div>
-                      <div style={{ fontSize: 9, fontWeight: 600, color: "#1E293B" }}>₹{formatINR(p.amount)}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#22C55E" }}>₹{formatINR(p.amount)}</div>
+                      <div style={{ display: "flex", gap: 6 }} className="print:hidden">
+                        <button onClick={() => openEditPay(p)} title="Edit" style={{ width: 28, height: 28, borderRadius: 7, border: `1px solid ${dark ? "rgba(255,255,255,0.12)" : "#E2E8F0"}`, background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                          <Pencil className="w-3.5 h-3.5" style={{ color: dark ? "#94A3B8" : "#64748B" }} />
+                        </button>
+                        <button onClick={() => setDelPayId(p.id)} title="Delete" style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid rgba(186,26,26,0.25)", background: "rgba(186,26,26,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                          <X className="w-3.5 h-3.5" style={{ color: "#B3261E" }} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1080,6 +1115,76 @@ export default function InvoiceViewPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* -- EDIT PAYMENT MODAL -- */}
+      {editPayId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}>
+          <div className="w-full max-w-sm mx-4 rounded-2xl p-6 shadow-2xl" style={{ background: dark ? "#1C1B1F" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,0.10)" : "#E7E0EC"}` }}>
+            <h2 className="font-bold text-[17px] mb-4" style={{ color: dark ? "#E6E1E5" : "#1C1B1F" }}>Edit Payment</h2>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: "Amount (₹)", type: "number", value: editPayForm.amount, onChange: (v: string) => setEditPayForm(f => ({ ...f, amount: v })), placeholder: "0.00" },
+                { label: "Bank Name", type: "text", value: editPayForm.bankName, onChange: (v: string) => setEditPayForm(f => ({ ...f, bankName: v })), placeholder: "e.g. SBI" },
+                { label: "Reference / UTR No", type: "text", value: editPayForm.refNo, onChange: (v: string) => setEditPayForm(f => ({ ...f, refNo: v })), placeholder: "UTR / Txn reference" },
+              ].map(({ label, type, value, onChange, placeholder }) => (
+                <div key={label}>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark ? "#938F99" : "#79747E" }}>{label}</label>
+                  <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+                    className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
+                    style={{ background: dark ? "rgba(255,255,255,0.06)" : "#FAF7FF", border: `1px solid ${dark ? "rgba(255,255,255,0.14)" : "#90E0EF"}`, color: dark ? "#E6E1E5" : "#1C1B1F" }} />
+                </div>
+              ))}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark ? "#938F99" : "#79747E" }}>Mode</label>
+                  <select value={editPayForm.mode} onChange={e => setEditPayForm(f => ({ ...f, mode: e.target.value as PaymentMode }))}
+                    className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
+                    style={{ background: dark ? "rgba(255,255,255,0.06)" : "#FAF7FF", border: `1px solid ${dark ? "rgba(255,255,255,0.14)" : "#90E0EF"}`, color: dark ? "#E6E1E5" : "#1C1B1F", colorScheme: dark ? "dark" : "light" }}>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="upi">UPI</option>
+                    <option value="cash">Cash</option>
+                    <option value="cheque">Cheque</option>
+                    <option value="card">Card</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: dark ? "#938F99" : "#79747E" }}>Date</label>
+                  <input type="date" value={editPayForm.date} onChange={e => setEditPayForm(f => ({ ...f, date: e.target.value }))}
+                    className="w-full rounded-xl px-3 py-2.5 text-[14px] focus:outline-none"
+                    style={{ background: dark ? "rgba(255,255,255,0.06)" : "#FAF7FF", border: `1px solid ${dark ? "rgba(255,255,255,0.14)" : "#90E0EF"}`, color: dark ? "#E6E1E5" : "#1C1B1F" }} />
+                </div>
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button onClick={() => setEditPayId(null)} className="flex-1 py-2.5 text-[14px] font-semibold rounded-xl"
+                  style={{ color: dark ? "#938F99" : "#79747E", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#E7E0EC"}` }}>Cancel</button>
+                <button onClick={handleEditPayment} disabled={!editPayForm.amount}
+                  className="flex-1 py-2.5 text-[14px] font-semibold text-white rounded-xl disabled:opacity-40"
+                  style={{ background: "linear-gradient(135deg,#0077B6,#0096C7)" }}>Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* -- DELETE PAYMENT CONFIRM -- */}
+      {delPayId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}>
+          <div className="w-full max-w-sm mx-4 rounded-2xl p-6 shadow-2xl" style={{ background: dark ? "#1C1B1F" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,0.10)" : "#E7E0EC"}` }}>
+            <div className="flex items-center gap-3 mb-3">
+              <X className="w-5 h-5 text-red-600" />
+              <h2 className="font-bold text-[16px]" style={{ color: dark ? "#E6E1E5" : "#1C1B1F" }}>Delete Payment?</h2>
+            </div>
+            <p className="text-[13px] mb-5" style={{ color: dark ? "#938F99" : "#79747E" }}>This payment record will be removed and the invoice balance will be updated.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDelPayId(null)} className="flex-1 py-2.5 text-[14px] font-semibold rounded-xl"
+                style={{ color: dark ? "#938F99" : "#79747E", border: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#E7E0EC"}` }}>Cancel</button>
+              <button onClick={handleDeletePayment}
+                className="flex-1 py-2.5 text-[14px] font-semibold text-white rounded-xl"
+                style={{ background: "#B3261E" }}>Yes, Delete</button>
+            </div>
           </div>
         </div>
       )}
