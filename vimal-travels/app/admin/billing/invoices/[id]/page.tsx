@@ -206,7 +206,7 @@ export default function InvoiceViewPage() {
   const secTitle = { fontSize: 10, fontWeight: 700, color: "#172554", letterSpacing: "0.7px", textTransform: "uppercase" as const, marginBottom: 7 };
   const cardBase = { background: "#FFFFFF", border: "1px solid #DCE6F2", borderRadius: 12, padding: 11, boxShadow: "0 3px 12px rgba(15,23,42,0.05)" };
   const tblH = { background: "#EFF6FF", borderBottom: "1px solid #BFDBFE" };
-  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "8px 10px", textAlign: right ? "right" : "left", fontSize: 8, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
+  const thCell = (right?: boolean): React.CSSProperties => ({ padding: "9px 10px", textAlign: right ? "right" : "left", fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: "0.5px", textTransform: "uppercase", borderBottom: "1px solid #BFDBFE" });
   const tdRow = (alt: boolean) => ({ borderBottom: "1px solid #F1F5F9", background: alt ? "#F8FBFF" : "white" });
 
   const toolbarBg     = dark ? "rgba(18,18,18,0.97)" : "#FFFFFF";
@@ -540,7 +540,7 @@ export default function InvoiceViewPage() {
             {/* TRAIN TABLE */}
             {isTrain && (
               <div style={{ marginBottom: 16, border: "1px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
-                <table className="w-full" style={{ fontSize: 11, borderCollapse: "collapse" }}>
+                <table className="w-full" style={{ fontSize: 13, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ ...tblH }}>
                       {["#","Passenger","Train","Route","Date","Class / Seat","PNR","Fare (₹)",...(gstTotal>0?["Svc (₹)"]:[])] .map((h, i) => (
@@ -553,21 +553,21 @@ export default function InvoiceViewPage() {
                       const t = item as TrainItem;
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
-                          <td style={{ padding: "8px 10px", color: "#94A3B8", width: 24, fontSize: 10 }}>{i + 1}</td>
-                          <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{t.paxName}</td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 10 }}>
-                            <div style={{ fontWeight: 600, color: "#334155" }}>{t.trainNo}</div>
-                            <div style={{ color: "#64748B" }}>{t.trainName}</div>
+                          <td style={{ padding: "9px 10px", color: "#94A3B8", width: 24, fontSize: 12 }}>{i + 1}</td>
+                          <td style={{ padding: "9px 10px", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{t.paxName}</td>
+                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontSize: 12 }}>
+                            <div style={{ fontWeight: 700, color: "#334155" }}>{t.trainNo}</div>
+                            <div style={{ color: "#64748B", fontSize: 11 }}>{t.trainName}</div>
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 10, color: "#334155" }}>{t.fromStation} {'->'} {t.toStation}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 10, color: "#334155" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 11 }}>
-                            <span style={{ fontWeight: 600, color: "#334155" }}>{t.travelClass}</span>
-                            {t.seatNo && <span style={{ color: "#94A3B8", marginLeft: 4 }}>· {t.seatNo}</span>}
+                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#1E293B" }}>{t.fromStation} {'->'} {t.toStation}</td>
+                          <td style={{ padding: "9px 10px", fontSize: 13, fontWeight: 700, color: "#1E293B" }}>{t.travelDate ? fmtDate(t.travelDate) : ""}</td>
+                          <td style={{ padding: "9px 10px", fontSize: 13 }}>
+                            <span style={{ fontWeight: 700, color: "#334155" }}>{t.travelClass}</span>
+                            {t.seatNo && <span style={{ color: "#94A3B8", marginLeft: 4, fontSize: 11 }}>· {t.seatNo}</span>}
                           </td>
-                          <td style={{ padding: "8px 10px", fontFamily: "monospace", fontWeight: 600, color: "#172554", fontSize: 10 }}>{t.pnr}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{formatINR(t.amount)}</td>
-                          {gstTotal > 0 && <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 11 }}>{formatINR(t.serviceCharge || 0)}</td>}
+                          <td style={{ padding: "9px 10px", fontFamily: "monospace", fontWeight: 700, color: "#172554", fontSize: 12 }}>{t.pnr}</td>
+                          <td style={{ padding: "9px 10px", textAlign: "right", fontWeight: 700, color: "#1E293B", fontSize: 13 }}>{formatINR(t.amount)}</td>
+                          {gstTotal > 0 && <td style={{ padding: "9px 10px", textAlign: "right", fontWeight: 600, color: "#D99A22", fontSize: 13 }}>{formatINR(t.serviceCharge || 0)}</td>}
                         </tr>
                       );
                     })}
