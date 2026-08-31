@@ -224,10 +224,11 @@ export const COMPANY = {
   mobile1:   "9886114440",
   mobile2:   "9845679729",
   email:     "vimaltrls@gmail.com",
-  bank:      "Canara Bank",
-  accountNo: "3063101009711",
-  ifsc:      "CNRB0003063",
-  branch:    "Gokula, Bangalore",
+  bank:      "ICICI Bank",
+  accountNo: "093705500029",
+  ifsc:      "ICIC0000937",
+  branch:    "New Bel Road",
+  upiId:     "vimaltrls@okicici",
 };
 
 // ── Labels ────────────────────────────────────────────────────────────────────

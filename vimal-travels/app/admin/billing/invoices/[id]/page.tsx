@@ -171,7 +171,8 @@ export default function InvoiceViewPage() {
     const phone = (inv.customer.mobile || "").replace(/\D/g, "");
     if (!phone) { alert("Customer mobile number not set"); return; }
 
-    const msg = `Dear ${inv.customer.name},\n\nPlease find your invoice from Vimal Travels:\n\nInvoice No: ${inv.invoiceNo}\nDate: ${fmtDate(inv.date)}\nService: ${TYPE_LABEL[inv.type]}\nAmount: ₹${formatINR(inv.total)}\n\nThank you for choosing Vimal Travels!\n" ${COMPANY.mobile1} | ${COMPANY.mobile2}\n ${COMPANY.email}`;
+    const balDue = inv.total - (inv.payments || []).reduce((s, p) => s + p.amount, 0);
+    const msg = `Dear ${inv.customer.name},\n\nPlease find your invoice details from Vimal Travels:\n\nInvoice No: ${inv.invoiceNo}\nDate: ${fmtDate(inv.date)}\nService: ${TYPE_LABEL[inv.type]}\nTotal Amount: ₹${formatINR(inv.total)}${balDue > 0 ? `\nAmount Paid: ₹${formatINR(inv.total - balDue)}\n*Balance Due: ₹${formatINR(balDue)}*\n\n⚠️ Please clear your pending dues at the earliest.` : "\n\n✅ Payment received. Thank you!"}\n\n💳 *Pay via UPI:*\nUPI ID: ${COMPANY.upiId}\n\nThank you for choosing Vimal Travels!\n📞 ${COMPANY.mobile1} | ${COMPANY.mobile2}\n✉️ ${COMPANY.email}`;
     const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
     const custName = (inv.customer?.name || "Customer").replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "_");
     const svcType  = TYPE_LABEL[inv.type]?.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "_") || inv.type;
@@ -894,13 +895,24 @@ export default function InvoiceViewPage() {
                       <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.6px", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>₹{formatINR(inv.total)}</div>
                       <div style={{ fontSize: 8.5, color: "rgba(255,255,255,0.38)", marginTop: 6 }}>All amounts in INR · Inclusive of all taxes</div>
                     </div>
-                    {inv.status === "paid" && (
+                    {inv.status === "paid" ? (
                       <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 999, padding: "4px 11px", display: "flex", alignItems: "center", gap: 4 }}>
                         <span style={{ fontSize: 8, color: "#4ADE80" }}>"</span>
                         <span style={{ fontSize: 7.5, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.5px" }}>PAID</span>
                       </div>
-                    )}
+                    ) : balance > 0 ? (
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 8, fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: 3 }}>Paid</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#4ADE80", fontVariantNumeric: "tabular-nums" }}>₹{formatINR(paid)}</div>
+                      </div>
+                    ) : null}
                   </div>
+                  {balance > 0 && (
+                    <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.15)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.6)", letterSpacing: "1px", textTransform: "uppercase" }}>Balance Due</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: "#FCA5A5", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px" }}>₹{formatINR(balance)}</div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -974,6 +986,20 @@ export default function InvoiceViewPage() {
                   <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 4 }}>
                     <ShieldCheck style={{ width: 11, height: 11, color: "#2563EB" }} />
                     <span style={{ fontSize: 8.5, fontWeight: 500, color: "#2563EB" }}>Primary Business Account — Secure Transfer</span>
+                  </div>
+                  {/* UPI QR */}
+                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid #EBF4FF", display: "flex", alignItems: "center", gap: 10 }}>
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=upi://pay?pa=${COMPANY.upiId}%26pn=Vimal+Travels`}
+                      alt="UPI QR"
+                      style={{ width: 70, height: 70, borderRadius: 6, border: "1px solid #DBEAFE", flexShrink: 0 }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <div>
+                      <div style={{ fontSize: 8, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 3 }}>Pay via UPI</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "#172554", fontFamily: "monospace" }}>{COMPANY.upiId}</div>
+                      <div style={{ fontSize: 8, color: "#94A3B8", marginTop: 2 }}>Scan with any UPI app</div>
+                    </div>
                   </div>
                 </div>
               </div>

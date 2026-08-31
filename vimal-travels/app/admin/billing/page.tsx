@@ -764,7 +764,8 @@ export default function BillingDashboard() {
             </div>
           ) : (
             <>
-              <div className="grid px-6 py-2.5 text-[10px] font-bold uppercase"
+              {/* Desktop header */}
+              <div className="hidden md:grid px-6 py-2.5 text-[10px] font-bold uppercase"
                 style={{ gridTemplateColumns:"2fr 1.1fr 1.3fr 0.9fr 1fr 88px", background: T.tblHeader, borderBottom: `1px solid ${T.divider}`, color: T.textMuted, letterSpacing:"0.06em" }}>
                 <span>Customer</span><span>Invoice #</span><span>Service</span><span>Date</span><span className="text-right">Total</span><span className="text-center">Status</span>
               </div>
@@ -773,8 +774,29 @@ export default function BillingDashboard() {
                 const sc   = STATUS_CHIP[inv.status];
                 return (
                   <motion.div key={inv.id} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay: 0.38 + idx * 0.03 }}>
+                    {/* Mobile card */}
                     <Link href={`/admin/billing/invoices/${inv.id}`}
-                      className="grid items-center px-6 py-3.5 group transition-colors"
+                      className="md:hidden flex items-center gap-3 px-4 py-3.5 transition-colors"
+                      style={{ borderBottom:`1px solid ${T.divider}` }}>
+                      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
+                        style={{ background: dark?"rgba(0,119,182,0.15)":"#EFF6FF" }}>
+                        <Icon className="w-4 h-4" style={{ color: dark?"#90E0EF":"#0077B6" }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-[13px] truncate" style={{ color: T.text }}>{inv.customer?.name}</span>
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0"
+                            style={{ background: sc.bg, color: sc.text }}>
+                            <span className="w-1 h-1 rounded-full shrink-0" style={{ background: sc.dot }} />{sc.label}
+                          </span>
+                        </div>
+                        <div className="text-[11px] mt-0.5" style={{ color: T.textMuted }}>{fmtDate(inv.date)} · {TYPE_LABEL[inv.type].replace(" Invoice","").replace(" Ticket","")}</div>
+                      </div>
+                      <span className="font-bold text-[14px] tabular-nums shrink-0" style={{ color: T.text }}>₹{formatINR(inv.total)}</span>
+                    </Link>
+                    {/* Desktop row */}
+                    <Link href={`/admin/billing/invoices/${inv.id}`}
+                      className="hidden md:grid items-center px-6 py-3.5 group transition-colors"
                       style={{ gridTemplateColumns:"2fr 1.1fr 1.3fr 0.9fr 1fr 88px", borderBottom: `1px solid ${T.divider}` }}
                       onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.rowHover; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
@@ -805,7 +827,7 @@ export default function BillingDashboard() {
         </motion.div>
 
         {/* -- QUICK ACTIONS -- */}
-        <motion.div initial={{ opacity:0,y:14 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.4,delay:0.42 }} className="grid grid-cols-3 gap-4">
+        <motion.div initial={{ opacity:0,y:14 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.4,delay:0.42 }} className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
             { href:"/admin/billing/invoices/new?type=air-intl", icon:Plane,  label:"Air Ticket",    sub:"New flight invoice",  accent:dark?"#0096C7":"#0077B6", tint:dark?"rgba(255,255,255,0.07)":"#F3EFF6" },
             { href:"/admin/billing/invoices/new?type=hotel",    icon:Hotel,  label:"Hotel Booking", sub:"New hotel invoice",   accent:dark?"#60C0DC":"#0891B2", tint:dark?"rgba(8,145,178,0.15)":"#ECFEFF"  },
