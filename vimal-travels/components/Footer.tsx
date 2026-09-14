@@ -87,7 +87,10 @@ export default function Footer() {
           <ul className="space-y-4">
             <li className="flex gap-3 text-sm text-gray-400">
               <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-              5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054
+              <div>
+                <div>5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054</div>
+                <div className="mt-1">1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata showroom, AGS Layout, R.M.V. 2nd Stage, Bengaluru, Karnataka 560094</div>
+              </div>
             </li>
             <li>
               <a href="tel:+919886114440" className="flex gap-3 text-sm text-gray-400 hover:text-blue-400 transition-colors">

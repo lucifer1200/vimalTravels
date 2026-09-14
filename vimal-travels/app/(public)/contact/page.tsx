@@ -50,7 +50,8 @@ export default function ContactPage() {
 
                 <div className="space-y-4 mb-8">
                   {[
-                    { icon: MapPin, label: "Office Address", content: "5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054", href: undefined },
+                    { icon: MapPin, label: "Branch 1 — Mathikere", content: "5, Vimal Shopping Complex, MS Ramaiah Rd, opp. divya msr gateway, Gokula Extension, Mathikere, Bengaluru, Karnataka 560054", href: undefined },
+                    { icon: MapPin, label: "Branch 2 — New BEL Rd", content: "1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata showroom, AGS Layout, R.M.V. 2nd Stage, Bengaluru, Karnataka 560094", href: undefined },
                     { icon: Phone,  label: "Phone",          content: "+91 98861 14440  |  +91 98456 79729", href: "tel:+919886114440" },
                     { icon: Mail,   label: "Email",          content: "vimaltrls@gmail.com", href: "mailto:vimaltrls@gmail.com" },
                     { icon: Clock,  label: "Business Hours", content: "Mon–Sat: 10:30 AM – 8:00 PM", href: undefined },

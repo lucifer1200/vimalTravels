@@ -217,6 +217,7 @@ export interface Voucher {
 export const COMPANY = {
   name:      "VIMAL TRAVELS",
   address:   "No 5 Vimal Shopping Complex, MSR Main Road, Gokula, Bangalore (560054)",
+  address2:  "1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata showroom, AGS Layout, R.M.V. 2nd Stage, Bengaluru (560094)",
   state:     "Karnataka",
   stateCode: "29",
   gstin:     "29ABYPK8170A1Z8",
