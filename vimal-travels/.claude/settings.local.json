@@ -23,7 +23,28 @@
       "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
       "Bash(python3)",
       "Bash(node -e ' *)",
-      "Bash(del \"C:\\\\Users\\\\jain1\\\\Downloads\\\\vimal-travels\\\\vimal-travels\\\\read_pdf_temp.mjs\")"
+      "Bash(del \"C:\\\\Users\\\\jain1\\\\Downloads\\\\vimal-travels\\\\vimal-travels\\\\read_pdf_temp.mjs\")",
+      "PowerShell(npm install -g vercel 2>&1)",
+      "Bash(npx tsc *)",
+      "PowerShell(powershell -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\jain1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jain1-Downloads-vimal-travels-vimal-travels\\\\d3e30f05-2759-47ce-9322-a93471e0c40e\\\\scratchpad\\\\fix_encoding.ps1\")",
+      "PowerShell(powershell -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\jain1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jain1-Downloads-vimal-travels-vimal-travels\\\\d3e30f05-2759-47ce-9322-a93471e0c40e\\\\scratchpad\\\\fix_encoding2.ps1\")",
+      "PowerShell(powershell -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\jain1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jain1-Downloads-vimal-travels-vimal-travels\\\\d3e30f05-2759-47ce-9322-a93471e0c40e\\\\scratchpad\\\\fix_purple.ps1\")",
+      "Bash(xargs perl -i -pe 's/\\\\x{e2}\\\\x{80}\\\\x{9c}\\(?=\\\\s*\\(exempt|taxable|works|HOTEL|OTA|GST|Room|Break|Dinner|Dinner\\)\\)/\\\\xe2\\\\x80\\\\x94/g; s/â€\"\\([^\"<>]*\\)/—$1/g;')",
+      "Bash(xargs grep -l 'â€\"')",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(curl -s -X DELETE https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/invoices?id=neq.00000000-0000-0000-0000-000000000000 -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Content-Type: application/json')",
+      "Bash(curl -s -X DELETE https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/counters?key=neq.customer -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Content-Type: application/json')",
+      "Bash(curl -s 'https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/invoices?select=id&limit=5' -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4')",
+      "Bash(curl -s https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/counters?select=* -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4')",
+      "Bash(curl -s -X DELETE https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/customers?id=neq.00000000-0000-0000-0000-000000000000 -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4')",
+      "Bash(curl -s -X DELETE https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/counters?key=eq.customer -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4')",
+      "Bash(curl -s 'https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/customers?select=id&limit=5' -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4')",
+      "Bash(curl -s -X POST https://qkwcxnsxrwyjgrohfqnh.supabase.co/rest/v1/rpc/query -H 'apikey: sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4' -H 'Content-Type: application/json' -d '{\"query\": \"ALTER TABLE invoices ADD COLUMN IF NOT EXISTS deleted_at timestamptz;\"}')",
+      "Bash(curl -s \"https://api.supabase.com/v1/projects\" -H \"Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4\")",
+      "Bash(ls \"C:\\\\Users\\\\jain1\\\\AppData\\\\Local\\\\Temp\\\\\" | grep -i \"png\\\\|jpg\\\\|jpeg\" | head -10)",
+      "Bash('C:\\\\Users\\\\jain1/.claude/skills/seo/bin/claude-seo' run *)",
+      "WebSearch"
     ]
   }
 }
