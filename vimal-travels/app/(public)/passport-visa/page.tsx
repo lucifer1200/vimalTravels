@@ -6,8 +6,14 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Passport & Visa Services — Vimal Travels",
-  description: "Expert passport and visa assistance in Bengaluru. New applications, renewals, Tatkal and all visa types.",
+  title: "Passport & Visa Services in Bengaluru — Tatkal, Renewal, All Countries | Vimal Travels",
+  description: "Expert passport & visa assistance in Bengaluru. New passport, Tatkal, renewal, Schengen, USA, UAE, UK, Singapore visa processing. 99% success rate · IATA certified.",
+  alternates: { canonical: "/passport-visa" },
+  openGraph: {
+    title: "Passport & Visa Services in Bengaluru — Vimal Travels",
+    description: "Passport & visa assistance in Bengaluru. Schengen, USA, UAE, UK, Singapore & all countries. 99% success rate.",
+    url: "https://www.vimaltravels.in/passport-visa",
+  },
 };
 
 const passportServices = [

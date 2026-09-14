@@ -7,8 +7,14 @@ import ScrollReveal from "@/components/ScrollReveal";
 import PackageCard from "@/components/PackageCard";
 
 export const metadata: Metadata = {
-  title: "Tour Packages — Vimal Travels",
-  description: "Browse our domestic and international tour packages with best prices.",
+  title: "Tour Packages from Bengaluru — Domestic & International | Vimal Travels",
+  description: "Book Kashmir, Kerala, Bali, Singapore, Goa, Europe & more tour packages from Bengaluru. Best prices, customised itineraries, IATA certified. Starting ₹12,999.",
+  alternates: { canonical: "/packages" },
+  openGraph: {
+    title: "Tour Packages from Bengaluru — Vimal Travels",
+    description: "Kashmir, Kerala, Bali, Singapore & Europe tour packages from Bengaluru. Starting ₹12,999.",
+    url: "https://www.vimaltravels.in/packages",
+  },
 };
 
 const domesticPackages = [

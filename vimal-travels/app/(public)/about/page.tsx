@@ -6,8 +6,14 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "About Us — Vimal Travels",
-  description: "Bengaluru's trusted travel agency since 2007. Learn about our story, team, and commitment to travelers.",
+  title: "About Vimal Travels — Bengaluru's IATA Certified Agency Since 2007",
+  description: "Vimal Travels has been Bengaluru's trusted travel partner since 2007. 19+ years, 5,000+ families, IATA certified, 4.9★ Google rated. Two offices: Mathikere & New BEL Road.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About Vimal Travels — Bengaluru Since 2007",
+    description: "19+ years, 5,000+ families, IATA certified. Bengaluru's trusted travel agency.",
+    url: "https://www.vimaltravels.in/about",
+  },
 };
 
 export default function AboutPage() {

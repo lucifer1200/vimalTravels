@@ -6,8 +6,14 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Contact Us — Vimal Travels",
-  description: "Get in touch with Vimal Travels. Visit our Bengaluru office or send us an enquiry online.",
+  title: "Contact Vimal Travels — 2 Offices in Bengaluru | Mathikere & New BEL Road",
+  description: "Visit Vimal Travels at Mathikere (560054) or New BEL Road, R.M.V. 2nd Stage (560094), Bengaluru. Call +91 98861 14440. Mon–Sat 10:30 AM – 8:00 PM.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact Vimal Travels — Bengaluru",
+    description: "2 offices in Bengaluru: Mathikere & New BEL Road. Call +91 98861 14440.",
+    url: "https://www.vimaltravels.in/contact",
+  },
 };
 
 export default function ContactPage() {

@@ -117,7 +117,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10 py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-gray-500">
-          <p>© 2007–2025 Vimal Travels. All rights reserved.</p>
+          <p>© 2007–2026 Vimal Travels. All rights reserved.</p>
           <p>Bengaluru, Karnataka, India</p>
         </div>
       </div>

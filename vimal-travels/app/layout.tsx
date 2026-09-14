@@ -22,24 +22,166 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Vimal Travels — Bengaluru's Trusted Travel Agency",
+  metadataBase: new URL("https://www.vimaltravels.in"),
+  title: {
+    default: "Vimal Travels Bengaluru — Tours, Visa & Passport Services Since 2007",
+    template: "%s | Vimal Travels Bengaluru",
+  },
   description:
-    "Your trusted travel partner for Tours, Visa & Passport Services. Plan your dream vacation with expert guidance, best prices, and end-to-end travel support.",
-  keywords: "travel agency bengaluru, visa services, passport assistance, tour packages, domestic international tours",
+    "IATA certified travel agency in Bengaluru since 2007. Book domestic & international tour packages, visa assistance, passport services. 4.9★ rated · 500+ reviews · 2 offices in Bengaluru.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Vimal Travels",
-    description: "Tours, Visa & Passport Services from Bengaluru",
+    title: "Vimal Travels Bengaluru — Tours, Visa & Passport Services",
+    description:
+      "IATA certified travel agency in Bengaluru since 2007. Tour packages, visa & passport services. 4.9★ · 500+ reviews.",
     type: "website",
+    url: "https://www.vimaltravels.in",
+    siteName: "Vimal Travels",
+    locale: "en_IN",
+    images: [
+      {
+        url: "/vimal-logo.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Vimal Travels — Bengaluru's Trusted Travel Agency",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vimal Travels Bengaluru — Tours, Visa & Passport Services",
+    description: "IATA certified travel agency in Bengaluru since 2007.",
+    images: ["/vimal-logo.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   icons: {
-    icon: "/vimal-logo.jpeg",
+    icon: [
+      { url: "/vimal-logo.jpeg", type: "image/jpeg" },
+    ],
     apple: "/vimal-logo.jpeg",
   },
 };
 
+// JSON-LD structured data — TravelAgency with both Bengaluru offices
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TravelAgency",
+      "@id": "https://www.vimaltravels.in/#organization",
+      name: "Vimal Travels",
+      alternateName: "Vimal Travels Bengaluru",
+      url: "https://www.vimaltravels.in",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.vimaltravels.in/vimal-logo.jpeg",
+      },
+      image: "https://www.vimaltravels.in/vimal-logo.jpeg",
+      description:
+        "IATA certified travel agency in Bengaluru established in 2007. Offering domestic & international tour packages, visa assistance, passport services, hotel bookings, and group tours from Bengaluru.",
+      foundingDate: "2007",
+      telephone: ["+91-9886114440", "+91-9845679729"],
+      email: "vimaltrls@gmail.com",
+      // Primary office — Mathikere
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "5, Vimal Shopping Complex, MS Ramaiah Road, opp. Divya MSR Gateway, Gokula Extension, Mathikere",
+        addressLocality: "Bengaluru",
+        addressRegion: "Karnataka",
+        postalCode: "560054",
+        addressCountry: "IN",
+      },
+      // Both locations
+      location: [
+        {
+          "@type": "Place",
+          name: "Vimal Travels — Mathikere Branch",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "5, Vimal Shopping Complex, MS Ramaiah Road, opp. Divya MSR Gateway, Gokula Extension, Mathikere",
+            addressLocality: "Bengaluru",
+            addressRegion: "Karnataka",
+            postalCode: "560054",
+            addressCountry: "IN",
+          },
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: "13.02637",
+            longitude: "77.56893",
+          },
+        },
+        {
+          "@type": "Place",
+          name: "Vimal Travels — New BEL Road Branch",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "1st Floor, 17, New BEL Road, opp. to Printo, next to Bata showroom, AGS Layout, R.M.V. 2nd Stage",
+            addressLocality: "Bengaluru",
+            addressRegion: "Karnataka",
+            postalCode: "560094",
+            addressCountry: "IN",
+          },
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: "13.02100",
+            longitude: "77.57200",
+          },
+        },
+      ],
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          opens: "10:30",
+          closes: "20:00",
+        },
+      ],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "500",
+        bestRating: "5",
+        worstRating: "1",
+      },
+      priceRange: "₹₹",
+      currenciesAccepted: "INR",
+      paymentAccepted: "Cash, UPI, Credit Card, Bank Transfer",
+      areaServed: { "@type": "Country", name: "India" },
+      knowsAbout: [
+        "International Tour Packages from Bengaluru",
+        "Domestic Tour Packages from Bengaluru",
+        "Visa Assistance in Bengaluru",
+        "Passport Services in Bengaluru",
+        "Honeymoon Packages from Bangalore",
+        "Group Tours from Bangalore",
+        "Schengen Visa from Bengaluru",
+        "Kashmir Tour Packages from Bangalore",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.vimaltravels.in/#website",
+      name: "Vimal Travels",
+      url: "https://www.vimaltravels.in",
+      publisher: { "@id": "https://www.vimaltravels.in/#organization" },
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${roboto.variable}`}>
+    <html lang="en-IN" className={`${playfair.variable} ${dmSans.variable} ${roboto.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="font-body bg-white text-slate-900 antialiased">
         {children}
       </body>

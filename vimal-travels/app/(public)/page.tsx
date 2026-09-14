@@ -114,7 +114,7 @@ export default function HomePage() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
             >
-              Your Trusted Travel Partner for Tours,{" "}
+              Bengaluru&apos;s Trusted Travel Partner for Tours,{" "}
               <span className="text-blue-300">Visa &amp; Passport</span>
             </motion.h1>
             <motion.p

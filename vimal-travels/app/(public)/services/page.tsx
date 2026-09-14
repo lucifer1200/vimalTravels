@@ -6,8 +6,14 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Our Services — Vimal Travels",
-  description: "Domestic & international tours, visa processing, passport assistance, flight & hotel booking, cruise, travel insurance, car rentals and more.",
+  title: "Travel Services in Bengaluru — Tours, Visa, Passport | Vimal Travels",
+  description: "Complete travel services in Bengaluru: domestic & international tours, visa processing, passport assistance, hotel bookings, flight tickets, cruise & more. IATA certified since 2007.",
+  alternates: { canonical: "/services" },
+  openGraph: {
+    title: "Travel Services in Bengaluru — Vimal Travels",
+    description: "Tours, visa, passport, hotels, flights & more from Bengaluru's trusted IATA agency.",
+    url: "https://www.vimaltravels.in/services",
+  },
 };
 
 const services = [
