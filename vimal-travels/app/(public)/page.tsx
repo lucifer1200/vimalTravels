@@ -1,12 +1,12 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
-import { Award, Users, Calendar, CheckCircle, MapPin, FileText, BookOpen, Phone, MessageCircle, Star, Shield, Clock } from "lucide-react";
+import { Award, Users, Calendar, CheckCircle, MapPin, Phone, MessageCircle, Star, Shield, Clock } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import HeroPlane from "@/components/HeroPlane";
 import HeroContent from "@/components/HeroContent";
-import ServiceCard from "@/components/ServiceCard";
+import ServicesSection from "@/components/ServicesSection";
 
 const stats = [
   { icon: Calendar, value: "2007", label: "Established", sub: "Over a decade of service" },
@@ -15,26 +15,6 @@ const stats = [
   { icon: Shield, value: "99%", label: "Visa Success Rate", sub: "Trusted processing" },
 ];
 
-const services = [
-  {
-    icon: MapPin,
-    title: "Holiday Packages",
-    desc: "Curated domestic and international tours designed for luxury, adventure, and comfort.",
-    href: "/packages",
-  },
-  {
-    icon: FileText,
-    title: "Visa Assistance",
-    desc: "Professional documentation and filing for all types of visas with end-to-end guidance.",
-    href: "/passport-visa",
-  },
-  {
-    icon: BookOpen,
-    title: "Passport Services",
-    desc: "Hassle-free passport applications, renewals, and corrections with expert supervision.",
-    href: "/passport-visa",
-  },
-];
 
 const packages = [
   {
@@ -132,13 +112,7 @@ export default function HomePage() {
               </h2>
             </div>
           </ScrollReveal>
-          <div className="grid md:grid-cols-3 gap-6">
-            {services.map((s, i) => (
-              <ScrollReveal key={i} direction="up" delay={i * 100}>
-                <ServiceCard icon={s.icon} title={s.title} desc={s.desc} href={s.href} />
-              </ScrollReveal>
-            ))}
-          </div>
+          <ServicesSection />
         </div>
       </section>
 
