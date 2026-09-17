@@ -156,7 +156,7 @@ export default function VisaAgentBangalorePage() {
               { icon: FileText,    title: "Updated Embassy Requirements",  desc: "We track embassy policy changes daily so your application is always compliant." },
               { icon: Clock,       title: "Fast Processing Available",     desc: "Urgent visa processing for last-minute travel plans." },
               { icon: Shield,      title: "Rejection Case Support",        desc: "Visa rejected? We analyse, reapply and handle the appeal process." },
-              { icon: CheckCircle, title: "Two Offices in North Bangalore", desc: "Visit us at Mathikere (560054) or New BEL Road (560094). No travel to South Bangalore." },
+              { icon: CheckCircle, title: "Head Office + Branch in North Bangalore", desc: "Head Office in Mathikere (560054), Branch in New BEL Road (560094). No travel to South Bangalore." },
             ].map((item, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 80}>
                 <div className="card p-5 flex gap-4 h-full">

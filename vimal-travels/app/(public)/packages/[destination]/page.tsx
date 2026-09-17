@@ -301,7 +301,7 @@ export default async function DestinationPage({ params }: Props) {
                   Ready to Plan Your {d.title.split(" Tour")[0]} Trip?
                 </h2>
                 <p className="text-gray-600 text-sm">
-                  Visit us at Mathikere or New BEL Road, North Bangalore. Mon–Sat 10:30 AM – 8:00 PM.
+                  Head Office: Mathikere · Branch: New BEL Road, North Bangalore. Mon–Sat 10:30 AM – 8:00 PM.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 shrink-0">

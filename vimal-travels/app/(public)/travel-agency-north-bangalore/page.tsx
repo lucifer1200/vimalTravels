@@ -67,14 +67,14 @@ export default function LocalNorthBangalorePage() {
           <div className="grid md:grid-cols-2 gap-6">
             {[
               {
-                branch: "Branch 1 — Mathikere",
+                branch: "Head Office — Mathikere",
                 address: "5, Vimal Shopping Complex, MS Ramaiah Rd, opp. Divya MSR Gateway, Gokula Extension, Mathikere, Bengaluru 560054",
                 landmarks: "Near MS Ramaiah Hospital, MS Ramaiah Institute of Technology",
                 phone: "+91 98861 14440",
                 mapUrl: "https://maps.google.com/?q=Vimal+Travels+Mathikere+Bangalore",
               },
               {
-                branch: "Branch 2 — New BEL Road",
+                branch: "Branch — New BEL Road",
                 address: "1st Floor, 17, New BEL Rd, opp. to Printo, next to Bata showroom, AGS Layout, R.M.V. 2nd Stage, Bengaluru 560094",
                 landmarks: "Near BEL Circle, RMV 2nd Stage, close to Hebbal flyover",
                 phone: "+91 98456 79729",

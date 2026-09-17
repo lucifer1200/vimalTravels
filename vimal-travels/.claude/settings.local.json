@@ -44,7 +44,9 @@
       "Bash(curl -s \"https://api.supabase.com/v1/projects\" -H \"Authorization: Bearer sb_publishable_uAHFvhmahhlSSBQHgDbwbQ_G4Yi6wp4\")",
       "Bash(ls \"C:\\\\Users\\\\jain1\\\\AppData\\\\Local\\\\Temp\\\\\" | grep -i \"png\\\\|jpg\\\\|jpeg\" | head -10)",
       "Bash('C:\\\\Users\\\\jain1/.claude/skills/seo/bin/claude-seo' run *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npx next *)",
+      "Bash(npx vercel *)"
     ]
   }
 }

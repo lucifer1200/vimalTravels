@@ -191,7 +191,7 @@ export default function PassportAgentBangalorePage() {
               { icon: CheckCircle, title: "Zero Rejection Policy",           desc: "We verify every document before submission to prevent delays and rejections." },
               { icon: Clock,       title: "Tatkal Available",               desc: "Urgent travel? We process Tatkal applications for fast-track passport delivery." },
               { icon: BookOpen,    title: "Updated PSK Requirements",       desc: "Ministry of External Affairs updates tracked daily. Your checklist is always current." },
-              { icon: Shield,      title: "Two Offices in North Bangalore",  desc: "Conveniently located in Mathikere (560054) and New BEL Road (560094)." },
+              { icon: Shield,      title: "Head Office + Branch in North Bangalore",  desc: "Head Office in Mathikere (560054) and Branch in New BEL Road (560094)." },
               { icon: CheckCircle, title: "End-to-End Service",             desc: "From form filling to PSK appointment — we handle it all. You just bring the documents." },
             ].map((item, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 80}>
