@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services/visa-agent-bangalore" },
   openGraph: {
     title: "Visa Agent in Bangalore — Vimal Travels",
-    description: "Schengen, USA, UK, UAE, Singapore visa assistance in Bangalore. 99% success rate. Two offices: Mathikere & New BEL Road.",
+    description: "Schengen, USA, UK, UAE, Singapore visa assistance in Bangalore. 99% success rate. Head Office: Mathikere. Branch: New BEL Road.",
     url: "https://www.vimaltravels.in/services/visa-agent-bangalore",
   },
 };

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s | Vimal Travels Bengaluru",
   },
   description:
-    "IATA certified travel agency in Bengaluru since 2007. Book domestic & international tour packages, visa assistance, passport services. 4.9★ rated · 500+ reviews · 2 offices in Bengaluru.",
+    "IATA certified travel agency in Bengaluru since 2007. Book domestic & international tour packages, visa assistance, passport services. 4.9★ rated · 500+ reviews · Head Office: Mathikere · Branch: New BEL Road.",
   alternates: {
     canonical: "/",
   },

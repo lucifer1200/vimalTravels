@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Travel Agency in North Bangalore — Vimal Travels",
     description:
-      "2 offices in North Bangalore: Mathikere (560054) & New BEL Road (560094). Tours, visa & passport. Call +91 98861 14440.",
+      "Head Office: Mathikere (560054). Branch: New BEL Road (560094). Tours, visa & passport. Call +91 98861 14440.",
     url: "https://www.vimaltravels.in/travel-agency-north-bangalore",
   },
 };
@@ -43,7 +43,7 @@ export default function LocalNorthBangalorePage() {
               Travel Agency in Mathikere, New BEL Road &amp; North Bangalore
             </h1>
             <p className="text-blue-200 mt-4 text-lg max-w-2xl">
-              Two offices serving Mathikere, RMV 2nd Stage, Hebbal, Yeshwanthpur, Rajajinagar and the whole of North Bengaluru since 2007.
+              Head Office in Mathikere &amp; Branch in New BEL Road — serving RMV 2nd Stage, Hebbal, Yeshwanthpur, Rajajinagar and the whole of North Bengaluru since 2007.
             </p>
             <div className="flex flex-wrap gap-3 mt-6">
               <a href="tel:+919886114440" className="bg-white text-blue-900 hover:bg-blue-50 font-bold px-6 py-3 rounded-lg text-sm transition-colors">
@@ -105,7 +105,7 @@ export default function LocalNorthBangalorePage() {
           </div>
           <div className="mt-4 card p-4 flex items-center gap-3 text-sm text-gray-600">
             <Clock className="w-4 h-4 text-blue-500 shrink-0" />
-            <span><strong>Business Hours:</strong> Monday to Saturday, 10:30 AM – 8:00 PM (Both offices)</span>
+            <span><strong>Business Hours:</strong> Monday to Saturday, 10:30 AM – 8:00 PM (Head Office &amp; Branch)</span>
           </div>
         </div>
       </section>
@@ -165,7 +165,7 @@ export default function LocalNorthBangalorePage() {
             <p className="section-label mb-2">AREAS WE SERVE</p>
             <h2 className="font-display text-3xl font-bold text-slate-900 mb-6">Serving All Areas Across North Bengaluru</h2>
             <p className="text-gray-500 mb-8 text-sm leading-relaxed max-w-2xl">
-              Our two offices in Mathikere and New BEL Road are easily accessible from all parts of North Bengaluru. Whether you live in Hebbal, Yeshwanthpur, Rajajinagar or Nagarbhavi — you're never far from us.
+              Our Head Office in Mathikere and Branch in New BEL Road are easily accessible from all parts of North Bengaluru. Whether you live in Hebbal, Yeshwanthpur, Rajajinagar or Nagarbhavi — you're never far from us.
             </p>
           </ScrollReveal>
           <div className="flex flex-wrap gap-2">

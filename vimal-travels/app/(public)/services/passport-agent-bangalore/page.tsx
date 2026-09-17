@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services/passport-agent-bangalore" },
   openGraph: {
     title: "Passport Agent in Bangalore — Vimal Travels",
-    description: "New passport, Tatkal & renewal assistance in Bangalore. Two offices: Mathikere & New BEL Road. Call +91 98861 14440.",
+    description: "New passport, Tatkal & renewal assistance in Bangalore. Head Office: Mathikere. Branch: New BEL Road. Call +91 98861 14440.",
     url: "https://www.vimaltravels.in/services/passport-agent-bangalore",
   },
 };
