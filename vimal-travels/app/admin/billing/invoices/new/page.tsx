@@ -26,7 +26,24 @@ const TYPES: { value: InvoiceType; label: string; icon: any }[] = [
   { value: "other",    label: "Other",      icon: FileText },
 ];
 
-const AIRLINES = ["Air India","IndiGo","SpiceJet","Vistara","GoFirst","Thai Airways","Emirates","Singapore Airlines","Qatar Airways","Lufthansa","British Airways","Etihad","Flydubai","Air Arabia","Cathay Pacific","Malaysia Airlines","Sri Lankan Airlines","Oman Air"];
+const AIRLINES = [
+  // Indian
+  "Air India","Air India Express","IndiGo","SpiceJet","Vistara","Akasa Air","AirAsia India","GoFirst","Alliance Air","Star Air","Blue Dart Aviation",
+  // Middle East
+  "Emirates","Etihad Airways","Qatar Airways","Flydubai","Air Arabia","Oman Air","Gulf Air","Kuwait Airways","Saudi Arabian Airlines","flynas","Jazeera Airways","Air Arabia Abu Dhabi",
+  // Southeast Asia
+  "Singapore Airlines","Malaysia Airlines","AirAsia","Batik Air","Garuda Indonesia","Vietnam Airlines","Philippine Airlines","Cebu Pacific","Bangkok Airways","Thai Airways","Thai Lion Air","Scoot","Firefly",
+  // East Asia
+  "Cathay Pacific","Hong Kong Airlines","Air China","China Eastern","China Southern","Japan Airlines","ANA All Nippon Airways","Korean Air","Asiana Airlines","Jin Air","Jeju Air",
+  // Europe
+  "Lufthansa","British Airways","Air France","KLM","Swiss International Air Lines","Austrian Airlines","Turkish Airlines","Finnair","SAS Scandinavian Airlines","Brussels Airlines","Iberia","TAP Air Portugal","ITA Airways","LOT Polish Airlines","Aegean Airlines","Wizz Air","Ryanair","easyJet",
+  // Americas
+  "American Airlines","Delta Air Lines","United Airlines","Air Canada","LATAM Airlines",
+  // Africa & Others
+  "Ethiopian Airlines","Kenya Airways","EgyptAir","South African Airways","RwandAir",
+  // Sri Lanka / Nepal / Maldives
+  "Sri Lankan Airlines","Himalaya Airlines","Maldivian","FitsAir",
+];
 const SAC_CODES: Record<InvoiceType, string> = {
   "air-intl":"998552","air-dom":"998551",train:"998554",bus:"998554",
   hotel:"996311",package:"998555",visa:"998599",other:"999999",
@@ -686,6 +703,58 @@ function colHeaders(type: InvoiceType) {
   };
 }
 
+/* -- Airline Combobox -- */
+function AirlineCombobox({ value, onChange, dark, placeholder }: { value: string; onChange: (v: string) => void; dark: boolean; placeholder?: string }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState(value);
+  const ref = useRef<HTMLDivElement>(null);
+  const filtered = AIRLINES.filter(a => a.toLowerCase().includes(query.toLowerCase())).slice(0, 12);
+  useEffect(() => { setQuery(value); }, [value]);
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+  const cardBg   = dark ? "#1C1B1F" : "#FFFFFF";
+  const cardBdr  = dark ? "rgba(255,255,255,0.1)" : "#E8DEF8";
+  const txtP     = dark ? "#E6E1E5" : "#1C1B1F";
+  const hoverBg  = dark ? "rgba(255,255,255,0.06)" : "#F7F2FA";
+  return (
+    <div ref={ref} style={{ position:"relative" }}>
+      <input
+        value={query}
+        onFocus={() => setOpen(true)}
+        onChange={e => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onBlur={() => setTimeout(() => setOpen(false), 120)}
+        placeholder={placeholder || "Type or select airline..."}
+        className={inp(dark)}
+        style={inpStyle(dark)}
+        autoComplete="off"
+      />
+      {open && filtered.length > 0 && (
+        <div style={{ position:"absolute", zIndex:999, top:"calc(100% + 4px)", left:0, right:0, background:cardBg, border:`1px solid ${cardBdr}`, borderRadius:"12px", boxShadow:"0 8px 24px rgba(0,0,0,0.18)", maxHeight:"220px", overflowY:"auto" }}>
+          {filtered.map(a => (
+            <button key={a} type="button"
+              onMouseDown={() => { onChange(a); setQuery(a); setOpen(false); }}
+              style={{ display:"block", width:"100%", textAlign:"left", padding:"10px 14px", fontSize:"13px", color:txtP, background:"transparent", border:"none", cursor:"pointer" }}
+              onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >{a}</button>
+          ))}
+          {query && !AIRLINES.some(a => a.toLowerCase() === query.toLowerCase()) && (
+            <button type="button"
+              onMouseDown={() => { onChange(query); setOpen(false); }}
+              style={{ display:"block", width:"100%", textAlign:"left", padding:"10px 14px", fontSize:"13px", color: dark?"#90E0EF":"#0077B6", background:"transparent", border:"none", borderTop:`1px solid ${cardBdr}`, cursor:"pointer", fontStyle:"italic" }}
+              onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >+ Use &quot;{query}&quot;</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* -- Main page -- */
 function NewInvoiceContent() {
   const dark = useAdminDark();
@@ -919,18 +988,8 @@ function NewInvoiceContent() {
               </div>
               {(type === "air-intl" || type === "air-dom") && (
                 <div className="col-span-2">
-                  <label style={lblStyle(dark)}>Airline <span style={{ color: dark?"#938F99":"#79747E", fontWeight:400, fontSize:"11px" }}>— select or type custom</span></label>
-                  <input
-                    list="invoice-airlines-list"
-                    value={airline}
-                    onChange={(e) => setAirline(e.target.value)}
-                    placeholder="Type or select airline..."
-                    className={inp(dark)}
-                    style={inpStyle(dark)}
-                  />
-                  <datalist id="invoice-airlines-list">
-                    {AIRLINES.map((a) => <option key={a} value={a} />)}
-                  </datalist>
+                  <label style={lblStyle(dark)}>Airline <span style={{ color: dark?"#938F99":"#79747E", fontWeight:400, fontSize:"11px" }}>— type to search or add custom</span></label>
+                  <AirlineCombobox value={airline} onChange={setAirline} dark={dark} />
                 </div>
               )}
               {(type === "train" || type === "bus") && (
