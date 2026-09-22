@@ -378,22 +378,8 @@ function EntryModal({
                     <input type="date" value={f.returnDate} onChange={(e) => upd({returnDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)} />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label style={lblStyle(dark)}>Airline</label>
-                    <input
-                      list="airlines-list"
-                      value={f.airline||""}
-                      onChange={(e) => upd({airline:e.target.value})}
-                      placeholder="Type or select airline..."
-                      className={inp(dark)}
-                      style={inpStyle(dark)}
-                    />
-                    <datalist id="airlines-list">
-                      {AIRLINES.map(a => <option key={a} value={a} />)}
-                    </datalist>
-                  </div>
-                  <div><label style={lblStyle(dark)}>Airline PNR / Ticket No</label><input value={f.airlinePnr} onChange={(e) => upd({airlinePnr:e.target.value.toUpperCase()})} placeholder="098-76543210" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)} /></div>
+                <div>
+                  <label style={lblStyle(dark)}>Airline PNR / Ticket No</label><input value={f.airlinePnr} onChange={(e) => upd({airlinePnr:e.target.value.toUpperCase()})} placeholder="098-76543210" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)} />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
@@ -755,7 +741,7 @@ function NewInvoiceContent() {
     setSacCode(SAC_CODES[t]); setGstRate(GST_RATES[t][0]);
   };
 
-  const openAdd  = () => { setEditingId(null); setModalItem(newItem(type)); };
+  const openAdd  = () => { setEditingId(null); const base = newItem(type); setModalItem(customer ? { ...base, paxName: customer.name.toUpperCase(), applicantName: customer.name.toUpperCase() } as InvoiceItem : base); };
   const openEdit = (item: InvoiceItem) => { setEditingId(item.id ?? null); setModalItem({ ...item }); };
 
   const saveEntry = (item: InvoiceItem) => {
