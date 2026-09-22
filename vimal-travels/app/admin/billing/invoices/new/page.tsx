@@ -933,11 +933,18 @@ function NewInvoiceContent() {
               </div>
               {(type === "air-intl" || type === "air-dom") && (
                 <div className="col-span-2">
-                  <label style={lblStyle(dark)}>Airline Selection</label>
-                  <select value={airline} onChange={(e) => setAirline(e.target.value)} className={inp(dark)} style={inpStyle(dark)}>
-                    <option value="">Select airline...</option>
-                    {AIRLINES.map((a) => <option key={a}>{a}</option>)}
-                  </select>
+                  <label style={lblStyle(dark)}>Airline <span style={{ color: dark?"#938F99":"#79747E", fontWeight:400, fontSize:"11px" }}>— select or type custom</span></label>
+                  <input
+                    list="invoice-airlines-list"
+                    value={airline}
+                    onChange={(e) => setAirline(e.target.value)}
+                    placeholder="Type or select airline..."
+                    className={inp(dark)}
+                    style={inpStyle(dark)}
+                  />
+                  <datalist id="invoice-airlines-list">
+                    {AIRLINES.map((a) => <option key={a} value={a} />)}
+                  </datalist>
                 </div>
               )}
               {(type === "train" || type === "bus") && (
