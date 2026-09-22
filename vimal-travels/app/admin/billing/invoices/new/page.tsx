@@ -351,7 +351,7 @@ function EntryModal({
                     <div key={pr.id} className="grid grid-cols-4 gap-3 items-end">
                       <div><label style={lblStyle(dark)}>Pax No</label><input value={pr.paxNo} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxNo:e.target.value}:p))} placeholder="001" className={inp(dark)} style={inpStyle(dark)} /></div>
                       <div className="col-span-3 flex gap-2 items-end">
-                        <div className="flex-1"><label style={lblStyle(dark)}>Passenger Name</label><input value={pr.paxName} onChange={(e)=>setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxName:e.target.value.toUpperCase()}:p))} placeholder="RAJESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)} /></div>
+                        <div className="flex-1"><label style={lblStyle(dark)}>Passenger Name</label><input value={pr.paxName} onChange={(e)=>{const name=e.target.value.toUpperCase();setPaxRows(r=>r.map((p,i)=>i===idx?{...p,paxName:name}:p));if(idx===0)onExtractName?.(name);}} placeholder="RAJESH KUMAR" className={`${inp(dark)} uppercase font-semibold`} style={inpStyle(dark)} /></div>
                         {paxRows.length > 1 && <button onClick={()=>setPaxRows(r=>r.filter((_,i)=>i!==idx))} className="mb-0.5 p-2 rounded-lg" style={{ color:"#B3261E", border:`1px solid rgba(179,38,30,0.3)` }}>✕</button>}
                       </div>
                     </div>
@@ -364,7 +364,7 @@ function EntryModal({
                     <div><label style={lblStyle(dark)}>From</label><input value={f.sectorFrom} onChange={(e) => upd({sectorFrom:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
                     <div><label style={lblStyle(dark)}>To</label><input value={f.sectorTo} onChange={(e) => upd({sectorTo:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
                     <div><label style={lblStyle(dark)}>Flight No</label><input value={f.flightNo} onChange={(e) => upd({flightNo:e.target.value.toUpperCase()})} placeholder="AI-102" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} /></div>
-                    <div><label style={lblStyle(dark)}>Class</label><input value={f.flightClass} onChange={(e) => upd({flightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} /></div>
+                    <div><label style={lblStyle(dark)}>Class</label><input value={f.flightClass} onChange={(e) => upd({flightClass:e.target.value.toUpperCase()})} placeholder="Y / Economy" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} /></div>
                     <div><label style={lblStyle(dark)}>Date</label><input type="date" value={f.travelDate} onChange={(e) => upd({travelDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)} /></div>
                   </div>
                 </div>
@@ -374,12 +374,28 @@ function EntryModal({
                     <input value={f.returnSectorFrom} onChange={(e) => upd({returnSectorFrom:e.target.value.toUpperCase()})} placeholder="BOM" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
                     <input value={f.returnSectorTo} onChange={(e) => upd({returnSectorTo:e.target.value.toUpperCase()})} placeholder="DEL" maxLength={3} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
                     <input value={f.returnFlightNo} onChange={(e) => upd({returnFlightNo:e.target.value.toUpperCase()})} placeholder="AI-103" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} />
-                    <input value={f.returnFlightClass} onChange={(e) => upd({returnFlightClass:e.target.value.toUpperCase()})} placeholder="Y" maxLength={2} className={`${inp(dark)} font-mono text-center uppercase`} style={inpStyle(dark)} />
+                    <input value={f.returnFlightClass} onChange={(e) => upd({returnFlightClass:e.target.value.toUpperCase()})} placeholder="Y / Economy" className={`${inp(dark)} font-mono uppercase`} style={inpStyle(dark)} />
                     <input type="date" value={f.returnDate} onChange={(e) => upd({returnDate:e.target.value})} className={inp(dark)} style={inpStyle(dark)} />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label style={lblStyle(dark)}>Airline</label>
+                    <input
+                      list="airlines-list"
+                      value={f.airline||""}
+                      onChange={(e) => upd({airline:e.target.value})}
+                      placeholder="Type or select airline..."
+                      className={inp(dark)}
+                      style={inpStyle(dark)}
+                    />
+                    <datalist id="airlines-list">
+                      {AIRLINES.map(a => <option key={a} value={a} />)}
+                    </datalist>
+                  </div>
                   <div><label style={lblStyle(dark)}>Airline PNR / Ticket No</label><input value={f.airlinePnr} onChange={(e) => upd({airlinePnr:e.target.value.toUpperCase()})} placeholder="098-76543210" className={`${inp(dark)} font-mono uppercase tracking-widest`} style={inpStyle(dark)} /></div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label style={lblStyle(dark)}>Base Fare (₹) <span style={{ color:textMuted, fontWeight:400 }}>— exempt</span></label>
                     <input type="number" value={f.amount||""} onChange={(e) => upd({amount:parseFloat(e.target.value)||0})} placeholder="4500" className={`${inp(dark)} font-bold`} style={{ ...inpStyle(dark), color: dark?"#90E0EF":"#0077B6" }} />
@@ -1195,7 +1211,7 @@ function NewInvoiceContent() {
           onSaveMany={saveManyEntries}
           onClose={() => { setModalItem(null); setEditingId(null); }}
           dark={dark}
-          onExtractName={(name) => { if (!customer) setCustSearch(name); }}
+          onExtractName={(name) => { if (!customer) { setCustSearch(name); setCustDropdown(true); } }}
           gstType={gstType}
         />
       )}

@@ -5,10 +5,10 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  getInvoices, formatINR, fmtDate, saveInvoice,
+  getInvoices, formatINR, fmtDate, saveInvoice, deleteInvoice,
   type Invoice, type InvoiceType, type InvoiceStatus, TYPE_LABEL,
 } from "@/lib/billing";
-import { Plus, Search, FileText, Plane, Package, FileCheck, Train, Bus, Hotel, TrendingUp, CheckCircle, AlertCircle, X, ChevronRight, Calendar, ChevronLeft, Download, MessageCircle } from "lucide-react";
+import { Plus, Search, FileText, Plane, Package, FileCheck, Train, Bus, Hotel, TrendingUp, CheckCircle, AlertCircle, X, ChevronRight, Calendar, ChevronLeft, Download, MessageCircle, Trash2 } from "lucide-react";
 const ChevRight = ChevronRight;
 import { useAdminDark } from "@/lib/useAdminDark";
 import { getSession } from "@/lib/auth";
@@ -275,6 +275,7 @@ function InvoicesPageContent() {
   const [isSuperAdmin,  setIsSuperAdmin]  = useState(false);
   const [selected,      setSelected]      = useState<Set<string>>(new Set());
   const [bulkLoading,   setBulkLoading]   = useState(false);
+  const [showDelConfirm, setShowDelConfirm] = useState(false);
 
   const toggleSelect = (id: string) => setSelected(prev => {
     const next = new Set(prev);
@@ -293,6 +294,20 @@ function InvoicesPageContent() {
     try {
       const toUpdate = invoices.filter(i => selected.has(i.id) && i.status !== "paid");
       await Promise.all(toUpdate.map(inv => saveInvoice({ ...inv, status: "paid" })));
+      const fresh = await getInvoices();
+      setInvoices(fresh);
+      setSelected(new Set());
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    setBulkLoading(true);
+    setShowDelConfirm(false);
+    try {
+      await Promise.all(Array.from(selected).map(id => deleteInvoice(id)));
       const fresh = await getInvoices();
       setInvoices(fresh);
       setSelected(new Set());
@@ -600,9 +615,40 @@ function InvoicesPageContent() {
               className="flex items-center gap-1.5 text-[13px] font-bold px-4 py-1.5 rounded-[10px] text-white transition-all disabled:opacity-50"
               style={{ background:"linear-gradient(135deg,#16A34A,#15803D)", boxShadow:"0 2px 8px rgba(22,163,74,0.35)" }}>
               <CheckCircle className="w-3.5 h-3.5" />
-              {bulkLoading ? "Marking..." : "Mark as Paid"}
+              {bulkLoading ? "Processing..." : "Mark as Paid"}
+            </button>
+            <button onClick={() => setShowDelConfirm(true)} disabled={bulkLoading}
+              className="flex items-center gap-1.5 text-[13px] font-bold px-4 py-1.5 rounded-[10px] text-white transition-all disabled:opacity-50"
+              style={{ background:"linear-gradient(135deg,#B3261E,#C62828)", boxShadow:"0 2px 8px rgba(179,38,30,0.35)" }}>
+              <Trash2 className="w-3.5 h-3.5" />
+              Delete
             </button>
           </motion.div>
+        )}
+
+        {/* -- BULK DELETE CONFIRM MODAL -- */}
+        {showDelConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:"rgba(0,0,0,0.55)", backdropFilter:"blur(8px)" }}>
+            <div className="rounded-2xl p-6 w-full max-w-sm" style={{ background:dark?"#1C1C1E":"#FFFFFF", border:`1px solid ${dark?"rgba(255,255,255,0.10)":"#E7E0EC"}`, boxShadow:"0 24px 64px rgba(0,0,0,0.4)" }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background:"rgba(179,38,30,0.12)" }}>
+                  <Trash2 className="w-5 h-5" style={{ color:"#B3261E" }} />
+                </div>
+                <h2 className="font-bold text-[16px]" style={{ color:dark?"#E6E1E5":"#1C1B1F" }}>Delete {selected.size} Invoice{selected.size > 1 ? "s" : ""}?</h2>
+              </div>
+              <p className="text-[14px] mb-5" style={{ color:dark?"#938F99":"#79747E" }}>
+                These invoices will be moved to trash. You can restore them from the Trash page.
+              </p>
+              <div className="flex gap-3">
+                <button onClick={() => setShowDelConfirm(false)} className="flex-1 py-2.5 text-[14px] font-semibold rounded-xl" style={{ color:dark?"#938F99":"#79747E", border:`1px solid ${dark?"rgba(255,255,255,0.08)":"#E7E0EC"}` }}>
+                  Cancel
+                </button>
+                <button onClick={bulkDelete} className="flex-1 py-2.5 text-[14px] font-semibold text-white rounded-xl" style={{ background:"#B3261E" }}>
+                  Yes, Delete
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* -- TABLE -- */}

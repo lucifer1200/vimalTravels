@@ -45,6 +45,7 @@ export interface FlightItem {
   returnFlightClass?: string;
   returnDate?: string;
   airlinePnr?: string;
+  airline?: string;
   description?: string;
   amount: number;
   quantity?: number;
