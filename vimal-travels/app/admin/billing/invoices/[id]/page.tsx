@@ -784,7 +784,7 @@ export default function InvoiceViewPage() {
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
                           <td style={{ padding: "8px 10px", color: "#94A3B8", width: 32, fontSize: 10 }}>{i + 1}</td>
                           <td style={{ padding: "8px 10px", color: "#334155", fontSize: 11 }}>{g.description}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR(g.amount)}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 11 }}>{formatINR(g.amount)}</td>
                         </tr>
                       );
                     })}
