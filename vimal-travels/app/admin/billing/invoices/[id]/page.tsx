@@ -220,7 +220,7 @@ export default function InvoiceViewPage() {
       <style>{`
         * { font-family: var(--font-roboto), Roboto, Inter, Arial, sans-serif; }
         @media print{
-          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;font-family:Arial,Helvetica,sans-serif!important}
           body{background:white!important}
           .print\\:hidden{display:none!important}
           @page{margin:5mm 7mm;size:A4 portrait}
@@ -301,7 +301,8 @@ export default function InvoiceViewPage() {
             title="Create a duplicate of this invoice">
             <Copy className="w-3.5 h-3.5" /> Duplicate
           </button>
-          <button onClick={() => window.print()}
+          <button onClick={() => { document.fonts.ready.then(() => window.print()); }}
+            title="In the print dialog, choose 'Save as PDF' (not Microsoft Print to PDF)"
             className="flex items-center gap-1.5 text-[13px] font-semibold px-3.5 py-2 text-white rounded-xl transition-all"
             style={{ background:"linear-gradient(135deg,#0077B6,#0096C7)", boxShadow:"0 2px 10px rgba(0,119,182,0.35)" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,119,182,0.50)"; }}
