@@ -727,7 +727,7 @@ export default function InvoiceViewPage() {
                           <td style={{ padding: "8px 10px", fontSize: 11, color: "#64748B" }}>{p.travelFrom ? fmtDate(p.travelFrom) : ""} " {p.travelTo ? fmtDate(p.travelTo) : ""}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{p.paxCount}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(p.perPersonRate ?? 0)}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR((p.perPersonRate ?? 0) * (p.paxCount ?? 0))}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 11 }}>{formatINR((p.perPersonRate ?? 0) * (p.paxCount ?? 0))}</td>
                         </tr>
                       );
                     })}
@@ -753,11 +753,11 @@ export default function InvoiceViewPage() {
                       return (
                         <tr key={item.id} style={{ ...tdRow(i % 2 !== 0) }}>
                           <td style={{ padding: "8px 10px", fontWeight: 700, color: "#1E293B", fontSize: 11 }}>{v.applicantName}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 8, color: "#334155" }}>{v.visaCountry}</td>
+                          <td style={{ padding: "8px 10px", fontSize: 11, color: "#334155" }}>{v.visaCountry}</td>
                           <td style={{ padding: "8px 10px", fontSize: 11, color: "#64748B" }}>{v.visaType}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(v.embassyFee ?? 0)}</td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontSize: 11, color: "#334155" }}>{formatINR(v.serviceFee ?? 0)}</td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 8 }}>{formatINR((v.embassyFee ?? 0) + (v.serviceFee ?? 0))}</td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 600, color: "#1E293B", fontSize: 11 }}>{formatINR((v.embassyFee ?? 0) + (v.serviceFee ?? 0))}</td>
                         </tr>
                       );
                     })}
