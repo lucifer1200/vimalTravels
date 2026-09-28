@@ -45,8 +45,8 @@ const AIRLINES = [
   "Sri Lankan Airlines","Himalaya Airlines","Maldivian","FitsAir",
 ];
 const SAC_CODES: Record<InvoiceType, string> = {
-  "air-intl":"998552","air-dom":"998551",train:"998554",bus:"998554",
-  hotel:"996311",package:"998555",visa:"998599",other:"999999",
+  "air-intl":"998555","air-dom":"998555",train:"998555",bus:"998555",
+  hotel:"998555",package:"998555",visa:"998555",other:"998555",
 };
 const GST_RATES: Record<InvoiceType, number[]> = {
   "air-intl":[18,5,0],"air-dom":[18,5,0],train:[18,0],bus:[18,0],
