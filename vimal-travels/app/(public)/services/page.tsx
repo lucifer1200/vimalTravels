@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Travel Services in Bengaluru — Tours, Visa, Passport | Vimal Travels",
+  title: "Travel Services in Bengaluru — Tours, Visa, Passport",
   description: "Complete travel services in Bengaluru: domestic & international tours, visa processing, passport assistance, hotel bookings, flight tickets, cruise & more. IATA certified since 2007.",
   alternates: { canonical: "/services" },
   openGraph: {

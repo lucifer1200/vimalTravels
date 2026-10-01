@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Travel Agency in Mathikere, New BEL Road & North Bangalore | Vimal Travels",
+  title: "Travel Agency in Mathikere, New BEL Road & North Bangalore",
   description:
     "Vimal Travels — trusted travel agency in Mathikere, New BEL Road, RMV 2nd Stage, Hebbal, Yeshwanthpur & across North Bangalore. IATA certified, 19+ years. Visit us for tours, visa & passport.",
   alternates: { canonical: "/travel-agency-north-bangalore" },

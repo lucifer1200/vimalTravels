@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Passport & Visa Services in Bengaluru — Tatkal, Renewal, All Countries | Vimal Travels",
+  title: "Passport & Visa Services in Bengaluru — Tatkal, Renewal, All Countries",
   description: "Expert passport & visa assistance in Bengaluru. New passport, Tatkal, renewal, Schengen, USA, UAE, UK, Singapore visa processing. 99% success rate · IATA certified.",
   alternates: { canonical: "/passport-visa" },
   openGraph: {

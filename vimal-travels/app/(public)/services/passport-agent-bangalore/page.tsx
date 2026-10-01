@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Passport Agent in Bangalore — Tatkal, Renewal & New Passport | Vimal Travels",
+  title: "Passport Agent in Bangalore — Tatkal, Renewal & New Passport",
   description:
     "Reliable passport agent in Bangalore. New passport, Tatkal, renewal, minor passport. Full documentation help. Offices in Mathikere & New BEL Road, Bengaluru. Call +91 98861 14440.",
   alternates: { canonical: "/services/passport-agent-bangalore" },

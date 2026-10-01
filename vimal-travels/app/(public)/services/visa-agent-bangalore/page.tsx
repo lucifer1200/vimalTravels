@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Visa Agent in Bangalore — Schengen, USA, UK, UAE, Singapore | Vimal Travels",
+  title: "Visa Agent in Bangalore — Schengen, USA, UK, UAE, Singapore",
   description:
     "Expert visa agent in Bangalore. Schengen, USA, UK, UAE, Singapore & 30+ countries. 99% success rate, IATA certified. Offices in Mathikere & New BEL Road. Call +91 98861 14440.",
   alternates: { canonical: "/services/visa-agent-bangalore" },

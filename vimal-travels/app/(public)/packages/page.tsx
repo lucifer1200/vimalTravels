@@ -7,7 +7,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import PackageCard from "@/components/PackageCard";
 
 export const metadata: Metadata = {
-  title: "Tour Packages from Bengaluru — Domestic & International | Vimal Travels",
+  title: "Tour Packages from Bengaluru — Domestic & International",
   description: "Book Kashmir, Kerala, Bali, Singapore, Goa, Europe & more tour packages from Bengaluru. Best prices, customised itineraries, IATA certified. Starting ₹12,999.",
   alternates: { canonical: "/packages" },
   openGraph: {

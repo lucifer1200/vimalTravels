@@ -18,7 +18,8 @@ function parseTarget(target: string): { num: number; suffix: string; prefix: str
 export default function AnimatedCounter({ target, duration = 1800 }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
-  const [count, setCount] = useState(0);
+  const { num: targetNum } = parseTarget(target);
+  const [count, setCount] = useState(targetNum);
   const started = useRef(false);
 
   useEffect(() => {
@@ -38,7 +39,6 @@ export default function AnimatedCounter({ target, duration = 1800 }: Props) {
   }, [inView, target, duration]);
 
   const { suffix, prefix } = parseTarget(target);
-
   return (
     <span ref={ref}>
       {prefix}{count.toLocaleString("en-IN")}{suffix}

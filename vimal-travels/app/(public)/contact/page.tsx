@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "Contact Vimal Travels — Head Office Mathikere & Branch New BEL Road | Bengaluru",
+  title: "Contact Us — Both Offices in North Bengaluru",
   description: "Visit Vimal Travels at Mathikere (560054) or New BEL Road, R.M.V. 2nd Stage (560094), Bengaluru. Call +91 98861 14440. Mon–Sat 10:30 AM – 8:00 PM.",
   alternates: { canonical: "/contact" },
   openGraph: {
@@ -33,7 +33,7 @@ export default function ContactPage() {
           <ScrollReveal direction="up">
             <div className="max-w-2xl">
               <p className="section-label text-blue-300 mb-3">Get In Touch</p>
-              <h1 className="font-display text-4xl md:text-5xl text-white font-bold leading-tight">Contact Us</h1>
+              <h1 className="font-display text-4xl md:text-5xl text-white font-bold leading-tight">Contact Vimal Travels — Bengaluru</h1>
               <p className="text-gray-200 mt-4 text-lg">We&apos;re here to help you plan your perfect trip. Reach out anytime!</p>
             </div>
           </ScrollReveal>
